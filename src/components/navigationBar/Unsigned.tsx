@@ -6,29 +6,29 @@ import {
   } from "@/components/ui/dropdown-menu";
   import { Menu } from "lucide-react";
   import { Card } from "@/components/ui/card";
-  import ThemeToggle from "@/components/theme-toggle";
+//   import ThemeToggle from "@/components/theme-toggle";
   import { Button } from "@/components/ui/button";
-  import ShadcnKit from "@/components/icons/shadcn-kit";
-  import { nanoid } from "nanoid";
+//   import ShadcnKit from "@/components/icons/shadcn-kit";
+//   import { nanoid } from "nanoid";
   import Link from "next/link";
   
-  const Navbar = () => {
+export function UnsignedNav() {
     return (
       <Card className="container bg-card py-3 px-4 border-0 flex items-center justify-between gap-6 rounded-2xl mt-5">
-        <ShadcnKit className="text-primary cursor-pointer" />
+        {/* <ShadcnKit className="text-primary cursor-pointer" /> */}
   
-        <ul className="hidden md:flex items-center gap-10 text-card-foreground">
+        <ul className="hidden md:flex items -center gap-10 text-card-foreground ml-auto">
           <li className="text-primary font-medium">
             <a href="#home">Home</a>
           </li>
           <li>
-            <a href="#features">Features</a>
+            <a href="#features">Businesses</a>
           </li>
           <li>
-            <a href="#pricing">Pricing</a>
+            <a href="#pricing">Projects</a>
           </li>
           <li>
-            <a href="#faqs">FAQs</a>
+            <a href="#faqs">Blog</a>
           </li>
           <li>
             <DropdownMenu>
@@ -100,7 +100,7 @@ import {
             </DropdownMenu>
           </div>
   
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
         </div>
       </Card>
     );
@@ -108,50 +108,49 @@ import {
   
   const landings = [
     {
-      id: nanoid(),
+      id: 1,
       title: "Landing 01",
       route: "/project-management",
     },
     {
-      id: nanoid(),
+      id: 2,
       title: "Landing 02",
       route: "/crm-landing",
     },
     {
-      id: nanoid(),
+      id: 3,
       title: "Landing 03",
       route: "/ai-content-landing",
     },
     {
-      id: nanoid(),
+      id: 4,
       title: "Landing 04",
       route: "/new-intro-landing",
     },
     {
-      id: nanoid(),
+      id: 5,
       title: "Landing 05",
       route: "/about-us-landing",
     },
     {
-      id: nanoid(),
+      id: 6,
       title: "Landing 06",
       route: "/contact-us-landing",
     },
     {
-      id: nanoid(),
+      id: 7,
       title: "Landing 07",
       route: "/faqs-landing",
     },
     {
-      id: nanoid(),
+      id: 8,
       title: "Landing 08",
       route: "/pricing-landing",
     },
     {
-      id: nanoid(),
+      id: 9,
       title: "Landing 09",
       route: "/career-landing",
     },
   ];
   
-  export default Navbar;
