@@ -24,6 +24,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons"
 
 export function UnsignedNav() {
   const components = [
@@ -31,7 +32,7 @@ export function UnsignedNav() {
       title: "Businesses",
       href: "",
       description:
-        "A modal dialog that interrupts the user with important content and expects a response.",
+        "Apply",
     },
   ];
   return (
@@ -181,6 +182,7 @@ const ListItem = React.forwardRef<
           <div className="text-sm font-medium leading-none">{title}</div>
           <hr />
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            <Icons.userLogo/>
             {children}
           </p>
         </a>
