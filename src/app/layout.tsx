@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
 import "@/app/globals.css";
 
 const montserrat = Montserrat({
@@ -15,14 +16,20 @@ export const metadata: Metadata = {
   description: "B2DVentures is a financial services company.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+interface RootLayoutProps {
+  children: Readonly<React.ReactNode>;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={`${montserrat.className}`}>{children}</body>
+      <body className={`${montserrat.className}`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <div className="relative flex min-h-screen flex-col">
+            <div className="flex-1">{children}</div>
+          </div>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
