@@ -1,19 +1,13 @@
 "use client";
 
 import * as React from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Menu } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import Link from "next/link";
+import Image from "next/image";
+
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-//   import ShadcnKit from "@/components/icons/shadcn-kit";
-//   import { nanoid } from "nanoid";
-import Link from "next/link";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -23,125 +17,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
-import { Icons } from "@/components/icons";
-
-export function UnsignedNav() {
-  const components = [
-    {
-      title: "Businesses",
-      href: "",
-      description: "Apply",
-    },
-  ];
-  return (
-    <Card className="container bg-card py-3 px-4 border-0 flex items-center justify-between gap-6 rounded-2xl mt-5">
-      {/* <ShadcnKit className="text-primary cursor-pointer" /> */}
-
-      <ul className="hidden md:flex items-center gap-5 text-card-foreground ml-auto">
-        <li className="text-primary font-medium">
-          <a href="#home">Home</a>
-        </li>
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-base">Businesses</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] ">
-                  {components.map((component) => (
-                    <ListItem key={component.title} title={component.title} href={component.href}>
-                      {component.description}
-                    </ListItem>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-base font-medium ">Projects</NavigationMenuTrigger>
-              <NavigationMenuContent>Lorem Ipsum</NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-base font-medium ">Blog</NavigationMenuTrigger>
-              <NavigationMenuContent>Lorem Ipsum</NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-        <li>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <span className="cursor-pointer">Docs</span>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="start">
-              {landings.map((page) => (
-                <DropdownMenuItem key={page.id}>
-                  <Link href={page.route}>{page.title}</Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </li>
-      </ul>
-
-      <div className="flex items-center">
-        <Button variant="secondary" className="hidden md:block px-2">
-          Login
-        </Button>
-        <Button className="hidden md:block ml-2 mr-2">Sign up</Button>
-
-        <div className="flex md:hidden mr-2 items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <span className="py-2 px-2 bg-gray-100 rounded-md">Pages</span>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="start">
-              {landings.map((page) => (
-                <DropdownMenuItem key={page.id}>
-                  <Link href={page.route}>{page.title}</Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-5 w-5 rotate-0 scale-100" />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <a href="#home">Home</a>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <a href="#features">Features</a>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <a href="#pricing">Pricing</a>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <a href="#faqs">FAQs</a>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Button variant="secondary" className="w-full text-sm">
-                  Login
-                </Button>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Button className="w-full text-sm">Sign up</Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        <ThemeToggle />
-      </div>
-    </Card>
-  );
-}
+import { Search } from "lucide-react";
 
 const landings = [
   {
@@ -170,7 +46,7 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
             <div className="text-sm font-medium leading-none">{title}</div>
             <hr />
             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-              <Icons.userLogo />
+              {/* <Icons.userLogo /> */}
               {children}
             </p>
           </a>
@@ -180,3 +56,112 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
   }
 );
 ListItem.displayName = "ListItem";
+
+export function UnsignedNav() {
+  const businessComponents = [
+    {
+      title: "Businesses",
+      href: "",
+      description: "Raise on B2DVentures",
+    },
+  ];
+
+  const projectComponents = [
+    {
+      title: "Projects",
+      href: "",
+      description: "Raise on B2DVentures",
+    },
+  ];
+
+  const blogComponents = [
+    {
+      title: "Blogs",
+      href: "",
+      description: "Raise on B2DVentures",
+    },
+  ];
+  return (
+    <header className="relative flex flex-wrap w-full bg-card text-sm py-3 border-b-2 border-border">
+      <nav className="max-w-[85rem] w-full mx-auto px-4">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <Link
+              className="flex-none text-xl font-semibold dark:text-white focus:outline-none focus:opacity-80"
+              href="#"
+              aria-label="Brand">
+              <span className="inline-flex items-center gap-x-2 text-xl font-semibold dark:text-white">
+                <Image src="./logo.svg" alt="logo" width={50} height={50} />
+                B2DVentures
+              </span>
+            </Link>
+          </div>
+
+          <div className="flex items-center">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-base">Businesses</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] ">
+                      {businessComponents.map((component) => (
+                        <ListItem key={component.title} title={component.title} href={component.href}>
+                          {component.description}
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-base font-medium ">Projects</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] ">
+                      {projectComponents.map((component) => (
+                        <ListItem key={component.title} title={component.title} href={component.href}>
+                          {component.description}
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-base">Blogs</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] ">
+                      {blogComponents.map((component) => (
+                        <ListItem key={component.title} title={component.title} href={component.href}>
+                          {component.description}
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link href="/docs">
+                    <NavigationMenuLink className="text-base font-medium">Docs</NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem className="pl-5">
+                  <Search />
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            <div className="flex gap-2 pl-2">
+              <ThemeToggle />
+              <Separator orientation="vertical" className="mx-3" />
+              <Button variant="secondary" className="border-2 border-border">
+                Login
+              </Button>
+              <Button>Sign up</Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+  );
+}
