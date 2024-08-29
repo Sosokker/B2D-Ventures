@@ -9,13 +9,15 @@ import {
 import { CalendarDaysIcon } from "lucide-react";
 
 interface XMap {
+  // tagName: colorCode
   [tag: string]: string;
 }
 
 interface BusinessCardProps {
-  description: string  | null;
-  joinDate: string | null;
-  location: string | null;
+  name: string;
+  description: string;
+  joinDate: string;
+  location: string;
   tags: XMap | null;
 }
 
@@ -23,7 +25,7 @@ export function BusinessCard(props: BusinessCardProps) {
   return (
     <Card>
       <CardHeader>
-        <div className="h-[200px] pb-2">
+        <div className="h-[200px] hover:h-[100px] duration-75 pb-2">
           <Image
             src={"/money.png"}
             width={0}
@@ -33,18 +35,17 @@ export function BusinessCard(props: BusinessCardProps) {
             alt="nvidia"
           />
         </div>
-        <CardTitle>NVIDIA</CardTitle>
+        <CardTitle>{props.name}</CardTitle>
         <CardDescription>
-          Founded in 1993, NVIDIA is a key innovator of computer graphics and AI
-          technology
+          {props.description}
           <span className="flex items-center pt-2 gap-1">
             <CalendarDaysIcon width={20} />
-            Joined December 2021
+            Joined {props.joinDate}
           </span>
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex-col items-start">
-        Bangkok, Thailand
+        {props.location}
         <span className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1">
           Technology
         </span>
