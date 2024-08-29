@@ -19,9 +19,9 @@ export function BusinessCard() {
         <CardTitle>NVIDIA</CardTitle>
         <CardDescription>
           Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology
-          <span className="flex items-center pt-2">
+          <span className="flex items-center pt-2 gap-1">
             <CalendarDaysIcon width={20} />
-            <p>Joined December 2021</p>
+            Joined December 2021
           </span>
         </CardDescription>
       </CardHeader>
