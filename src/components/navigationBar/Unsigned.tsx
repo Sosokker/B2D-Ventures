@@ -45,10 +45,7 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
             {...props}>
             <div className="text-sm font-medium leading-none">{title}</div>
             <hr />
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-              {/* <Icons.userLogo /> */}
-              {children}
-            </p>
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
           </a>
         </NavigationMenuLink>
       </li>
@@ -61,7 +58,7 @@ export function UnsignedNav() {
   const businessComponents = [
     {
       title: "Businesses",
-      href: "",
+      href: "/landing",
       description: "Raise on B2DVentures",
     },
   ];
@@ -69,7 +66,7 @@ export function UnsignedNav() {
   const projectComponents = [
     {
       title: "Projects",
-      href: "",
+      href: "/landing",
       description: "Raise on B2DVentures",
     },
   ];
@@ -77,7 +74,7 @@ export function UnsignedNav() {
   const blogComponents = [
     {
       title: "Blogs",
-      href: "",
+      href: "/landing",
       description: "Raise on B2DVentures",
     },
   ];
@@ -88,7 +85,7 @@ export function UnsignedNav() {
           <div className="flex flex-col">
             <Link
               className="flex-none text-xl font-semibold dark:text-white focus:outline-none focus:opacity-80"
-              href="#"
+              href="/"
               aria-label="Brand">
               <span className="inline-flex items-center gap-x-2 text-xl font-semibold dark:text-white">
                 <Image src="./logo.svg" alt="logo" width={50} height={50} />
@@ -140,9 +137,9 @@ export function UnsignedNav() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <Link href="/docs">
-                    <NavigationMenuLink className="text-base font-medium">Docs</NavigationMenuLink>
-                  </Link>
+                  <NavigationMenuLink className="text-base font-medium" href="docs">
+                    Docs
+                  </NavigationMenuLink>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem className="pl-5">
