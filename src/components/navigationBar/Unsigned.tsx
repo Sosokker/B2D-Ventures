@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Menu } from "lucide-react";
 import { Card } from "@/components/ui/card";
-//   import ThemeToggle from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 //   import ShadcnKit from "@/components/icons/shadcn-kit";
 //   import { nanoid } from "nanoid";
@@ -24,15 +24,14 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/icons";
 
 export function UnsignedNav() {
   const components = [
     {
       title: "Businesses",
       href: "",
-      description:
-        "Apply",
+      description: "Apply",
     },
   ];
   return (
@@ -50,11 +49,7 @@ export function UnsignedNav() {
               <NavigationMenuContent>
                 <ul className="grid w-[400px] ">
                   {components.map((component) => (
-                    <ListItem
-                      key={component.title}
-                      title={component.title}
-                      href={component.href}
-                    >
+                    <ListItem key={component.title} title={component.title} href={component.href}>
                       {component.description}
                     </ListItem>
                   ))}
@@ -63,15 +58,11 @@ export function UnsignedNav() {
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-base font-medium ">
-                Projects
-              </NavigationMenuTrigger>
+              <NavigationMenuTrigger className="text-base font-medium ">Projects</NavigationMenuTrigger>
               <NavigationMenuContent>Lorem Ipsum</NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-base font-medium ">
-                Blog
-              </NavigationMenuTrigger>
+              <NavigationMenuTrigger className="text-base font-medium ">Blog</NavigationMenuTrigger>
               <NavigationMenuContent>Lorem Ipsum</NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
@@ -146,7 +137,7 @@ export function UnsignedNav() {
           </DropdownMenu>
         </div>
 
-        {/* <ThemeToggle /> */}
+        <ThemeToggle />
       </div>
     </Card>
   );
@@ -164,30 +155,28 @@ const landings = [
     route: "/crm-landing",
   },
 ];
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <hr />
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            <Icons.userLogo/>
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
+const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+              className
+            )}
+            {...props}>
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <hr />
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+              <Icons.userLogo />
+              {children}
+            </p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
 ListItem.displayName = "ListItem";

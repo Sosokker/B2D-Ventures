@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
-import { UnsignedNav } from "@/components/navigationBar/Unsigned";
+import { UnsignedNav } from "@/components/navigationBar/unSigned";
 
-export default function Page(){
-    return (
-        <div>
-            <UnsignedNav/>
-        </div>
-    );
+export default function Page() {
+  return (
+    <div>
+      <UnsignedNav />
+    </div>
+  );
 }
