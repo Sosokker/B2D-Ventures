@@ -83,7 +83,7 @@ export function UnsignedNav() {
     },
   ];
   return (
-    <header className="relative flex flex-wrap w-full bg-card text-sm py-3 border-b-2 border-border">
+    <header className="sticky top-0 flex flex-wrap w-full bg-card text-sm py-3 border-b-2 border-border">
       <nav className="max-w-[85rem] w-full mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
@@ -177,9 +177,11 @@ export function UnsignedNav() {
             <div className="flex gap-2 pl-2">
               <ThemeToggle />
               <Separator orientation="vertical" className="mx-3" />
-              <Button variant="secondary" className="border-2 border-border">
-                <Link href='/login'>Login</Link>
-              </Button>
+              <Link href="/login">
+                <Button variant="secondary" className="border-2 border-border">
+                  Login
+                </Button>
+              </Link>
               <Button>Sign up</Button>
             </div>
           </div>

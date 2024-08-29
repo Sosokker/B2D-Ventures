@@ -78,10 +78,10 @@ export default function Home() {
           <p className="text-lg">The deals attracting the most interest right now</p>
         </span>
         <div className="grid grid-cols-4 gap-4">
-          <BusinessCard />
-          <BusinessCard />
-          <BusinessCard />
-          <BusinessCard />
+          <BusinessCard description={null} joinDate={null} location={null} tags={null} />
+          <BusinessCard description={null} joinDate={null} location={null} tags={null} />
+          <BusinessCard description={null} joinDate={null} location={null} tags={null} />
+          <BusinessCard description={null} joinDate={null} location={null} tags={null} />
         </div>
         <div className="self-center py-5">
           <Button>

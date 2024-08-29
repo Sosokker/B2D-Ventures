@@ -1,8 +1,25 @@
 import Image from "next/image";
-import { Card, CardFooter, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardFooter,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { CalendarDaysIcon } from "lucide-react";
 
-export function BusinessCard() {
+interface XMap {
+  [tag: string]: string;
+}
+
+interface BusinessCardProps {
+  description: string  | null;
+  joinDate: string | null;
+  location: string | null;
+  tags: XMap | null;
+}
+
+export function BusinessCard(props: BusinessCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -18,7 +35,8 @@ export function BusinessCard() {
         </div>
         <CardTitle>NVIDIA</CardTitle>
         <CardDescription>
-          Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology
+          Founded in 1993, NVIDIA is a key innovator of computer graphics and AI
+          technology
           <span className="flex items-center pt-2 gap-1">
             <CalendarDaysIcon width={20} />
             Joined December 2021
@@ -27,7 +45,9 @@ export function BusinessCard() {
       </CardHeader>
       <CardFooter className="flex-col items-start">
         Bangkok, Thailand
-        <span className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1">Technology</span>
+        <span className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1">
+          Technology
+        </span>
       </CardFooter>
     </Card>
   );
