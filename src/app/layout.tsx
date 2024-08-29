@@ -3,6 +3,8 @@ import { Montserrat } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "@/app/globals.css";
 
+import { UnsignedNav } from "@/components/navigationBar/unSigned";
+
 const montserrat = Montserrat({
   subsets: ["latin"],
   display: "swap",
@@ -23,10 +25,12 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
+      <head />
       <body className={`${montserrat.className}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="relative flex min-h-screen flex-col">
-            <div className="flex-1">{children}</div>
+            <UnsignedNav />
+            <div className="flex-1 bg-background">{children}</div>
           </div>
         </ThemeProvider>
       </body>
