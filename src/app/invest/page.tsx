@@ -23,7 +23,7 @@ export default function Invest() {
     return () => clearTimeout(timer);
   }, []);
   return (
-    <div className=" w-[90%] h-[500px]-500 ml-32 mt-12">
+    <div className="w-[90%] h-[500px]-500 ml-32 mt-12">
       <div>
         <div className="flex">
           <Image src="./logo.svg" alt="logo" width={50} height={50} />
@@ -82,6 +82,17 @@ export default function Invest() {
           </div>
         </div>
       </div>
+      <Carousel className="w-1/2 ml-5 -mt-10">
+        <CarouselContent className="-ml-1">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
+              <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+            </CarouselItem>
+          ))}
+          <CarouselPrevious />
+          <CarouselNext />
+        </CarouselContent>
+      </Carousel>
     </div>
   );
 }
