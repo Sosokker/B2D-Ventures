@@ -83,7 +83,7 @@ export function UnsignedNav() {
     },
   ];
   return (
-    <header className="sticky top-0 flex flex-wrap w-full bg-card text-sm py-3 border-b-2 border-border">
+    <header className="sticky top-0 flex flex-wrap w-full bg-card text-sm py-3 border-b-2 border-border z-50">
       <nav className="max-w-[85rem] w-full mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
