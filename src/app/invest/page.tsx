@@ -45,7 +45,7 @@ export default function Invest() {
           <Carousel className="w-[55%] mt-4">
             <CarouselContent className="h-[450px]">
               {Array.from({ length: 5 }).map((_, index) => (
-                <CarouselItem>
+                <CarouselItem key={index}>
                   <img src="./boiler1.jpg" alt="" className="rounded-lg" />
                 </CarouselItem>
               ))}
@@ -82,15 +82,24 @@ export default function Invest() {
           </div>
         </div>
       </div>
-      <Carousel className="w-1/2 ml-5 -mt-10">
-        <CarouselContent className="-ml-1">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
-              <img src="./boiler1.jpg" alt="" className="rounded-lg" />
-            </CarouselItem>
-          ))}
-          <CarouselPrevious />
-          <CarouselNext />
+      <Carousel className="w-1/2 mt-5 ml-10">
+        <CarouselContent>
+          {/* boiler plate for an actual pictures */}
+          <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
+            <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+          </CarouselItem>
+          <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
+            <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+          </CarouselItem>
+          <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
+            <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+          </CarouselItem>
+          <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
+            <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+          </CarouselItem>
+          <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
+            <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+          </CarouselItem>
         </CarouselContent>
       </Carousel>
     </div>
