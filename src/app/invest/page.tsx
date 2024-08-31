@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Invest() {
   const [progress, setProgress] = useState(0);
-  const [tab, setTab] = useState("");
+  const [tab, setTab] = useState("Pitch");
   const handleClick = (item: string) => {
     setTab(item);
   };
@@ -28,7 +28,7 @@ export default function Invest() {
   }, []);
   return (
     <div>
-      <div className="w-[90%] h-[500px]-500 m-auto mt-12 bg-red-500">
+      <div className="w-[90%] h-[500px]-500 m-auto mt-12">
         <div>
           <div className="flex">
             <Image src="./logo.svg" alt="logo" width={50} height={50} />
@@ -108,8 +108,9 @@ export default function Invest() {
           </CarouselContent>
         </Carousel>
       </div>
-      <div className="flex w-[90%]  mt-5 m-auto">
-        <ul className="list-none flex gap-10">
+      {/* menu */}
+      <div className="flex w-[90%]  mt-24 m-auto ml-32">
+        <ul className="list-none flex gap-10 text-xl ">
           <li>
             <a
               onClick={() => handleClick("Pitch")}
@@ -121,9 +122,7 @@ export default function Invest() {
           <li>
             <a
               onClick={() => handleClick("General Data")}
-              className={
-                tab === "General Data" ? "text-blue-600" : ""
-              }
+              className={tab === "General Data" ? "text-blue-600" : ""}
             >
               General Data
             </a>
@@ -131,14 +130,24 @@ export default function Invest() {
           <li>
             <a
               onClick={() => handleClick("Updates")}
-              className={
-                tab === "Updates" ? "text-blue-600" : ""
-              }
+              className={tab === "Updates" ? "text-blue-600" : ""}
             >
               Updates
             </a>
           </li>
         </ul>
+      </div>
+      <hr className="mt-2" />
+      {/* Card section */}
+      <div className="flex w-full mt-10">
+        {/* Cards */}
+        <Card className="m-auto border-slate-800 w-3/4 p-6">
+          <CardContent>
+            <Card>
+              <CardContent>{tab}</CardContent>
+            </Card>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
