@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BusinessCard } from "@/components/businessCard";
 import { Separator } from "@/components/ui/separator";
+import { ExtendableCard } from "@/components/extendable-card";
 
 export default function Home() {
   return (
@@ -89,6 +90,7 @@ export default function Home() {
           </Button>
         </div>
       </div>
+      <ExtendableCard/>
     </main>
   );
 }
