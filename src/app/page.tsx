@@ -19,7 +19,7 @@ export default function Home() {
               <p>Together, we turn ideas into impact.</p>
             </span>
             <Button className="font-bold mt-4">
-              <Link href="/login">Start Investing</Link>
+              <Link href="/">Start Investing</Link>
             </Button>
           </span>
         </div>
@@ -79,10 +79,40 @@ export default function Home() {
           <p className="text-lg">The deals attracting the most interest right now</p>
         </span>
         <div className="grid grid-cols-4 gap-4">
-          <BusinessCard name={"NVDA"} description={"Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"} joinDate={"December 2021"} location={"Bangkok, Thailand"} tags={null} />
-          <BusinessCard name={"Apple Inc."} description={"Founded in 1976, Apple Inc. is a leading innovator in consumer electronics, software, and online services, known for products like the iPhone, MacBook, and the App Store."} joinDate={"February 2020"} location={"Cupertino, California, USA"} tags={null} />
-          <BusinessCard name={"Google LLC"} description={"Founded in 1998, Google LLC specializes in internet-related services and products, including search engines, online advertising, cloud computing, and the Android operating system."} joinDate={"April 2019"} location={"Mountain View, California, USA"} tags={null} />
-          <BusinessCard name={"Microsoft Corporation"} description={"Founded in 1975, Microsoft Corporation is a multinational technology company that develops, manufactures, and licenses software, hardware, and services, including Windows, Office, and Azure."} joinDate={"January 2018"} location={""} tags={null} />
+          <BusinessCard
+            name={"NVDA"}
+            description={"Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"}
+            joinDate={"December 2021"}
+            location={"Bangkok, Thailand"}
+            tags={null}
+          />
+          <BusinessCard
+            name={"Apple Inc."}
+            description={
+              "Founded in 1976, Apple Inc. is a leading innovator in consumer electronics, software, and online services, known for products like the iPhone, MacBook, and the App Store."
+            }
+            joinDate={"February 2020"}
+            location={"Cupertino, California, USA"}
+            tags={null}
+          />
+          <BusinessCard
+            name={"Google LLC"}
+            description={
+              "Founded in 1998, Google LLC specializes in internet-related services and products, including search engines, online advertising, cloud computing, and the Android operating system."
+            }
+            joinDate={"April 2019"}
+            location={"Mountain View, California, USA"}
+            tags={null}
+          />
+          <BusinessCard
+            name={"Microsoft Corporation"}
+            description={
+              "Founded in 1975, Microsoft Corporation is a multinational technology company that develops, manufactures, and licenses software, hardware, and services, including Windows, Office, and Azure."
+            }
+            joinDate={"January 2018"}
+            location={""}
+            tags={null}
+          />
         </div>
         <div className="self-center py-5">
           <Button>

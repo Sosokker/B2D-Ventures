@@ -2,6 +2,9 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { LoginButton } from "@/components/auth/loginButton";
+import { LogoutButton } from "@/components/auth/logoutButton";
+
 export default function Login() {
   return (
     <div
@@ -16,14 +19,8 @@ export default function Login() {
         </CardHeader>
         <CardContent className="flex flex-col gap-y-2 mx-28">
           <p className="self-center font-semibold text-slate-800">Continue With</p>
-          <Button className="bg-foreground gap-2 rounded-xl">
-            <Image src={"/logo/google.svg"} width={30} height={30} alt={"Google"} />
-            Continue with Google
-          </Button>
-          <Button className="gap-2 rounded-xl">
-            <Image src={"/logo/facebook.svg"} width={30} height={30} alt={"Google"} />
-            Continue with Facebook
-          </Button>
+          <LoginButton />
+          <LogoutButton />
         </CardContent>
         <CardFooter className="text-xs justify-center">
           By signing up, you agree to the Terms of Service and acknowledge you’ve read our Privacy Policy.

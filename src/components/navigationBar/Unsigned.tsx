@@ -31,31 +31,27 @@ const landings = [
     route: "/crm-landing",
   },
 ];
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <hr />
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
+const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+              className
+            )}
+            {...props}>
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <hr />
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
 ListItem.displayName = "ListItem";
 
 export function UnsignedNav() {
@@ -90,8 +86,7 @@ export function UnsignedNav() {
             <Link
               className="flex-none text-xl font-semibold dark:text-white focus:outline-none focus:opacity-80"
               href="/"
-              aria-label="Brand"
-            >
+              aria-label="Brand">
               <span className="inline-flex items-center gap-x-2 text-xl font-semibold dark:text-white">
                 <Image src="./logo.svg" alt="logo" width={50} height={50} />
                 B2DVentures
@@ -103,17 +98,11 @@ export function UnsignedNav() {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-base">
-                    Businesses
-                  </NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="text-base">Businesses</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] ">
                       {businessComponents.map((component) => (
-                        <ListItem
-                          key={component.title}
-                          title={component.title}
-                          href={component.href}
-                        >
+                        <ListItem key={component.title} title={component.title} href={component.href}>
                           {component.description}
                         </ListItem>
                       ))}
@@ -122,17 +111,11 @@ export function UnsignedNav() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-base font-medium ">
-                    Projects
-                  </NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="text-base font-medium ">Projects</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] ">
                       {projectComponents.map((component) => (
-                        <ListItem
-                          key={component.title}
-                          title={component.title}
-                          href={component.href}
-                        >
+                        <ListItem key={component.title} title={component.title} href={component.href}>
                           {component.description}
                         </ListItem>
                       ))}
@@ -141,17 +124,11 @@ export function UnsignedNav() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-base">
-                    Blogs
-                  </NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="text-base">Blogs</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] ">
                       {blogComponents.map((component) => (
-                        <ListItem
-                          key={component.title}
-                          title={component.title}
-                          href={component.href}
-                        >
+                        <ListItem key={component.title} title={component.title} href={component.href}>
                           {component.description}
                         </ListItem>
                       ))}
@@ -160,10 +137,7 @@ export function UnsignedNav() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuLink
-                    className="text-base font-medium"
-                    href="docs"
-                  >
+                  <NavigationMenuLink className="text-base font-medium" href="docs">
                     Docs
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -177,7 +151,7 @@ export function UnsignedNav() {
             <div className="flex gap-2 pl-2">
               <ThemeToggle />
               <Separator orientation="vertical" className="mx-3" />
-              <Link href="/login">
+              <Link href="/auth">
                 <Button variant="secondary" className="border-2 border-border">
                   Login
                 </Button>
