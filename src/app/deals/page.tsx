@@ -7,14 +7,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { Clock3Icon } from "lucide-react";
+import {
+  Clock3Icon,
+  MessageSquareIcon,
+  UserIcon,
+  UsersIcon,
+} from "lucide-react";
 
 export default function Deals() {
   const [postAtFilter, setPostAtFilter] = useState("");
   const [contentTypeFilter, setContentTypeFilter] = useState("");
-  const handlePostAtFilter = (value: string) => {
-    setPostAtFilter(value);
-  };
+  const [authorFilter, setAuthorFilter] = useState("");
+  const [groupsFilter, setGroupFilter] = useState("");
   return (
     <div>
       <div className=" w-full h-[350px] mt-10 ml-[15%]">
@@ -24,27 +28,52 @@ export default function Deals() {
         <p>
           All companies are <u>vetted & pass due diligence.</u>
         </p>
-        <div className="flex mt-10 bg-red-500 gap-3">
-          <Select onValueChange={handlePostAtFilter}>
+        {/* filters */}
+        <div className="flex mt-10 gap-3">
+          <Select onValueChange={(value) => setPostAtFilter(value)}>
             <SelectTrigger className="w-[180px]">
               <Clock3Icon className="ml-2" />
               <SelectValue placeholder="Posted at" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Today">Today</SelectItem>
+              <SelectItem value="Yesterday">Yesterday</SelectItem>
             </SelectContent>
           </Select>
           <Select onValueChange={(value) => setContentTypeFilter(value)}>
             <SelectTrigger className="w-[180px]">
-              <Clock3Icon className="ml-2" />
+              <MessageSquareIcon className="ml-2" />
               <SelectValue placeholder="Content type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="blog">blog</SelectItem>
+              <SelectItem value="Blog">Blog</SelectItem>
+              <SelectItem value="Youtube">Youtube</SelectItem>
             </SelectContent>
           </Select>
-          {postAtFilter}
+          <Select onValueChange={(value) => setAuthorFilter(value)}>
+            <SelectTrigger className="w-[180px]">
+              <UserIcon className="ml-2" />
+              <SelectValue placeholder="Author" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Me">Me</SelectItem>
+              <SelectItem value="Charlie Puth">Charlie Puth</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select onValueChange={(value) => setGroupFilter(value)}>
+            <SelectTrigger className="w-[180px]">
+              <UsersIcon className="ml-2" />
+              <SelectValue placeholder="Sent to groups" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Group1">Group1</SelectItem>
+              <SelectItem value="Group2">Group2</SelectItem>
+            </SelectContent>
+          </Select>
+          {/* {postAtFilter}
           {contentTypeFilter}
+          {authorFilter}
+          {groupsFilter} */}
         </div>
       </div>
     </div>
