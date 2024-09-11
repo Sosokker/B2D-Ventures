@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ExtendableCard } from "@/components/extendable-card";
+import { ExtendableCard } from "@/components/extendableCard";
 
 export default function Home() {
   return (

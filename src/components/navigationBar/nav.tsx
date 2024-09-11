@@ -85,7 +85,7 @@ const authenticatedComponents = () => {
   );
 };
 
-export function UnsignedNav() {
+export function NavigationBar() {
   const { session, loading } = useSession();
   const user = session?.user;
   const [sessionLoaded, setSessionLoaded] = React.useState(false);
