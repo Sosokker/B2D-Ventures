@@ -89,7 +89,7 @@ export default function Home() {
           </p>
         </span>
         <div className="grid grid-cols-4 gap-4">
-          <BusinessCard
+          <ExtendableCard
             name={"NVDA"}
             description={
               "Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"
@@ -97,8 +97,11 @@ export default function Home() {
             joinDate={"December 2021"}
             location={"Bangkok, Thailand"}
             tags={null}
+            minInvestment={10000}
+            totalInvestor={58400}
+            totalRaised={9000000}
           />
-          <BusinessCard
+          <ExtendableCard
             name={"Apple Inc."}
             description={
               "Founded in 1976, Apple Inc. is a leading innovator in consumer electronics, software, and online services, known for products like the iPhone, MacBook, and the App Store."
@@ -106,8 +109,11 @@ export default function Home() {
             joinDate={"February 2020"}
             location={"Cupertino, California, USA"}
             tags={null}
+            minInvestment={10000}
+            totalInvestor={58400}
+            totalRaised={9000000}
           />
-          <BusinessCard
+          <ExtendableCard
             name={"Google LLC"}
             description={
               "Founded in 1998, Google LLC specializes in internet-related services and products, including search engines, online advertising, cloud computing, and the Android operating system."
@@ -115,16 +121,21 @@ export default function Home() {
             joinDate={"April 2019"}
             location={"Mountain View, California, USA"}
             tags={null}
+            minInvestment={10000}
+            totalInvestor={5000}
+            totalRaised={1500000000}
           />
-          <BusinessCard
+          <ExtendableCard
             name={"Microsoft Corporation"}
             description={
-              "Founded in 1975, Microsoft Corporation is a multinational technology company that develops, manufactures, and licenses software, hardware, and services, including Windows, Office, and Azure."
-
+              "Microsoft Corporation is a multinational technology company."
             }
             joinDate={"January 2018"}
-            location={""}
+            location={"California, USA"}
             tags={null}
+            minInvestment={250}
+            totalInvestor={5000}
+            totalRaised={1500000}
           />
         </div>
         <div className="self-center py-5">
@@ -133,18 +144,6 @@ export default function Home() {
           </Button>
         </div>
       </div>
-      <ExtendableCard
-        name={"Microsoft Corporation"}
-        description={
-          "Microsoft Corporation is a multinational technology company."
-        }
-        joinDate={"January 2018"}
-        location={"California, USA"}
-        tags={null}
-        minInvestment={250}
-        totalInvestor={5000}
-        totalRaised={1500000}
-      />
     </main>
   );
 }

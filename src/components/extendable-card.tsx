@@ -22,7 +22,7 @@ export function ExtendableCard(props: ExtendableCardProps) {
     <div className="group relative w-full max-w-sm overflow-hidden rounded-lg bg-card shadow-md transition-all duration-500 hover:shadow-lg">
       <div className="aspect-[4/3] overflow-hidden">
         <img
-          src="/placeholder.svg"
+          src="/money.png"
           alt="Card image"
           width="400"
           height="300"
