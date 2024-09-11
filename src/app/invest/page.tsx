@@ -28,7 +28,7 @@ export default function Invest() {
   }, []);
   return (
     <div>
-      <div className="w-[90%] h-[500px]-500 m-auto mt-12">
+      <div className="w-[90%] h-[500px]-500 m-auto mt-12  pl-24">
         <div>
           <div className="flex">
             <Image src="./logo.svg" alt="logo" width={50} height={50} />

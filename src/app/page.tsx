@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BusinessCard } from "@/components/businessCard";
 import { Separator } from "@/components/ui/separator";
 import { ExtendableCard } from "@/components/extendable-card";
 
