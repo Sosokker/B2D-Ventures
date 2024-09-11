@@ -26,7 +26,7 @@ export default function Home() {
               <p>Together, we turn ideas into impact.</p>
             </span>
             <Button className="font-bold mt-4">
-              <Link href="/">Start Investing</Link>
+              <Link href="/deals">Start Investing</Link>
             </Button>
           </span>
         </div>
@@ -88,18 +88,20 @@ export default function Home() {
           </p>
         </span>
         <div className="grid grid-cols-4 gap-4">
-          <ExtendableCard
-            name={"NVDA"}
-            description={
-              "Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"
-            }
-            joinDate={"December 2021"}
-            location={"Bangkok, Thailand"}
-            tags={null}
-            minInvestment={10000}
-            totalInvestor={58400}
-            totalRaised={9000000}
-          />
+          <Link href={"/invest"}>
+            <ExtendableCard
+              name={"NVDA"}
+              description={
+                "Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"
+              }
+              joinDate={"December 2021"}
+              location={"Bangkok, Thailand"}
+              tags={null}
+              minInvestment={10000}
+              totalInvestor={58400}
+              totalRaised={9000000}
+            />
+          </Link>
           <ExtendableCard
             name={"Apple Inc."}
             description={
@@ -139,7 +141,7 @@ export default function Home() {
         </div>
         <div className="self-center py-5">
           <Button>
-            <Link href={"/invest"}>View all</Link>
+            <Link href={"/deals"}>View all</Link>
           </Button>
         </div>
       </div>
