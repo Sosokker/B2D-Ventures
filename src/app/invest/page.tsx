@@ -35,11 +35,11 @@ export default function Invest() {
             <h1 className="mt-3 font-bold text-3xl">NVIDIA</h1>
           </div>
           <p className="mt-2"> World's first non-metal sustainable battery</p>
-          <div className="flex mt-3">
+          <div className="flex flex-wrap mt-3">
             {["Technology", "Gaming"].map((tag) => (
               <span
                 key={tag}
-                className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1"
+                className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1"
               >
                 {tag}
               </span>

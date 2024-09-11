@@ -1,7 +1,13 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { BusinessCard } from "@/components/businessCard";
 import { Separator } from "@/components/ui/separator";
 import { ExtendableCard } from "@/components/extendable-card";
@@ -14,7 +20,9 @@ export default function Home() {
           <span className="px-28 py-20">
             <p className="text-4xl font-bold">Explore the world of ventures</p>
             <span className="text-lg">
-              <p>Unlock opportunities and connect with a community of passionate</p>
+              <p>
+                Unlock opportunities and connect with a community of passionate
+              </p>
               <p>investors and innovators.</p>
               <p>Together, we turn ideas into impact.</p>
             </span>
@@ -76,12 +84,16 @@ export default function Home() {
       <div className="flex flex-col px-28">
         <span className="pb-5">
           <p className="text-2xl font-bold">Hottest Deals</p>
-          <p className="text-lg">The deals attracting the most interest right now</p>
+          <p className="text-lg">
+            The deals attracting the most interest right now
+          </p>
         </span>
         <div className="grid grid-cols-4 gap-4">
           <BusinessCard
             name={"NVDA"}
-            description={"Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"}
+            description={
+              "Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"
+            }
             joinDate={"December 2021"}
             location={"Bangkok, Thailand"}
             tags={null}
@@ -108,6 +120,7 @@ export default function Home() {
             name={"Microsoft Corporation"}
             description={
               "Founded in 1975, Microsoft Corporation is a multinational technology company that develops, manufactures, and licenses software, hardware, and services, including Windows, Office, and Azure."
+
             }
             joinDate={"January 2018"}
             location={""}
@@ -120,7 +133,18 @@ export default function Home() {
           </Button>
         </div>
       </div>
-      <ExtendableCard/>
+      <ExtendableCard
+        name={"Microsoft Corporation"}
+        description={
+          "Microsoft Corporation is a multinational technology company."
+        }
+        joinDate={"January 2018"}
+        location={"California, USA"}
+        tags={null}
+        minInvestment={250}
+        totalInvestor={5000}
+        totalRaised={1500000}
+      />
     </main>
   );
 }
