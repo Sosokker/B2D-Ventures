@@ -3,7 +3,7 @@ import { Montserrat } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "@/app/globals.css";
 
-import { UnsignedNav } from "@/components/navigationBar/Unsigned";
+import { NavigationBar } from "@/components/navigationBar/nav";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className={`${montserrat.className}`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="relative flex min-h-screen flex-col">
-            <UnsignedNav />
+            <NavigationBar />
             <div className="flex-1 bg-background">{children}</div>
           </div>
         </ThemeProvider>

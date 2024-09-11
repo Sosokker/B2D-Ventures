@@ -17,7 +17,11 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Search } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Search, Bell, Heart, Wallet } from "lucide-react";
+
+import useSession from "@/lib/supabase/useSession";
 
 const landings = [
   {
@@ -54,7 +58,44 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
 );
 ListItem.displayName = "ListItem";
 
-export function UnsignedNav() {
+const unAuthenticatedComponents = () => {
+  return (
+    <div className="flex gap-2 pl-2">
+      <Link href="/auth">
+        <Button variant="secondary" className="border-2 border-border">
+          Login
+        </Button>
+      </Link>
+      <Button>Sign up</Button>
+    </div>
+  );
+};
+
+const authenticatedComponents = () => {
+  return (
+    <div className="flex gap-3 pl-2 items-center">
+      <Bell />
+      <Heart />
+      <Wallet />
+      <Avatar className="ml-2">
+        <AvatarImage src="https://api.dicebear.com/9.x/pixel-art/svg" />
+        <AvatarFallback>1</AvatarFallback>
+      </Avatar>
+    </div>
+  );
+};
+
+export function NavigationBar() {
+  const { session, loading } = useSession();
+  const user = session?.user;
+  const [sessionLoaded, setSessionLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!loading) {
+      setSessionLoaded(true);
+    }
+  }, [loading]);
+
   const businessComponents = [
     {
       title: "Businesses",
@@ -151,12 +192,17 @@ export function UnsignedNav() {
             <div className="flex gap-2 pl-2">
               <ThemeToggle />
               <Separator orientation="vertical" className="mx-3" />
-              <Link href="/auth">
-                <Button variant="secondary" className="border-2 border-border">
-                  Login
-                </Button>
-              </Link>
-              <Button>Sign up</Button>
+              {sessionLoaded ? (
+                user ? (
+                  authenticatedComponents()
+                ) : (
+                  unAuthenticatedComponents()
+                )
+              ) : (
+                <div>
+                  <Skeleton className="rounded-lg h-full w-[160px]" />
+                </div>
+              )}
             </div>
           </div>
         </div>
