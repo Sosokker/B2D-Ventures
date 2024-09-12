@@ -2,13 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import CountUp from "react-countup";
 import { Progress } from "@/components/ui/progress";
@@ -34,13 +28,10 @@ export default function Invest() {
             <Image src="./logo.svg" alt="logo" width={50} height={50} />
             <h1 className="mt-3 font-bold text-3xl">NVIDIA</h1>
           </div>
-          <p className="mt-2"> World's first non-metal sustainable battery</p>
+          <p className="mt-2"> Worlds first non-metal sustainable battery</p>
           <div className="flex flex-wrap mt-3">
             {["Technology", "Gaming"].map((tag) => (
-              <span
-                key={tag}
-                className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1"
-              >
+              <span key={tag} className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1">
                 {tag}
               </span>
             ))}
@@ -48,10 +39,18 @@ export default function Invest() {
           <div className="flex">
             {/* image carousel */}
             <Carousel className="w-[55%] mt-4">
-              <CarouselContent className="h-[450px]">
+              <CarouselContent>
                 {Array.from({ length: 5 }).map((_, index) => (
                   <CarouselItem key={index}>
-                    <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+                    <Image
+                      src="/boiler1.jpg"
+                      alt=""
+                      className="rounded-lg"
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      style={{ width: "100%", height: "auto" }}
+                    />
                   </CarouselItem>
                 ))}
               </CarouselContent>{" "}
@@ -61,13 +60,7 @@ export default function Invest() {
             <div className=" w-1/3 mt-4 h-[400px] ml-[8%] ">
               <div className="pl-5">
                 <h1 className="font-semibold text-4xl mt-8">
-                  <CountUp
-                    start={0}
-                    end={100000}
-                    duration={2}
-                    prefix="$"
-                    className=""
-                  />
+                  <CountUp start={0} end={100000} duration={2} prefix="$" className="" />
                 </h1>
                 <p className=""> 5% raised of $5M max goal</p>
                 <Progress value={progress} className="w-[60%] h-3 mt-3" />
@@ -87,23 +80,63 @@ export default function Invest() {
             </div>
           </div>
         </div>
-        <Carousel className="w-1/2 mt-5 ml-10">
+        <Carousel className="w-1/2">
           <CarouselContent>
             {/* boiler plate for an actual pictures */}
-            <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
-              <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+            <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+              <Image
+                src="/boiler1.jpg"
+                alt=""
+                className="rounded-lg"
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
+              />
             </CarouselItem>
-            <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
-              <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+            <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+              <Image
+                src="/boiler1.jpg"
+                alt=""
+                className="rounded-lg"
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
+              />
             </CarouselItem>
-            <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
-              <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+            <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+              <Image
+                src="/boiler1.jpg"
+                alt=""
+                className="rounded-lg"
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
+              />
             </CarouselItem>
-            <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
-              <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+            <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+              <Image
+                src="/boiler1.jpg"
+                alt=""
+                className="rounded-lg"
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
+              />
             </CarouselItem>
-            <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
-              <img src="./boiler1.jpg" alt="" className="rounded-lg" />
+            <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+              <Image
+                src="/boiler1.jpg"
+                alt=""
+                className="rounded-lg"
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
+              />
             </CarouselItem>
           </CarouselContent>
         </Carousel>
@@ -112,26 +145,17 @@ export default function Invest() {
       <div className="flex w-[90%]  mt-24 m-auto ml-32">
         <ul className="list-none flex gap-10 text-xl ">
           <li>
-            <a
-              onClick={() => handleClick("Pitch")}
-              className={tab === "Pitch" ? "text-blue-600" : ""}
-            >
+            <a onClick={() => handleClick("Pitch")} className={tab === "Pitch" ? "text-blue-600" : ""}>
               Pitch
             </a>
           </li>
           <li>
-            <a
-              onClick={() => handleClick("General Data")}
-              className={tab === "General Data" ? "text-blue-600" : ""}
-            >
+            <a onClick={() => handleClick("General Data")} className={tab === "General Data" ? "text-blue-600" : ""}>
               General Data
             </a>
           </li>
           <li>
-            <a
-              onClick={() => handleClick("Updates")}
-              className={tab === "Updates" ? "text-blue-600" : ""}
-            >
+            <a onClick={() => handleClick("Updates")} className={tab === "Updates" ? "text-blue-600" : ""}>
               Updates
             </a>
           </li>
