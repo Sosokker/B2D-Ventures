@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { LoginButton } from "@/components/auth/loginButton";
-import { LogoutButton } from "@/components/auth/logoutButton";
 
 export default function Login() {
   return (
@@ -18,9 +17,8 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-y-2 mx-28">
-          <p className="self-center font-semibold text-slate-800">Continue With</p>
+          <p className="self-center font-semibold text-slate-800 dark:text-slate-200">Continue With</p>
           <LoginButton />
-          <LogoutButton />
         </CardContent>
         <CardFooter className="text-xs justify-center">
           By signing up, you agree to the Terms of Service and acknowledge you’ve read our Privacy Policy.

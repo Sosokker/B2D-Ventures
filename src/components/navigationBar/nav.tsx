@@ -17,9 +17,19 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Bell, Heart, Wallet } from "lucide-react";
+
+import { LogoutButton } from "@/components/auth/logoutButton";
 
 import useSession from "@/lib/supabase/useSession";
 
@@ -77,10 +87,26 @@ const authenticatedComponents = () => {
       <Bell />
       <Heart />
       <Wallet />
-      <Avatar className="ml-2">
-        <AvatarImage src="https://api.dicebear.com/9.x/pixel-art/svg" />
-        <AvatarFallback>1</AvatarFallback>
-      </Avatar>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
+            <Avatar>
+              <AvatarImage src="https://api.dicebear.com/9.x/pixel-art/svg" />
+              <AvatarFallback>1</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem>Support</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <LogoutButton />
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
