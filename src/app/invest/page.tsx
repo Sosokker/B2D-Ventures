@@ -18,7 +18,6 @@ import { ShareIcon, StarIcon } from "lucide-react";
 import { Toaster, toast } from "react-hot-toast";
 import useSession from "@/lib/supabase/useSession";
 import { redirect } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
