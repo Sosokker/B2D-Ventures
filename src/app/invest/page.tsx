@@ -19,18 +19,33 @@ import { Toaster, toast } from "react-hot-toast";
 import useSession from "@/lib/supabase/useSession";
 import { redirect } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function Invest() {
   const [progress, setProgress] = useState(0);
   const [tab, setTab] = useState("Pitch");
   const { session, loading } = useSession();
   const user = session?.user;
-  const [sessionLoaded, setSessionLoaded] = React.useState(false);
+  const [sessionLoaded, setSessionLoaded] = useState(false);
+  const [isFollow, setIsFollow] = useState(false);
+
+  useEffect(() => {
+    // set sessionLoaded to true once session is confirmed
+    if (!loading) {
+      setSessionLoaded(true);
+    }
+  }, [loading]);
   const handleClick = (item: string) => {
     setTab(item);
   };
-  const currentUrl = window.location.href;
+
   const handleShare = () => {
+    const currentUrl = window.location.href;
     if (document.hasFocus()) {
       navigator.clipboard.writeText(currentUrl).then(() => {
         toast.success("URL copied to clipboard!");
@@ -38,16 +53,11 @@ export default function Invest() {
     }
   };
   const handleFollow = () => {
-    {
-      sessionLoaded ? (
-        user ? null : ( // if login, save follow
-          redirect("/login")
-        )
-      ) : (
-        <div>
-          <Skeleton className="rounded-lg h-full w-[160px]" />
-        </div>
-      );
+    if (user) {
+      setIsFollow((prevState) => !prevState);
+      // save follow to database
+    } else {
+      redirect("/login");
     }
   };
   useEffect(() => {
@@ -67,7 +77,20 @@ export default function Invest() {
             <h1 className="mt-3 font-bold text-3xl">NVIDIA</h1>
             <div className="grid grid-cols-2 gap-5 ml-[850px] ">
               <div className="mt-2 cursor-pointer" onClick={handleFollow}>
-                <StarIcon />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <StarIcon
+                        id="follow"
+                        fill={isFollow ? "#FFFF00" : "#fff"}
+                        strokeWidth={2}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Follow NIVIDIA</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               <div onClick={handleShare} className=" cursor-pointer  mt-2">
                 <ShareIcon />
