@@ -57,7 +57,7 @@ export function ExtendableCard(props: ExtendableCardProps) {
         </div>
 
         {/* Hover content (appears when hovered) */}
-        <div className="mt-4 max-h-0 overflow-hidden opacity-0 group-hover:max-h-[500px] group-hover:opacity-100 transition-all duration-500 ease-in-out">
+        <div className="mt-4 max-h-0 overflow-hidden opacity-0 group-hover:max-h-[500px] group-hover:opacity-100 transition-all duration-1000 ease-in-out">
           <p className="text-sm text-muted-foreground">{props.description}</p>
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
