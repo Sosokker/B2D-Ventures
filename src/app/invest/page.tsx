@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { ShareIcon, StarIcon } from "lucide-react";
 import { Toaster, toast } from "react-hot-toast";
 import useSession from "@/lib/supabase/useSession";
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Invest() {
@@ -37,20 +37,19 @@ export default function Invest() {
       });
     }
   };
-  const handleFollow = () =>{
-    {sessionLoaded ? (
-      user ? (
-        // if login, save follow
-         null
+  const handleFollow = () => {
+    {
+      sessionLoaded ? (
+        user ? null : ( // if login, save follow
+          redirect("/login")
+        )
       ) : (
-        redirect('/login')
-      )
-    ) : (
-      <div>
-        <Skeleton className="rounded-lg h-full w-[160px]" />
-      </div>
-    )}
-  }
+        <div>
+          <Skeleton className="rounded-lg h-full w-[160px]" />
+        </div>
+      );
+    }
+  };
   useEffect(() => {
     // percent success
     const timer = setTimeout(() => setProgress(66), 500);
@@ -67,13 +66,10 @@ export default function Invest() {
             <Image src="./logo.svg" alt="logo" width={50} height={50} />
             <h1 className="mt-3 font-bold text-3xl">NVIDIA</h1>
             <div className="grid grid-cols-2 gap-5 ml-[850px] ">
-              <div className="mt-2 cursor-pointer bg-red-500" onClick={handleFollow}>
+              <div className="mt-2 cursor-pointer" onClick={handleFollow}>
                 <StarIcon />
               </div>
-              <div
-                onClick={handleShare}
-                className=" cursor-pointer  mt-2 bg-green-500"
-              >
+              <div onClick={handleShare} className=" cursor-pointer  mt-2">
                 <ShareIcon />
               </div>
             </div>
