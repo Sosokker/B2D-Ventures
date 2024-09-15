@@ -99,6 +99,7 @@ export default function Invest() {
               </div>
             </div>
           </div>
+          {/* end of pack */}
           <p className="mt-2"> World's first non-metal sustainable battery</p>
           <div className="flex flex-wrap mt-3">
             {["Technology", "Gaming"].map((tag) => (
@@ -110,9 +111,9 @@ export default function Invest() {
               </span>
             ))}
           </div>
-          <div className="flex">
+          <div className="grid grid-cols-2">
             {/* image carousel */}
-            <Carousel className="w-[55%] mt-4">
+            <Carousel className="w-full mt-4">
               <CarouselContent className="h-[450px]">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <CarouselItem key={index}>
@@ -123,7 +124,7 @@ export default function Invest() {
               <CarouselPrevious />
               <CarouselNext />
             </Carousel>
-            <div className=" w-1/3 mt-4 h-[400px] ml-[8%] ">
+            <div className=" w-2/3 mt-4 h-[400px] m-auto grid-rows-5 ">
               <div className="pl-5">
                 <h1 className="font-semibold text-4xl mt-8">
                   <CountUp
@@ -144,7 +145,6 @@ export default function Invest() {
               </div>
               <Separator decorative className="mt-3 w-3/4 ml-5" />
               <h1 className="font-semibold text-4xl mt-8 ml-5">
-                {" "}
                 <CountUp start={0} end={5800} duration={2} className="" /> hours
               </h1>
               <p className="ml-5"> Left to invest</p>
