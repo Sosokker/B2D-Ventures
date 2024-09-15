@@ -71,10 +71,13 @@ export default function Invest() {
       </div>
       <div className="w-[90%] h-[45w0px]-500 m-auto mt-12  pl-24">
         <div>
-          <div className="flex ">
-            <Image src="./logo.svg" alt="logo" width={50} height={50} />
-            <h1 className="mt-3 font-bold text-3xl">NVIDIA</h1>
-            <div className="grid grid-cols-2 gap-5 ml-[850px] ">
+          {/* Name, star and share button packed */}
+          <div className="grid grid-cols-4">
+            <div className="flex col-span-2">
+              <Image src="./logo.svg" alt="logo" width={50} height={50} />
+              <h1 className="mt-3 font-bold text-3xl">NVIDIA</h1>
+            </div>
+            <div className="grid grid-cols-2 gap-5 justify-self-end ">
               <div className="mt-2 cursor-pointer" onClick={handleFollow}>
                 <TooltipProvider>
                   <Tooltip>
