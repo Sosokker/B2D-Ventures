@@ -17,7 +17,9 @@ export default function Home() {
       <div className="flex flex-row bg-slate-100 dark:bg-gray-800">
         <div className="flex flex-col w-3/5">
           <span className="px-10 md:px-28 py-10 md:py-20">
-            <p className="text-lg md:text-4xl font-bold">Explore the world of ventures</p>
+            <p className="text-lg md:text-4xl font-bold">
+              Explore the world of ventures
+            </p>
             <span className="text-sm md:text-lg">
               <p>
                 Unlock opportunities and connect with a community of passionate
@@ -67,11 +69,23 @@ export default function Home() {
           </CardHeader>
           <CardContent className="flex gap-2">
             <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-              <Image src={"/github.svg"} width={20} height={20} alt="github"  className="scale-75 md:scale-100"/>
+              <Image
+                src={"/github.svg"}
+                width={20}
+                height={20}
+                alt="github"
+                className="scale-75 md:scale-100"
+              />
               Github
             </Button>
             <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-              <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100"/>
+              <Image
+                src={"/github.svg"}
+                width={20}
+                height={20}
+                alt="github"
+                className="scale-75 md:scale-100"
+              />
               Github
             </Button>
           </CardContent>
@@ -87,7 +101,7 @@ export default function Home() {
             The deals attracting the most interest right now
           </p>
         </span>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link href={"/invest"}>
             <ExtendableCard
               name={"NVDA"}
