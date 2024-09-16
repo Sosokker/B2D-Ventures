@@ -120,7 +120,7 @@ export default function Invest() {
               </span>
             ))}
           </div>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-2 mt-5">
             {/* image carousel */}
             <div>
               <Carousel className="w-full mt-20 md:mt-0">
@@ -202,8 +202,8 @@ export default function Invest() {
         </div>
       </div>
       {/* menu */}
-      <div className="flex w-[90%]  mt-24 m-auto ml-32">
-        <ul className="list-none flex gap-10 text-xl ">
+      <div className="flex w-[90%] mt-24 m-auto ml-10 md:ml-32">
+        <ul className="list-none flex gap-10 text-lg md:text-xl ">
           <li>
             <a
               onClick={() => handleClick("Pitch")}
