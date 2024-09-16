@@ -123,24 +123,22 @@ export default function Invest() {
           <div className="grid grid-cols-2">
             {/* image carousel */}
             <div>
-              <Carousel className="w-full -mt-20 md:mt-0">
-                <CarouselContent className="h-[400px]">
+              <Carousel className="w-full mt-20 md:mt-0">
+                <CarouselContent className="h-[400px] flex h-full">
                   {Array.from({ length: 5 }).map((_, index) => (
                     <CarouselItem key={index}>
-                      <div className="flex h-full items-center justify-center">
-                        <img
-                          src="./boiler1.jpg"
-                          alt=""
-                          className="rounded-lg self-center"
-                        />
-                      </div>
+                      <img
+                        src="./boiler1.jpg"
+                        alt=""
+                        className="rounded-lg self-center"
+                      />
                     </CarouselItem>
                   ))}
                 </CarouselContent>{" "}
                 <CarouselPrevious />
                 <CarouselNext />
               </Carousel>
-              <Carousel className="w-2/3 md:w-full ml-10 md:ml-0 -mt-24 md:mt-0">
+              <Carousel className="w-2/3 md:w-full ml-10 md:ml-0 mt-5 md:mt-10 ">
                 <CarouselContent>
                   {/* boiler plate for an actual pictures */}
                   <CarouselItem className="pl-1 md:basis-1/2 lg:basis-1/3">
