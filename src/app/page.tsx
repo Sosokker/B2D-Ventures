@@ -15,17 +15,17 @@ export default function Home() {
   return (
     <main>
       <div className="flex flex-row bg-slate-100 dark:bg-gray-800">
-        <div className="flex flex-col w-3/5">
+        <div className="flex flex-col w-3/5  bg-red-500">
           <span className="px-28 py-20">
-            <p className="text-4xl font-bold">Explore the world of ventures</p>
-            <span className="text-lg">
+            <p className="text-lg md:text-4xl font-bold">Explore the world of ventures</p>
+            <span className="text-sm md:text-lg">
               <p>
                 Unlock opportunities and connect with a community of passionate
               </p>
               <p>investors and innovators.</p>
               <p>Together, we turn ideas into impact.</p>
             </span>
-            <Button className="font-bold mt-4">
+            <Button className="scale-75 md:scale-100 font-bold mt-4">
               <Link href="/deals">Start Investing</Link>
             </Button>
           </span>
