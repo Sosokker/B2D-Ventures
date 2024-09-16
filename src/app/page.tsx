@@ -101,7 +101,7 @@ export default function Home() {
             The deals attracting the most interest right now
           </p>
         </span>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Link href={"/invest"}>
             <ExtendableCard
               name={"NVDA"}
