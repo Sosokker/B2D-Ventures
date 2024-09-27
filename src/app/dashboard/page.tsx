@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+"use client";
 import Image from "next/image";
 import {
   Card,
@@ -10,13 +10,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/ui/overview";
 import { RecentSales } from "@/components/recent-sales";
-
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Example dashboard app built using the components.",
-};
+import { useState } from "react";
 
 export default function Dashboard() {
+  const [graphType, setGraphType] = useState("line");
   return (
     <>
       <div className="md:hidden">
@@ -163,7 +160,24 @@ export default function Dashboard() {
                     <CardTitle>Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview />
+                    <Overview graphType={graphType} />
+                    {/* tab to switch between line and bar graph */}
+                    <Tabs defaultValue="line" className="space-y-4 ml-[50%]">
+                      <TabsList>
+                        <TabsTrigger
+                          value="line"
+                          onClick={() => setGraphType("line")}
+                        >
+                          Line
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="bar"
+                          onClick={() => setGraphType("bar")}
+                        >
+                          Bar
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
                   </CardContent>
                 </Card>
                 <Card className="col-span-3">
