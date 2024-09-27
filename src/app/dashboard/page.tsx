@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/ui/overview";
-import { RecentSales } from "@/components/recent-sales";
+import { RecentFunds } from "@/components/recent-funds";
 import { useState } from "react";
 
 export default function Dashboard() {
@@ -40,22 +40,14 @@ export default function Dashboard() {
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
-                Analytics
-              </TabsTrigger>
-              <TabsTrigger value="reports" disabled>
-                Reports
-              </TabsTrigger>
-              <TabsTrigger value="notifications" disabled>
-                Notifications
-              </TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Total Revenue
+                      Total Funds Raised
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -80,7 +72,33 @@ export default function Dashboard() {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Subscriptions
+                      Profile Views
+                    </CardTitle>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      className="h-4 w-4 text-muted-foreground"
+                    >
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">+2350</div>
+                    <p className="text-xs text-muted-foreground">
+                      +180.1% from last month
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Total Followers
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -98,37 +116,13 @@ export default function Dashboard() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+2350</div>
-                    <p className="text-xs text-muted-foreground">
-                      +180.1% from last month
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <rect width="20" height="14" x="2" y="5" rx="2" />
-                      <path d="M2 10h20" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
                     <div className="text-2xl font-bold">+12,234</div>
                     <p className="text-xs text-muted-foreground">
                       +19% from last month
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                {/* <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                       Active Now
@@ -152,7 +146,7 @@ export default function Dashboard() {
                       +201 since last hour
                     </p>
                   </CardContent>
-                </Card>
+                </Card> */}
               </div>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 <Card className="col-span-4">
@@ -162,7 +156,10 @@ export default function Dashboard() {
                   <CardContent className="pl-2">
                     <Overview graphType={graphType} />
                     {/* tab to switch between line and bar graph */}
-                    <Tabs defaultValue="line" className="space-y-4 ml-[50%]">
+                    <Tabs
+                      defaultValue="line"
+                      className="space-y-4 ml-[50%] mt-2"
+                    >
                       <TabsList>
                         <TabsTrigger
                           value="line"
@@ -182,13 +179,13 @@ export default function Dashboard() {
                 </Card>
                 <Card className="col-span-3">
                   <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
+                    <CardTitle>Recent Funds</CardTitle>
                     <CardDescription>
                       You made 265 sales this month.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentSales />
+                    <RecentFunds />
                   </CardContent>
                 </Card>
               </div>
