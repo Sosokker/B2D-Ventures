@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ReactQueryClientProvider } from "@/components/ReactQueryClientProvider";
 import "@/app/globals.css";
 
 import { NavigationBar } from "@/components/navigationBar/nav";
@@ -24,16 +25,18 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
-      <head />
-      <body className={`${montserrat.className}`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="relative flex min-h-screen flex-col">
-            <NavigationBar />
-            <div className="flex-1 bg-background">{children}</div>
-          </div>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ReactQueryClientProvider>
+      <html lang="en">
+        <head />
+        <body className={`${montserrat.className}`}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="relative flex min-h-screen flex-col">
+              <NavigationBar />
+              <div className="flex-1 bg-background">{children}</div>
+            </div>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ReactQueryClientProvider>
   );
 }
