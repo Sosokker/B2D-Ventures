@@ -133,6 +133,7 @@ export function NavigationBar() {
   const { session, loading } = useSession();
   const user = session?.user;
   const [sessionLoaded, setSessionLoaded] = React.useState(false);
+  const [searchActive, setSearchActive] = React.useState(false);
 
   React.useEffect(() => {
     if (!loading) {
@@ -249,8 +250,26 @@ export function NavigationBar() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem className="pl-5">
-                  <Search />
+                <NavigationMenuItem className="pl-5 flex">
+                  <Search
+                    onClick={() => setSearchActive(!searchActive)}
+                    className="cursor-pointer"
+                  />
+                  {/* search bar's input */}
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className={cn(
+                      "ml-2 border rounded-md px-2 py-1 transition-all duration-300 ease-in-out ",
+                      searchActive ? "w-48 opacity-100" : "w-0 opacity-0"
+                    )}
+                    onKeyDown={(k) => {
+                      // when open search bar and hit enter
+                      if(k.key == "Enter"){
+                        console.log((k.target as HTMLInputElement).value);
+                      }
+                    }}
+                  />
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
