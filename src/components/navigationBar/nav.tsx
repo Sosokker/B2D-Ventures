@@ -143,14 +143,15 @@ export function NavigationBar() {
     }
   }, [loading]);
 
-  const handleKeyDown = (k: React.KeyboardEvent<HTMLInputElement>) => {
-    // check for "Enter"
+  const handleKeyDown = async (k: React.KeyboardEvent<HTMLInputElement>) => {
     if (k.key === 'Enter') {
       const query = (k.target as HTMLInputElement).value.trim();
-      router.push(`/find?query=${encodeURIComponent(query)}`);
+      if (query) {
+        router.push(`/find?query=${encodeURIComponent(query)}`);
+      }
     }
   };
-
+  
   const businessComponents = [
     {
       title: "Businesses",
