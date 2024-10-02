@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -134,12 +135,21 @@ export function NavigationBar() {
   const user = session?.user;
   const [sessionLoaded, setSessionLoaded] = React.useState(false);
   const [searchActive, setSearchActive] = React.useState(false);
+  const router = useRouter();
 
   React.useEffect(() => {
     if (!loading) {
       setSessionLoaded(true);
     }
   }, [loading]);
+
+  const handleKeyDown = (k: React.KeyboardEvent<HTMLInputElement>) => {
+    // check for "Enter"
+    if (k.key === 'Enter') {
+      const query = (k.target as HTMLInputElement).value.trim();
+      router.push(`/find?query=${encodeURIComponent(query)}`);
+    }
+  };
 
   const businessComponents = [
     {
@@ -258,17 +268,12 @@ export function NavigationBar() {
                   {/* search bar's input */}
                   <input
                     type="text"
-                    placeholder="Search..."
+                    placeholder="Enter business name..."
                     className={cn(
                       "ml-2 border rounded-md px-2 py-1 transition-all duration-300 ease-in-out ",
                       searchActive ? "w-48 opacity-100" : "w-0 opacity-0"
                     )}
-                    onKeyDown={(k) => {
-                      // when open search bar and hit enter
-                      if(k.key == "Enter"){
-                        console.log((k.target as HTMLInputElement).value);
-                      }
-                    }}
+                    onKeyDown={handleKeyDown}
                   />
                 </NavigationMenuItem>
               </NavigationMenuList>
