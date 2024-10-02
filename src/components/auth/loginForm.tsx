@@ -23,9 +23,17 @@ export function LoginForm() {
 
   return (
     <div className="flex flex-col space-y-2">
-      <Input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-      <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-      <Button onClick={handleLogin}>Login</Button>
+      <Input id="email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+      <Input
+        id="password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+      />
+      <Button id="login" onClick={handleLogin}>
+        Login
+      </Button>
     </div>
   );
 }
