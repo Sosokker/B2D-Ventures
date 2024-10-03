@@ -47,7 +47,10 @@ export function ExtendableCard(props: ExtendableCardProps) {
         </div>
         <div className="mt-2 flex flex-wrap items-center text-muted-foreground group-hover:hidden">
           {props.tags.map((tag) => (
-            <span key={tag} className="text-[10px] md:text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1">
+            <span
+              id="tag"
+              key={tag}
+              className="text-[10px] md:text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1">
               {tag}
             </span>
           ))}
