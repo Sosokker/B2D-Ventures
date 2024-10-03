@@ -11,7 +11,7 @@ interface ExtendableCardProps {
   description: string;
   joinDate: string;
   location: string;
-  tags: XMap | null;
+  tags: XMap | null | never[] | string[];
   minInvestment: number;
   totalInvestor: number;
   totalRaised: number;
@@ -46,11 +46,8 @@ export function ExtendableCard(props: ExtendableCardProps) {
           <span className="text-xs md:text-sm">{props.location}</span>
         </div>
         <div className="mt-2 flex flex-wrap items-center text-muted-foreground group-hover:hidden">
-          {["Technology", "Gaming"].map((tag) => (
-            <span
-              key={tag}
-              className="text-[10px] md:text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1"
-            >
+          {props.tags.map((tag) => (
+            <span key={tag} className="text-[10px] md:text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1">
               {tag}
             </span>
           ))}
@@ -58,26 +55,21 @@ export function ExtendableCard(props: ExtendableCardProps) {
 
         {/* Hover content (appears when hovered) */}
         <div className="mt-4 max-h-0 overflow-hidden opacity-0 group-hover:max-h-[500px] group-hover:opacity-100 transition-all duration-1000 ease-in-out">
-          <p className="text-xs md:text-sm text-muted-foreground">
-            {props.description}
-          </p>
+          <p className="text-xs md:text-sm text-muted-foreground">{props.description}</p>
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div>
                 <hr className="w-screen -ml-4 mb-2" />
                 <p className="text-xs md:text-base">
-                  <strong>${props.totalRaised.toLocaleString()}</strong>{" "}
-                  committed and reserved
+                  <strong>${props.totalRaised.toLocaleString()}</strong> committed and reserved
                 </p>
                 <hr className="w-screen -ml-4 mb-2 mt-2" />
                 <p className="mb-2 text-xs md:text-base">
-                  <strong>{props.totalInvestor.toLocaleString()}</strong>{" "}
-                  investors
+                  <strong>{props.totalInvestor.toLocaleString()}</strong> investors
                 </p>
                 <hr className="w-screen -ml-4 mb-2" />
                 <p className="text-xs md:text-base">
-                  <strong>${props.minInvestment.toLocaleString()}</strong> min.
-                  investment
+                  <strong>${props.minInvestment.toLocaleString()}</strong> min. investment
                 </p>
               </div>
             </div>

@@ -164,7 +164,7 @@ export default function Find() {
                         minInvestment={project.ProjectInvestmentDetail[0]?.minInvestment}
                         totalInvestor={project.ProjectInvestmentDetail[0]?.totalInvestment}
                         totalRaised={project.ProjectInvestmentDetail[0]?.targetInvestment}
-                        tags={null}
+                        tags={[]}
                       />
                     ))}
                   </CardContent>
