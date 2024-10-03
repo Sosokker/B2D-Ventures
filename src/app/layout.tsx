@@ -5,6 +5,7 @@ import { ReactQueryClientProvider } from "@/components/ReactQueryClientProvider"
 import "@/app/globals.css";
 
 import { NavigationBar } from "@/components/navigationBar/nav";
+import { Toaster } from "react-hot-toast";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -31,6 +32,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <body className={`${montserrat.className}`}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="relative flex min-h-screen flex-col">
+              <div>
+                <Toaster position="top-center" reverseOrder={false} toastOptions={{ duration: 1000 }} />
+              </div>
               <NavigationBar />
               <div className="flex-1 bg-background">{children}</div>
             </div>

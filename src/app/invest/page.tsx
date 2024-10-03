@@ -2,13 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import CountUp from "react-countup";
 import { Progress } from "@/components/ui/progress";
@@ -18,12 +12,8 @@ import { ShareIcon, StarIcon } from "lucide-react";
 import { Toaster, toast } from "react-hot-toast";
 import useSession from "@/lib/supabase/useSession";
 import { redirect } from "next/navigation";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Link from "next/link";
 
 export default function Invest() {
   const [progress, setProgress] = useState(0);
@@ -74,13 +64,7 @@ export default function Invest() {
           {/* Name, star and share button packed */}
           <div className="grid grid-cols-4">
             <div className="flex col-span-2">
-              <Image
-                src="./logo.svg"
-                alt="logo"
-                width={50}
-                height={50}
-                className="sm:scale-75"
-              />
+              <Image src="./logo.svg" alt="logo" width={50} height={50} className="sm:scale-75" />
               <div className="mt-3 font-bold  text-lg md:text-3xl">NVIDIA</div>
             </div>
             <div className="grid grid-cols-2 gap-5 justify-self-end ">
@@ -88,11 +72,7 @@ export default function Invest() {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <StarIcon
-                        id="follow"
-                        fill={isFollow ? "#FFFF00" : "#fff"}
-                        strokeWidth={2}
-                      />
+                      <StarIcon id="follow" fill={isFollow ? "#FFFF00" : "#fff"} strokeWidth={2} />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Follow NIVIDIA</p>
@@ -106,16 +86,10 @@ export default function Invest() {
             </div>
           </div>
           {/* end of pack */}
-          <p className="mt-2 sm:text-sm">
-            {" "}
-            World's first non-metal sustainable battery
-          </p>
+          <p className="mt-2 sm:text-sm"> World's first non-metal sustainable battery</p>
           <div className="flex flex-wrap mt-3">
             {["Technology", "Gaming"].map((tag) => (
-              <span
-                key={tag}
-                className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1"
-              >
+              <span key={tag} className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1">
                 {tag}
               </span>
             ))}
@@ -127,11 +101,7 @@ export default function Invest() {
                 <CarouselContent className="h-[400px] flex h-full">
                   {Array.from({ length: 5 }).map((_, index) => (
                     <CarouselItem key={index}>
-                      <img
-                        src="./boiler1.jpg"
-                        alt=""
-                        className="rounded-lg self-center"
-                      />
+                      <img src="./boiler1.jpg" alt="" className="rounded-lg self-center" />
                     </CarouselItem>
                   ))}
                 </CarouselContent>{" "}
@@ -162,40 +132,23 @@ export default function Invest() {
             <div className=" w-2/3 mt-4  m-auto grid-rows-5">
               <div className="pl-5">
                 <h1 className="font-semibold text-xl md:text-4xl mt-8">
-                  <CountUp
-                    start={0}
-                    end={100000}
-                    duration={2}
-                    prefix="$"
-                    className=""
-                  />
+                  <CountUp start={0} end={100000} duration={2} prefix="$" className="" />
                 </h1>
                 <p className="text-sm md:text-lg"> 5% raised of $5M max goal</p>
                 <Progress value={progress} className="w-[60%] h-3 mt-3" />
                 <h1 className="font-semibold text-4xl md:mt-8">
                   {" "}
-                  <CountUp
-                    start={0}
-                    end={1000}
-                    duration={2}
-                    className="text-xl md:text-4xl"
-                  />
+                  <CountUp start={0} end={1000} duration={2} className="text-xl md:text-4xl" />
                 </h1>
                 <p className="text-sm md:text-lg"> Investors</p>
               </div>
               <Separator decorative className="mt-3 w-3/4 ml-5" />
               <h1 className="font-semibold text-xl md:text-4xl mt-8 ml-5">
-                <CountUp
-                  start={0}
-                  end={5800}
-                  duration={2}
-                  className="text-xl md:text-4xl"
-                />{" "}
-                hours
+                <CountUp start={0} end={5800} duration={2} className="text-xl md:text-4xl" /> hours
               </h1>
               <p className="ml-5"> Left to invest</p>
               <Button className="mt-5 md:mt-10 ml-0 md:ml-[25%] scale-75 md:scale-100">
-                Invest in NVIDIA
+                <Link href="/invest/1">Invest in NVIDIA</Link>
               </Button>
             </div>
           </div>
@@ -205,26 +158,17 @@ export default function Invest() {
       <div className="flex w-[90%] mt-24 m-auto ml-10 md:ml-32">
         <ul className="list-none flex gap-10 text-lg md:text-xl ">
           <li>
-            <a
-              onClick={() => handleClick("Pitch")}
-              className={tab === "Pitch" ? "text-blue-600" : ""}
-            >
+            <a onClick={() => handleClick("Pitch")} className={tab === "Pitch" ? "text-blue-600" : ""}>
               Pitch
             </a>
           </li>
           <li>
-            <a
-              onClick={() => handleClick("General Data")}
-              className={tab === "General Data" ? "text-blue-600" : ""}
-            >
+            <a onClick={() => handleClick("General Data")} className={tab === "General Data" ? "text-blue-600" : ""}>
               General Data
             </a>
           </li>
           <li>
-            <a
-              onClick={() => handleClick("Updates")}
-              className={tab === "Updates" ? "text-blue-600" : ""}
-            >
+            <a onClick={() => handleClick("Updates")} className={tab === "Updates" ? "text-blue-600" : ""}>
               Updates
             </a>
           </li>
