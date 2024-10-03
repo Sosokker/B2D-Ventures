@@ -1,12 +1,14 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ExtendableCard } from "@/components/extendableCard";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ProjectInvestmentDetail {
   minInvestment: number;
@@ -19,6 +21,8 @@ interface Project {
   projectName: string;
   businessId: string;
   investmentCount: number;
+  projectShortDescription: string;
+  publishedTime: string;
   ProjectInvestmentDetail: ProjectInvestmentDetail[];
   tags: string[];
 }
@@ -42,6 +46,8 @@ function getProjects(client: SupabaseClient, businessIds: string[]) {
             id,
             projectName,
             businessId,
+            publishedTime,
+            projectShortDescription,
             ProjectInvestmentDetail (
                 minInvestment,
                 totalInvestment,
@@ -116,30 +122,59 @@ export default function Find() {
 
   return (
     <div>
-      {results.length === 0 && <p>No results found.</p>}
-      {results.length > 0 && (
-        <ul>
-          {results.map((business) => (
-            <li key={business.id}>
-              <h2>{business.businessName}</h2>
-              <p>Joined Date: {new Date(business.joinedDate).toLocaleDateString()}</p>
-              <ul>
+      <div className="mt-10 mx-[15%]">
+        <h1 className="text-4xl font-bold">Result</h1>
+
+        <Separator className="my-4" />
+
+        {results.length === 0 && <p>No results found.</p>}
+        {results.length > 0 && (
+          <ul>
+            {results.map((business) => (
+              <li key={business.id}>
+                {/* <h2>{business.businessName}</h2>
+                <p>Joined Date: {new Date(business.joinedDate).toLocaleDateString()}</p>
                 {business.Projects.map((project) => (
-                  <li key={project.id}>
-                    <h3>{project.projectName}</h3>
-                    <p>Investment Count: {project.investmentCount}</p>
-                    <p>Min Investment: ${project.ProjectInvestmentDetail[0]?.minInvestment}</p>
-                    <p>Total Investment: ${project.ProjectInvestmentDetail[0]?.totalInvestment}</p>
-                    <p>Target Investment: ${project.ProjectInvestmentDetail[0]?.targetInvestment}</p>
-                    <p>Tags: {project.tags.join(", ")}</p>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      )}
-      <ReactQueryDevtools initialIsOpen={false} />
+                  <ExtendableCard
+                    key={project.id}
+                    name={project.projectName}
+                    description={project.projectName}
+                    joinDate={project.projectName}
+                    location={"Bangkok"}
+                    minInvestment={project.ProjectInvestmentDetail[0]?.minInvestment}
+                    totalInvestor={project.ProjectInvestmentDetail[0]?.totalInvestment}
+                    totalRaised={project.ProjectInvestmentDetail[0]?.targetInvestment}
+                    tags={null}
+                  />
+                ))} */}
+
+                <Card className="w-full">
+                  <CardHeader>
+                    <CardTitle>{business.businessName}</CardTitle>
+                    <CardDescription>Joined Date: {new Date(business.joinedDate).toLocaleDateString()}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {business.Projects.map((project) => (
+                      <ExtendableCard
+                        key={project.id}
+                        name={project.projectName}
+                        description={project.projectName}
+                        joinDate={project.projectName}
+                        location={"Bangkok"}
+                        minInvestment={project.ProjectInvestmentDetail[0]?.minInvestment}
+                        totalInvestor={project.ProjectInvestmentDetail[0]?.totalInvestment}
+                        totalRaised={project.ProjectInvestmentDetail[0]?.targetInvestment}
+                        tags={null}
+                      />
+                    ))}
+                  </CardContent>
+                </Card>
+              </li>
+            ))}
+          </ul>
+        )}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </div>
     </div>
   );
 }
