@@ -11,8 +11,8 @@ export default function Notification() {
   ];
   return (
     <div>
-      <div className="ml-56 mt-16 ">
-        <h1 className="font-bold text-3xl h-0">Notifications</h1>
+      <div className="ml-24 md:ml-56 mt-16 ">
+        <h1 className="font-bold text-2xl md:text-3xl h-0">Notifications</h1>
         <div className=" w-full mt-20 ">
           {/* Cards */}
           <Card className=" border-slate-800 w-3/4 p-6">

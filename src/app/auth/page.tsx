@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { LoginButton } from "@/components/auth/loginButton";
+import { LoginForm } from "@/components/auth/loginForm";
 
 export default function Login() {
   return (
@@ -18,6 +19,8 @@ export default function Login() {
         </CardHeader>
         <CardContent className="flex flex-col gap-y-2 mx-28">
           <p className="self-center font-semibold text-slate-800 dark:text-slate-200">Continue With</p>
+          <LoginForm />
+          <hr></hr>
           <LoginButton />
         </CardContent>
         <CardFooter className="text-xs justify-center">
