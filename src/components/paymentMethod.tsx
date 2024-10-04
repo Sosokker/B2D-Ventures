@@ -23,7 +23,7 @@ import {
 
 export function CardsPaymentMethod() {
   return (
-    <Card className="w-full">
+    <Card className="lg:w-2/3 ">
       <CardHeader>
         <CardTitle className="text-xl md:text-2xl">Payment Method</CardTitle>
         <CardDescription className="font-normal md:font-semibold">

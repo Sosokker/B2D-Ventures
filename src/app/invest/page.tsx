@@ -3,7 +3,14 @@
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { CardsPaymentMethod } from "@/components/paymentMethod";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
@@ -47,7 +54,9 @@ const term_data = [
 ];
 
 export default function Invest() {
-  const [checkedTerms, setCheckedTerms] = useState(Array(term_data.length).fill(false));
+  const [checkedTerms, setCheckedTerms] = useState(
+    Array(term_data.length).fill(false)
+  );
   const [error, setError] = useState("");
   const router = useRouter(); // Initialize the router
 
@@ -59,7 +68,9 @@ export default function Invest() {
 
   const handleTermServiceClick = () => {
     if (checkedTerms.some((checked) => !checked)) {
-      setError("Please accept all terms before proceeding with the investment.");
+      setError(
+        "Please accept all terms before proceeding with the investment."
+      );
     } else {
       setError("");
       handleInvestmentSuccess();
@@ -88,7 +99,7 @@ export default function Invest() {
 
         <div className="w-full space-y-2">
           <h2 className="text:base md:text-2xl">Payment Information</h2>
-          <CardsPaymentMethod />
+            <CardsPaymentMethod />
         </div>
         <Separator className="my-4" />
 
@@ -106,7 +117,11 @@ export default function Invest() {
               {term_data.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell>
-                    <input type="checkbox" checked={checkedTerms[index]} onChange={() => handleCheckboxChange(index)} />
+                    <input
+                      type="checkbox"
+                      checked={checkedTerms[index]}
+                      onChange={() => handleCheckboxChange(index)}
+                    />
                   </TableCell>
                   <TableCell>{item.term}</TableCell>
                   <TableCell>{item.description}</TableCell>
@@ -123,7 +138,9 @@ export default function Invest() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Are you absolutely sure?</DialogTitle>
-              <DialogDescription>This action cannot be undone. This will permanently!</DialogDescription>
+              <DialogDescription>
+                This action cannot be undone. This will permanently!
+              </DialogDescription>
             </DialogHeader>
             <DialogFooter className="sm:justify-start">
               <Button type="submit" onClick={handleTermServiceClick}>
@@ -135,7 +152,9 @@ export default function Invest() {
                 </Button>
               </DialogClose>
             </DialogFooter>
-            {error && <p className="text-red-500 mt-2 text-lg font-bold">{error}</p>}
+            {error && (
+              <p className="text-red-500 mt-2 text-lg font-bold">{error}</p>
+            )}
           </DialogContent>
         </Dialog>
       </div>
