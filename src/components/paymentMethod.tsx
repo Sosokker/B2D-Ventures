@@ -32,7 +32,7 @@ export function CardsPaymentMethod() {
       </CardHeader>
       <CardContent className="grid gap-6">
         <RadioGroup defaultValue="card" className="flex w-full justify-center gap-1 md:gap-3">
-          <div className="w-[100px] md:w-[150px]">
+          <div className="w-[100px] lg:w-[130px]">
             <RadioGroupItem
               value="card"
               id="card"
@@ -60,7 +60,7 @@ export function CardsPaymentMethod() {
             </Label>
           </div>
 
-          <div className="w-[100px] md:w-[150px]">
+          <div className="w-[100px] lg:w-[130px]">
             <RadioGroupItem
               value="paypal"
               id="paypal"
@@ -76,7 +76,7 @@ export function CardsPaymentMethod() {
             </Label>
           </div>
 
-          <div className="w-[100px] md:w-[150px]">
+          <div className="w-[100px] lg:w-[130px]">
             <RadioGroupItem
               value="apple"
               id="apple"
