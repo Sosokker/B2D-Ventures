@@ -148,7 +148,7 @@ export default function Invest() {
               </h1>
               <p className="ml-5"> Left to invest</p>
               <Button className="mt-5 md:mt-10 ml-0 md:ml-[25%] scale-75 md:scale-100">
-                <Link href="/invest/1">Invest in NVIDIA</Link>
+                <Link href="/invest">Invest in NVIDIA</Link>
               </Button>
             </div>
           </div>

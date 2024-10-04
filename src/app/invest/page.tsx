@@ -75,24 +75,24 @@ export default function Invest() {
   };
 
   return (
-    <div className="mx-40 my-10">
-      <h1 className="text-4xl font-bold">Invest on NVIDIA</h1>
+    <div className="mx-10 md:mx-40 my-10">
+      <h1 className="text-2xl md:text-4xl font-bold">Invest on NVIDIA</h1>
       <Separator className="my-4" />
 
       <div>
         <div className="w-1/2 space-y-2">
-          <h2 className="text-2xl">Investment Amount</h2>
+          <h2 className="text:base md:text-2xl">Investment Amount</h2>
           <Input type="number" placeholder="min $500" />
         </div>
         <Separator className="my-4" />
 
-        <div className="w-1/2 space-y-2">
-          <h2 className="text-2xl">Payment Information</h2>
+        <div className="w-full space-y-2">
+          <h2 className="text:base md:text-2xl">Payment Information</h2>
           <CardsPaymentMethod />
         </div>
         <Separator className="my-4" />
 
-        <div className="w-2/3 space-y-2">
+        <div className=" md:w-2/3 space-y-2">
           <h2 className="text-2xl">Terms and Services</h2>
           <Table>
             <TableHeader>
