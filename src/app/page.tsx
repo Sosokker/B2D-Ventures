@@ -78,7 +78,7 @@ export default function Home() {
           <p className="text-md md:text-lg">The deals attracting the most interest right now</p>
         </span>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link href={"/invest"}>
+          <Link href={"/overview"}>
             <ExtendableCard
               name={"NVDA"}
               description={"Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"}
