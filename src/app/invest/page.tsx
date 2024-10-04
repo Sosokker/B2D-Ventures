@@ -93,13 +93,18 @@ export default function Invest() {
       <div>
         <div className="w-1/2 space-y-2">
           <h2 className="text:base md:text-2xl">Investment Amount</h2>
-          <Input type="number" placeholder="min $500" />
+          <Input
+            className="w-52"
+            type="number"
+            placeholder="min $500"
+            min={500}
+          />
         </div>
         <Separator className="my-4" />
 
         <div className="w-full space-y-2">
           <h2 className="text:base md:text-2xl">Payment Information</h2>
-            <CardsPaymentMethod />
+          <CardsPaymentMethod />
         </div>
         <Separator className="my-4" />
 
