@@ -104,7 +104,7 @@ export default function Deals() {
         <p className="mt-3">The deals attracting the most interest right now</p>
       </div>
       {/* block for all the deals */}
-      <div className="ml-[15%] mt-10 grid grid-cols-3">
+      <div className="mx-[15%] mt-10 grid grid-cols-3">
         {filteredData.map((item, index) => (
           <ExtendableCard
             key={index}
