@@ -1,8 +1,10 @@
 "use client";
+
 import { CalendarDaysIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface XMap {
-  // tagName: colorCode
   [tag: string]: string;
 }
 
@@ -12,69 +14,86 @@ interface ExtendableCardProps {
   joinDate: string;
   location: string;
   tags: XMap | null | never[] | string[];
+  imageUri: string | null;
   minInvestment: number;
   totalInvestor: number;
   totalRaised: number;
+  className?: string;
 }
 
 export function ExtendableCard(props: ExtendableCardProps) {
   return (
-    <div className="group relative w-full max-w-sm overflow-hidden rounded-lg bg-card shadow-md transition-all duration-500 hover:shadow-lg ">
-      <div className="aspect-[4/3] overflow-hidden">
-        <img
-          src="/money.png"
-          alt="Card image"
-          width="400"
-          height="300"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          style={{ aspectRatio: "400/300", objectFit: "cover" }}
-        />
-      </div>
-      <div className="p-1 md:p-4">
-        <div className="text-sm md:text-lg font-semibold text-card-foreground transition-colors duration-500 group-hover:text-primary">
-          {props.name}
+    <div
+      className={cn(
+        "flex flex-col group border-[1px] border-border relative hover:shadow-md rounded-xl h-[450px]",
+        props.className
+      )}>
+      <div className="flex flex-col h-full">
+        {/* Image */}
+        <div className="relative h-3/4 w-full">
+          {props.imageUri ? (
+            <Image
+              src={props.imageUri}
+              alt="Card image"
+              layout="fill"
+              className="rounded-t-xl bg-background dark:bg-background h-full"
+            />
+          ) : (
+            <Image
+              src="/money.png"
+              alt="Card image"
+              layout="fill"
+              className="rounded-t-xl bg-background dark:bg-background h-full"
+            />
+          )}
         </div>
+        <div className="flex flex-col h-full justify-between">
+          {/* Info 0 overlaps Image */}
+          <div className="bg-background dark:bg-background transition-all ease-out transform group-hover:-translate-y-24 duration-1000 group-hover:bg-opacity-100 z-10 p-4">
+            <div className="font-semibold text-card-foreground transition-colors duration-1000 group-hover:text-primary">
+              {props.name}
+            </div>
+            <p className="text-sm text-muted-foreground line-clamp-3">{props.description}</p>
+          </div>
 
-        {/* Default content (visible when not hovered) */}
-        <div className="mt-2 flex items-center text-muted-foreground group-hover:hidden">
-          <span className="flex items-center pt-2 gap-1">
-            <CalendarDaysIcon width={20} />
-            <div className="text-xs md:text-lg">Joined {props.joinDate}</div>
-          </span>
-        </div>
-        <div className="mt-2 flex items-center text-muted-foreground group-hover:hidden">
-          <span className="text-xs md:text-sm">{props.location}</span>
-        </div>
-        <div className="mt-2 flex flex-wrap items-center text-muted-foreground group-hover:hidden">
-          {props.tags.map((tag) => (
-            <span
-              id="tag"
-              key={tag}
-              className="text-[10px] md:text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1">
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        {/* Hover content (appears when hovered) */}
-        <div className="mt-4 max-h-0 overflow-hidden opacity-0 group-hover:max-h-[500px] group-hover:opacity-100 transition-all duration-1000 ease-in-out">
-          <p className="text-xs md:text-sm text-muted-foreground">{props.description}</p>
-          <div className="mt-4 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div>
-                <hr className="w-screen -ml-4 mb-2" />
-                <p className="text-xs md:text-base">
-                  <strong>${props.totalRaised.toLocaleString()}</strong> committed and reserved
-                </p>
-                <hr className="w-screen -ml-4 mb-2 mt-2" />
-                <p className="mb-2 text-xs md:text-base">
-                  <strong>{props.totalInvestor.toLocaleString()}</strong> investors
-                </p>
-                <hr className="w-screen -ml-4 mb-2" />
-                <p className="text-xs md:text-base">
-                  <strong>${props.minInvestment.toLocaleString()}</strong> min. investment
-                </p>
+          {/* Info 1 */}
+          <div>
+            <div className="transition-transform duration-500 transform opacity-100 group-hover:opacity-0 p-4">
+              <div className="flex items-center text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <CalendarDaysIcon width={20} />
+                  <div className="text-xs">Joined {props.joinDate}</div>
+                </span>
               </div>
+              <div className="flex items-center text-muted-foreground">
+                <span className="text-xs">{props.location}</span>
+              </div>
+              <div className="flex flex-wrap mt-1 items-center text-muted-foreground">
+                {props.tags.map((tag) => (
+                  <span id="tag" key={tag} className="text-[10px] rounded-md bg-slate-200 dark:bg-slate-700 p-1 mr-1">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Info 2 */}
+          <div className="hidden group-hover:flex group-hover:absolute group-hover:bottom-4 p-4">
+            {/* Info 2 (Visible on hover) */}
+            <div className="transition-transform duration-500 transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+              <hr className="-ml-4 mb-2" />
+              <p className="text-base">
+                <strong>${props.totalRaised.toLocaleString()}</strong> committed and reserved
+              </p>
+              <hr className="-ml-4 mb-2 mt-2" />
+              <p className="mb-2 text-base">
+                <strong>{props.totalInvestor.toLocaleString()}</strong> investors
+              </p>
+              <hr className="-ml-4 mb-2" />
+              <p className="text-base">
+                <strong>${props.minInvestment.toLocaleString()}</strong> min. investment
+              </p>
             </div>
           </div>
         </div>

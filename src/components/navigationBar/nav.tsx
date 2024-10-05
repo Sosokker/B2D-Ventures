@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -46,31 +46,27 @@ const landings = [
     route: "/crm-landing",
   },
 ];
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <hr />
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
+const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+              className
+            )}
+            {...props}>
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <hr />
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
 ListItem.displayName = "ListItem";
 
 const unAuthenticatedComponents = () => {
@@ -104,11 +100,7 @@ const authenticatedComponents = () => {
       <Wallet />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
+          <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
             <Avatar>
               <AvatarImage src="https://api.dicebear.com/9.x/pixel-art/svg" />
               <AvatarFallback>1</AvatarFallback>
@@ -144,14 +136,14 @@ export function NavigationBar() {
   }, [loading]);
 
   const handleKeyDown = async (k: React.KeyboardEvent<HTMLInputElement>) => {
-    if (k.key === 'Enter') {
+    if (k.key === "Enter") {
       const query = (k.target as HTMLInputElement).value.trim();
       if (query) {
         router.push(`/find?query=${encodeURIComponent(query)}`);
       }
     }
   };
-  
+
   const businessComponents = [
     {
       title: "Businesses",
@@ -177,14 +169,13 @@ export function NavigationBar() {
   ];
   return (
     <header className="sticky top-0 flex flex-wrap w-full bg-card text-sm py-3 border-b-2 border-border z-50">
-      <nav className="max-w-[85rem] w-full mx-auto px-4">
+      <nav className="max-w-screen-xl w-full mx-auto px-4">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <Link
               className="flex-none text-xl font-semibold dark:text-white focus:outline-none focus:opacity-80"
               href="/"
-              aria-label="Brand"
-            >
+              aria-label="Brand">
               <span className="inline-flex items-center gap-x-2 text-xl font-semibold dark:text-white">
                 <Image src="./logo.svg" alt="logo" width={50} height={50} />
                 B2DVentures
@@ -196,17 +187,11 @@ export function NavigationBar() {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-base">
-                    Businesses
-                  </NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="text-base">Businesses</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] ">
                       {businessComponents.map((component) => (
-                        <ListItem
-                          key={component.title}
-                          title={component.title}
-                          href={component.href}
-                        >
+                        <ListItem key={component.title} title={component.title} href={component.href}>
                           {component.description}
                         </ListItem>
                       ))}
@@ -215,17 +200,11 @@ export function NavigationBar() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-base font-medium ">
-                    Projects
-                  </NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="text-base font-medium ">Projects</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] ">
                       {projectComponents.map((component) => (
-                        <ListItem
-                          key={component.title}
-                          title={component.title}
-                          href={component.href}
-                        >
+                        <ListItem key={component.title} title={component.title} href={component.href}>
                           {component.description}
                         </ListItem>
                       ))}
@@ -234,17 +213,11 @@ export function NavigationBar() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-base">
-                    Blogs
-                  </NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="text-base">Blogs</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] ">
                       {blogComponents.map((component) => (
-                        <ListItem
-                          key={component.title}
-                          title={component.title}
-                          href={component.href}
-                        >
+                        <ListItem key={component.title} title={component.title} href={component.href}>
                           {component.description}
                         </ListItem>
                       ))}
@@ -253,19 +226,13 @@ export function NavigationBar() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuLink
-                    className="text-base font-medium"
-                    href="docs"
-                  >
+                  <NavigationMenuLink className="text-base font-medium" href="docs">
                     Docs
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem className="pl-5 flex">
-                  <Search
-                    onClick={() => setSearchActive(!searchActive)}
-                    className="cursor-pointer"
-                  />
+                  <Search onClick={() => setSearchActive(!searchActive)} className="cursor-pointer" />
                   {/* search bar's input */}
                   <input
                     type="text"

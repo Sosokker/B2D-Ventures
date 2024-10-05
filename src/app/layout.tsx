@@ -6,6 +6,7 @@ import "@/app/globals.css";
 
 import { NavigationBar } from "@/components/navigationBar/nav";
 import { Toaster } from "react-hot-toast";
+import { SiteFooter } from "@/components/siteFooter";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <div className="flex-1 bg-background">{children}</div>
             </div>
           </ThemeProvider>
+          <SiteFooter />
         </body>
       </html>
     </ReactQueryClientProvider>

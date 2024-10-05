@@ -18,6 +18,7 @@ export default function Deals() {
       joinDate: "December 2021",
       location: "Bangkok, Thailand",
       tags: ["AI", "Technology"],
+      imageUri: "/login.png",
       minInvestment: 10000,
       totalInvestor: 58400,
       totalRaised: 9000000,
@@ -29,6 +30,7 @@ export default function Deals() {
       joinDate: "February 2020",
       location: "Cupertino, California, USA",
       tags: ["Consumer Electronics", "Software"],
+      imageUri: "/money.png",
       minInvestment: 10000,
       totalInvestor: 58400,
       totalRaised: 9000000,
@@ -40,6 +42,7 @@ export default function Deals() {
       joinDate: "April 2019",
       location: "Mountain View, California, USA",
       tags: ["Internet", "Search Engine"],
+      imageUri: "/money.png",
       minInvestment: 10000,
       totalInvestor: 5000,
       totalRaised: 1500000000,
@@ -50,6 +53,7 @@ export default function Deals() {
       joinDate: "January 2018",
       location: "California, USA",
       tags: ["Technology", "Software"],
+      imageUri: null,
       minInvestment: 250,
       totalInvestor: 5000,
       totalRaised: 1500000,
@@ -59,18 +63,19 @@ export default function Deals() {
   const filteredData = selectedTag ? data.filter((item) => item.tags.includes(selectedTag)) : data;
 
   return (
-    <div>
-      <div className=" w-1/2 h-[250px] mt-10 ml-[15%]">
+    <div className="container max-w-screen-xl mx-auto px-4">
+      <div className="h-auto mt-10">
         <h1 className="text-4xl font-bold">Investment Opportunities</h1>
         <br />
         <p>Browse current investment opportunities on B2DVenture.</p>
         <p>
           All companies are <u>vetted & pass due diligence.</u>
         </p>
-        {/* filters */}
-        <div className="flex mt-10 gap-3">
+
+        {/* Filters */}
+        <div className="flex flex-wrap mt-10 gap-3">
           <Select onValueChange={(value) => setPostAtFilter(value)}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <Clock3Icon className="ml-2" />
               <SelectValue placeholder="Posted at" />
             </SelectTrigger>
@@ -79,15 +84,14 @@ export default function Deals() {
               <SelectItem value="Yesterday">Yesterday</SelectItem>
             </SelectContent>
           </Select>
+
           <Select onValueChange={(value) => setSelectedTag(value)}>
-            {" "}
-            {/* Tag filtering */}
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <MessageSquareIcon className="ml-2" />
               <SelectValue placeholder="Tags" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="_">All Tags</SelectItem> {/* Reset filter */}
+              <SelectItem value="_">All Tags</SelectItem>
               <SelectItem value="AI">AI</SelectItem>
               <SelectItem value="Technology">Technology</SelectItem>
               <SelectItem value="Consumer Electronics">Consumer Electronics</SelectItem>
@@ -99,18 +103,20 @@ export default function Deals() {
         <Separator className="mt-10" />
       </div>
 
-      <div className="ml-[15%]">
+      <div className="mt-10">
         <h2 className="text-2xl">Deals</h2>
         <p className="mt-3">The deals attracting the most interest right now</p>
       </div>
-      {/* block for all the deals */}
-      <div className="ml-[15%] mt-10 grid grid-cols-3">
+
+      {/* Block for all the deals */}
+      <div className="mt-10 grid grid-cols-3 gap-4">
         {filteredData.map((item, index) => (
           <ExtendableCard
             key={index}
             name={item.name}
             description={item.description}
             joinDate={item.joinDate}
+            imageUri={item.imageUri}
             location={item.location}
             minInvestment={item.minInvestment}
             totalInvestor={item.totalInvestor}
