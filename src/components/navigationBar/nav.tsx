@@ -77,7 +77,9 @@ const unAuthenticatedComponents = () => {
           Login
         </Button>
       </Link>
-      <Button>Sign up</Button>
+      <Link href="/auth/signup">
+        <Button>Sign up</Button>
+      </Link>
     </div>
   );
 };
