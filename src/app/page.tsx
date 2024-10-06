@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ExtendableCard } from "@/components/extendableCard";
+import { ProjectCard } from "@/components/projectCard";
 
 export default function Home() {
   return (
@@ -83,7 +83,7 @@ export default function Home() {
           </span>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Link href={"/overview"}>
-              <ExtendableCard
+              <ProjectCard
                 name={"NVDA"}
                 description={"Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"}
                 joinDate={"December 2021"}
@@ -94,7 +94,7 @@ export default function Home() {
                 totalRaised={9000000}
               />
             </Link>
-            <ExtendableCard
+            <ProjectCard
               name={"Apple Inc."}
               description={
                 "Founded in 1976, Apple Inc. is a leading innovator in consumer electronics, software, and online services, known for products like the iPhone, MacBook, and the App Store."
@@ -106,7 +106,7 @@ export default function Home() {
               totalInvestor={58400}
               totalRaised={9000000}
             />
-            <ExtendableCard
+            <ProjectCard
               name={"Google LLC"}
               description={
                 "Founded in 1998, Google LLC specializes in internet-related services and products, including search engines, online advertising, cloud computing, and the Android operating system."
@@ -118,7 +118,7 @@ export default function Home() {
               totalInvestor={5000}
               totalRaised={1500000000}
             />
-            <ExtendableCard
+            <ProjectCard
               name={"Microsoft Corporation"}
               description={"Microsoft Corporation is a multinational technology company."}
               joinDate={"January 2018"}

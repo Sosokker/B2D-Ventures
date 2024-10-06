@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useState } from "react";
 import { Clock3Icon, MessageSquareIcon, UserIcon, UsersIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { ExtendableCard } from "@/components/extendableCard";
+import { ProjectCard } from "@/components/projectCard";
 
 export default function Deals() {
   const [postAtFilter, setPostAtFilter] = useState("");
@@ -111,7 +111,7 @@ export default function Deals() {
       {/* Block for all the deals */}
       <div className="mt-10 grid grid-cols-3 gap-4">
         {filteredData.map((item, index) => (
-          <ExtendableCard
+          <ProjectCard
             key={index}
             name={item.name}
             description={item.description}

@@ -8,7 +8,7 @@ interface XMap {
   [tag: string]: string;
 }
 
-interface ExtendableCardProps {
+interface ProjectCardProps {
   name: string;
   description: string;
   joinDate: string;
@@ -21,7 +21,7 @@ interface ExtendableCardProps {
   className?: string;
 }
 
-export function ExtendableCard(props: ExtendableCardProps) {
+export function ProjectCard(props: ProjectCardProps) {
   return (
     <div
       className={cn(
