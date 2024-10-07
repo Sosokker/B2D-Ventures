@@ -92,6 +92,7 @@ export default function Home() {
                 minInvestment={10000}
                 totalInvestor={58400}
                 totalRaised={9000000}
+                imageUri={"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"}
               />
             </Link>
             <ExtendableCard
@@ -105,6 +106,7 @@ export default function Home() {
               minInvestment={10000}
               totalInvestor={58400}
               totalRaised={9000000}
+              imageUri={"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"}
             />
             <ExtendableCard
               name={"Google LLC"}
@@ -117,6 +119,7 @@ export default function Home() {
               minInvestment={10000}
               totalInvestor={5000}
               totalRaised={1500000000}
+              imageUri={"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"}
             />
             <ExtendableCard
               name={"Microsoft Corporation"}
@@ -127,6 +130,7 @@ export default function Home() {
               minInvestment={250}
               totalInvestor={5000}
               totalRaised={1500000}
+              imageUri={"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"}
             />
           </div>
           <div className="self-center py-5 scale-75 md:scale-100">

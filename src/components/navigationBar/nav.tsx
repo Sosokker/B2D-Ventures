@@ -146,9 +146,9 @@ export function NavigationBar() {
 
   const businessComponents = [
     {
-      title: "Businesses",
-      href: "/landing",
-      description: "Raise on B2DVentures",
+      title: "Business",
+      href: "/business/apply",
+      description: "Apply to raise on on B2DVentures",
     },
   ];
 
