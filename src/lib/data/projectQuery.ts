@@ -44,54 +44,29 @@ async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 
     }
   }
 
-async function searchProjects(client: SupabaseClient, searchTerm: string | null, page: number = 1, pageSize: number = 4) {
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize - 1;
-
-  try {
-    let query = client.from("Project").select(
-      `
-        id,
-        projectName,
-        businessId,
-        publishedTime,
-        projectShortDescription,
-        cardImage,
-        ProjectInvestmentDetail (
-          minInvestment,
-          totalInvestment,
-          targetInvestment,
-          investmentDeadline
-        ),
-        ItemTag (
-          Tag (
-            id,
-            value
-          )
-        ),
-        Business (
-          location
+async function getProjectData(client: SupabaseClient, projectId: number) {
+  const query = client.from("Project").select(
+    `
+      project_name:projectName,
+      project_short_description:projectShortDescription,
+      project_description:projectDescription,
+      published_time:publishedTime,
+      ...ProjectInvestmentDetail!inner (
+        min_investment:minInvestment,
+        total_investment:totalInvestment,
+        target_investment:targetInvestment,
+        investment_deadline:investmentDeadline
+      ),
+      tags:ItemTag!inner (
+        ...Tag!inner (
+          tag_name:value
         )
-      `
-    ).order("publishedTime", { ascending: false })
-      .range(start, end);
+      )
+    `
+  ).eq("id", projectId).single()
 
-    if (searchTerm) {
-      query = query.ilike('projectName', `%${searchTerm}%`);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("Error searching projects:", error.message);
-      return { data: null, error: error.message };
-    }
-
-    return { data, error: null };
-  } catch (err) {
-    console.error("Unexpected error:", err);
-    return { data: null, error: "An unexpected error occurred." };
-  }
+  const {data, error} = await query;
+  return { data, error }
 }
 
 export interface FilterParams {
@@ -178,5 +153,5 @@ function searchProjectsQuery(client: SupabaseClient, {searchTerm, tagsFilter, pr
 }
 
 
-export { getTopProjects, searchProjects, searchProjectsQuery };
+export { getTopProjects, getProjectData, searchProjectsQuery };
 
