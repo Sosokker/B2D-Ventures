@@ -35,14 +35,14 @@ export function ProjectCard(props: ProjectCardProps) {
             <Image
               src={props.imageUri}
               alt="Card image"
-              layout="fill"
+              fill
               className="rounded-t-xl bg-background dark:bg-background h-full"
             />
           ) : (
             <Image
               src="/money.png"
               alt="Card image"
-              layout="fill"
+              fill
               className="rounded-t-xl bg-background dark:bg-background h-full"
             />
           )}
