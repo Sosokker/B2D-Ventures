@@ -18,7 +18,9 @@ export default function Apply() {
   let supabase = createSupabaseClient();
   const [industry, setIndustry] = useState<string[]>([]);
   const [isInUS, setIsInUS] = useState("");
-  const [isForSale, setisForSale] = useState("");
+  const [isForSale, setIsForSale] = useState("");
+  const [isGenerating, setIsGenarting] = useState("");
+  const [pitch, setPitch] = useState("");
 
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
@@ -69,7 +71,7 @@ export default function Apply() {
             </Label>
             <div className="flex space-x-5">
               <Input type="text" id="companyName" className="w-96" />
-              <span className="text-[13px] text-neutral-500 self-center">
+              <span className="text-[12px] text-neutral-500 self-center">
                 This should be the name your company uses on your <br />
                 website and in the market.
               </span>
@@ -94,7 +96,7 @@ export default function Apply() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <span className="text-[13px] text-neutral-500 self-center">
+              <span className="text-[12px] text-neutral-500 self-center">
                 Choose the industry that best aligns with your business.
               </span>
             </div>
@@ -105,8 +107,13 @@ export default function Apply() {
               How much money has your company <br /> raised to date?
             </Label>
             <div className="flex space-x-5">
-              <Input type="text" id="companyName" className="w-96" placeholder="$   1,000,000"/>
-              <span className="text-[13px] text-neutral-500 self-center">
+              <Input
+                type="text"
+                id="companyName"
+                className="w-96"
+                placeholder="$   1,000,000"
+              />
+              <span className="text-[12px] text-neutral-500 self-center">
                 The sum total of past financing, including angel or venture{" "}
                 <br />
                 capital, loans, grants, or token sales.
@@ -136,7 +143,7 @@ export default function Apply() {
                   No
                 </Button>
               </div>
-              <span className="text-[13px] text-neutral-500 self-center">
+              <span className="text-[12px] text-neutral-500 self-center">
                 Only companies that are incorporated or formed in the US are{" "}
                 <br />
                 eligible to raise via Reg CF. If your company is incorporated{" "}
@@ -149,29 +156,98 @@ export default function Apply() {
           {/* Is your product available (for sale) in market? */}
           <div className="space-y-5">
             <Label htmlFor="companyName" className="font-bold text-lg">
-              Is your product available (for sale) <br />in market?
+              Is your product available (for sale) <br />
+              in market?
             </Label>
             <div className="flex space-x-5">
               <div className="flex space-x-2 w-96">
                 <Button
                   variant={isForSale === "Yes" ? "default" : "outline"}
-                  onClick={() => setisForSale("Yes")}
+                  onClick={() => setIsForSale("Yes")}
                   className="w-20 h-12 text-base"
                 >
                   Yes
                 </Button>
                 <Button
                   variant={isForSale === "No" ? "default" : "outline"}
-                  onClick={() => setisForSale("No")}
+                  onClick={() => setIsForSale("No")}
                   className="w-20 h-12 text-base"
                 >
                   No
                 </Button>
               </div>
-              <span className="text-[13px] text-neutral-500 self-center">
+              <span className="text-[12px] text-neutral-500 self-center">
                 Only check this box if customers can access, use, or buy your{" "}
                 <br />
                 product today.
+              </span>
+            </div>
+          </div>
+
+          {/* Is your company generating revenue?*/}
+          <div className="space-y-5">
+            <Label htmlFor="companyName" className="font-bold text-lg">
+              Is your company generating revenue?
+            </Label>
+            <div className="flex space-x-5">
+              <div className="flex space-x-2 w-96">
+                <Button
+                  variant={isGenerating === "Yes" ? "default" : "outline"}
+                  onClick={() => setIsGenarting("Yes")}
+                  className="w-20 h-12 text-base"
+                >
+                  Yes
+                </Button>
+                <Button
+                  variant={isGenerating === "No" ? "default" : "outline"}
+                  onClick={() => setIsGenarting("No")}
+                  className="w-20 h-12 text-base"
+                >
+                  No
+                </Button>
+              </div>
+              <span className="text-[12px] text-neutral-500 self-center">
+                Only check this box if your company is making money. <br />
+                Please elaborate on revenue and other traction below.
+              </span>
+            </div>
+          </div>
+
+          {/* Pitch deck */}
+          <div className="space-y-5">
+            <Label htmlFor="companyName" className="font-bold text-lg">
+              Pitch deck
+            </Label>
+            <div className="flex space-x-2 w-96">
+              <Button
+                variant={pitch === "text" ? "default" : "outline"}
+                onClick={() => setPitch("text")}
+                className="w-32 h-12 text-base"
+              >
+                Paste URL
+              </Button>
+              <Button
+                variant={pitch === "file" ? "default" : "outline"}
+                onClick={() => setPitch("file")}
+                className="w-32 h-12 text-base"
+              >
+                Upload a file
+              </Button>
+            </div>
+            <div className="flex space-x-5">
+              <Input
+                type={pitch}
+                id="companyName"
+                className="w-96"
+                placeholder="https:// "
+              />
+              <span className="text-[12px] text-neutral-500 self-center">
+                Your pitch deck and other application info will be used for{" "}
+                <br />
+                internal purposes only. <br />
+                Please make sure this document is publicly accessible. This can{" "}
+                <br />
+                be a DocSend, Box, Dropbox, Google Drive or other link.
               </span>
             </div>
           </div>
