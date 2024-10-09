@@ -102,7 +102,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   <p> Left to invest</p>
                 </span>
                 <Button className="mt-5 w-3/4 h-12">
-                  <Link href="/invest">Invest in NVIDIA</Link>
+                  <Link href={`/invest/${params.id}`}>Invest in {projectData?.project_name}</Link>
                 </Button>
               </div>
             </div>

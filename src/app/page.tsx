@@ -23,7 +23,7 @@ const TopProjects = async () => {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {topProjectsData.map((project) => (
-        <Link href={`/overview/${project.id}`} key={project.id}>
+        <Link href={`/deals/${project.id}`} key={project.id}>
           <ProjectCard
             name={project.projectName}
             description={project.projectShortDescription}

@@ -89,7 +89,7 @@ function searchProjectsQuery(client: SupabaseClient, {searchTerm, tagsFilter, pr
   
   let query = client.from("Project").select(
     `
-    id,
+    project_id:id,
     project_name:projectName,
     published_time:publishedTime,
     project_short_description:projectShortDescription,

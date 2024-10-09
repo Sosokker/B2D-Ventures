@@ -11,6 +11,7 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { searchProjectsQuery, FilterParams, FilterProjectQueryParams } from "@/lib/data/projectQuery";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const ProjectSection = ({ filteredProjects }) => {
   interface Tags {
@@ -31,18 +32,20 @@ const ProjectSection = ({ filteredProjects }) => {
       {/* Block for all the deals */}
       <div className="mt-10 grid grid-cols-3 gap-4">
         {filteredProjects.map((item, index) => (
-          <ProjectCard
-            key={index}
-            name={item.project_name}
-            description={item.project_short_description}
-            joinDate={item.published_time}
-            imageUri={item.card_image_url}
-            location={item.business_location}
-            minInvestment={item.min_investment}
-            totalInvestor={item.total_investment}
-            totalRaised={item.target_investment}
-            tags={item.tags.map((tag: Tags) => tag.tag_name)}
-          />
+          <Link key={index} href={`/deals/${item.project_id}`}>
+            <ProjectCard
+              key={index}
+              name={item.project_name}
+              description={item.project_short_description}
+              joinDate={item.published_time}
+              imageUri={item.card_image_url}
+              location={item.business_location}
+              minInvestment={item.min_investment}
+              totalInvestor={item.total_investment}
+              totalRaised={item.target_investment}
+              tags={item.tags.map((tag: Tags) => tag.tag_name)}
+            />
+          </Link>
         ))}
       </div>
     </div>
