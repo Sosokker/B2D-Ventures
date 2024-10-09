@@ -18,6 +18,7 @@ export default function Apply() {
   let supabase = createSupabaseClient();
   const [industry, setIndustry] = useState<string[]>([]);
   const [isInUS, setIsInUS] = useState("");
+  const [isForSale, setisForSale] = useState("");
 
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
@@ -104,7 +105,7 @@ export default function Apply() {
               How much money has your company <br /> raised to date?
             </Label>
             <div className="flex space-x-5">
-              <Input type="text" id="companyName" className="w-96" />
+              <Input type="text" id="companyName" className="w-96" placeholder="$   1,000,000"/>
               <span className="text-[13px] text-neutral-500 self-center">
                 The sum total of past financing, including angel or venture{" "}
                 <br />
@@ -148,20 +149,20 @@ export default function Apply() {
           {/* Is your product available (for sale) in market? */}
           <div className="space-y-5">
             <Label htmlFor="companyName" className="font-bold text-lg">
-              Is your product available (for sale) in market?
+              Is your product available (for sale) <br />in market?
             </Label>
             <div className="flex space-x-5">
               <div className="flex space-x-2 w-96">
                 <Button
-                  variant={isInUS === "Yes" ? "default" : "outline"}
-                  onClick={() => setIsInUS("Yes")}
+                  variant={isForSale === "Yes" ? "default" : "outline"}
+                  onClick={() => setisForSale("Yes")}
                   className="w-20 h-12 text-base"
                 >
                   Yes
                 </Button>
                 <Button
-                  variant={isInUS === "No" ? "default" : "outline"}
-                  onClick={() => setIsInUS("No")}
+                  variant={isForSale === "No" ? "default" : "outline"}
+                  onClick={() => setisForSale("No")}
                   className="w-20 h-12 text-base"
                 >
                   No
