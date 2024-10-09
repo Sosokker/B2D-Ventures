@@ -21,6 +21,7 @@ export default function Apply() {
   const [isForSale, setIsForSale] = useState("");
   const [isGenerating, setIsGenarting] = useState("");
   const [pitch, setPitch] = useState("");
+  const [projectType, setProjectType] = useState<string[]>([]);
   const communitySize = [
     "N/A",
     "0-5K",
@@ -40,13 +41,28 @@ export default function Apply() {
       console.error(error);
     } else {
       if (BusinessType) {
-        console.table();
+        // console.table();
         setIndustry(BusinessType.map((item) => item.value));
+      }
+    }
+  };
+  const fetchProjectType = async () => {
+    let { data: ProjectType, error } = await supabase
+      .from("ProjectType")
+      .select("value");
+
+    if (error) {
+      console.error(error);
+    } else {
+      if (ProjectType) {
+        console.table(ProjectType);
+        setProjectType(ProjectType.map((item) => item.value));
       }
     }
   };
   useEffect(() => {
     fetchIndustry();
+    fetchProjectType();
   }, []);
   return (
     <div>
@@ -65,7 +81,7 @@ export default function Apply() {
           </p>
         </div>
       </div>
-      <div className="grid grid-flow-row auto-rows-max w-full ml-48">
+      <div className="grid grid-flow-row auto-rows-max w-3/4 ml-48">
         <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
         <p className="ml-96 mt-5 text-neutral-500">
           All requested information in this section is required.
@@ -289,9 +305,70 @@ export default function Apply() {
           </div>
         </div>
       </div>
+
+      {/* apply first project */}
+      <div className="grid auto-rows-max w-3/4 ml-48 bg-zinc-100 dark:bg-zinc-900 mt-10 pt-12 pb-12">
+        {/* header */}
+        <div className="ml-96">
+          <h1 className="text-3xl font-bold mt-10">
+            Begin Your First Fundraising Project
+          </h1>
+          <p className="mt-3 text-sm text-neutral-500">
+            Starting a fundraising project is mandatory for all businesses. This
+            step is crucial <br />
+            to begin your journey and unlock the necessary tools for raising
+            funds.
+          </p>
+
+          {/* project's name */}
+          <div className="mt-10 space-y-5">
+            <Label htmlFor="projectName" className="font-bold text-lg">
+              Project name
+            </Label>
+            <div className="flex space-x-5">
+              <Input type="text" id="projectName" className="w-96" />
+            </div>
+          </div>
+
+          {/* project type */}
+          <div className="mt-10 space-y-5">
+            <Label htmlFor="industry" className="font-bold text-lg mt-10">
+              Project type
+            </Label>
+            <div className="flex space-x-5">
+              <Select>
+                <SelectTrigger className="w-96">
+                  <SelectValue placeholder="Select a Project type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Project type</SelectLabel>
+                    {projectType.map((i) => (
+                      <SelectItem value={i}>{i}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <span className="text-[12px] text-neutral-500 self-center">
+                Please specify the primary purpose of the funds
+              </span>
+            </div>
+          </div>
+
+          {/* short description */}
+          <div className="mt-10 space-y-5">
+            <Label htmlFor="companyName" className="font-bold text-lg">
+              Short description
+            </Label>
+            <div className="flex space-x-5">
+              <Input type="text" id="companyName" className="w-96" />
+            </div>
+          </div>
+        </div>
+      </div>
       {/* Submit */}
       <center>
-        <Button className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5">
+        <Button className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5">
           Submit application
         </Button>
       </center>
