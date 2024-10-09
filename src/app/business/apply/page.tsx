@@ -21,7 +21,15 @@ export default function Apply() {
   const [isForSale, setIsForSale] = useState("");
   const [isGenerating, setIsGenarting] = useState("");
   const [pitch, setPitch] = useState("");
-  const communitySize = ["N/A", "0-5K", "5-10K", "10-20K", "20-50K", "50-100K", "100K+"];
+  const communitySize = [
+    "N/A",
+    "0-5K",
+    "5-10K",
+    "10-20K",
+    "20-50K",
+    "50-100K",
+    "100K+",
+  ];
 
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
@@ -57,7 +65,7 @@ export default function Apply() {
           </p>
         </div>
       </div>
-      <div className="grid grid-flow-row auto-rows-max w-full">
+      <div className="grid grid-flow-row auto-rows-max w-full ml-48">
         <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
         <p className="ml-96 mt-5 text-neutral-500">
           All requested information in this section is required.
