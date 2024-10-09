@@ -3,9 +3,53 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ExtendableCard } from "@/components/extendableCard";
+import { ProjectCard } from "@/components/projectCard";
+import { getTopProjects } from "@/lib/data/projectQuery";
+import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
+import { Suspense } from "react";
 
-export default function Home() {
+const TopProjects = async () => {
+  const supabase = createSupabaseClient();
+  const { data: topProjectsData, error: topProjectsError } = await getTopProjects(supabase);
+
+  if (topProjectsError) {
+    return <div>Error loading top projects: {topProjectsError}</div>;
+  }
+
+  if (!topProjectsData || topProjectsData.length === 0) {
+    return <div>No top projects available.</div>;
+  }
+
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {topProjectsData.map((project) => (
+        <Link href={`/deals/${project.id}`} key={project.id}>
+          <ProjectCard
+            name={project.projectName}
+            description={project.projectShortDescription}
+            imageUri={project.cardImage}
+            joinDate={new Date(project.publishedTime).toLocaleDateString()}
+            location={project.Business.location}
+            tags={project.ItemTag.map((item) => item.Tag.value)}
+            minInvestment={project.ProjectInvestmentDetail[0]?.minInvestment || 0}
+            totalInvestor={0}
+            totalRaised={project.ProjectInvestmentDetail[0]?.totalInvestment || 0}
+          />
+        </Link>
+      ))}
+    </div>
+  );
+};
+
+const ProjectsLoader = () => (
+  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    {[...Array(4)].map((_, index) => (
+      <div key={index} className="h-64 bg-gray-200 animate-pulse rounded-lg"></div>
+    ))}
+  </div>
+);
+
+export default async function Home() {
   return (
     <main>
       <div className="relative mx-auto">
@@ -81,58 +125,9 @@ export default function Home() {
             <p className="text-xl md:text-2xl font-bold">Hottest Deals</p>
             <p className="text-md md:text-lg">The deals attracting the most interest right now</p>
           </span>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link href={"/overview"}>
-              <ExtendableCard
-                name={"NVDA"}
-                description={"Founded in 1993, NVIDIA is a key innovator of computer graphics and AI technology"}
-                joinDate={"December 2021"}
-                location={"Bangkok, Thailand"}
-                tags={[]}
-                minInvestment={10000}
-                totalInvestor={58400}
-                totalRaised={9000000}
-                imageUri={"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"}
-              />
-            </Link>
-            <ExtendableCard
-              name={"Apple Inc."}
-              description={
-                "Founded in 1976, Apple Inc. is a leading innovator in consumer electronics, software, and online services, known for products like the iPhone, MacBook, and the App Store."
-              }
-              joinDate={"February 2020"}
-              location={"Cupertino, California, USA"}
-              tags={[]}
-              minInvestment={10000}
-              totalInvestor={58400}
-              totalRaised={9000000}
-              imageUri={"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"}
-            />
-            <ExtendableCard
-              name={"Google LLC"}
-              description={
-                "Founded in 1998, Google LLC specializes in internet-related services and products, including search engines, online advertising, cloud computing, and the Android operating system."
-              }
-              joinDate={"April 2019"}
-              location={"Mountain View, California, USA"}
-              tags={[]}
-              minInvestment={10000}
-              totalInvestor={5000}
-              totalRaised={1500000000}
-              imageUri={"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"}
-            />
-            <ExtendableCard
-              name={"Microsoft Corporation"}
-              description={"Microsoft Corporation is a multinational technology company."}
-              joinDate={"January 2018"}
-              location={"California, USA"}
-              tags={[]}
-              minInvestment={250}
-              totalInvestor={5000}
-              totalRaised={1500000}
-              imageUri={"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"}
-            />
-          </div>
+          <Suspense fallback={<ProjectsLoader />}>
+            <TopProjects />
+          </Suspense>
           <div className="self-center py-5 scale-75 md:scale-100">
             <Button>
               <Link href={"/deals"}>View all</Link>

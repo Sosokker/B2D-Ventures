@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,8 +5,6 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,36 +12,10 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Bell, Heart, Wallet } from "lucide-react";
+import { SearchBar } from "./serchBar";
+import { ProfileBar } from "./profileBar";
 
-import { LogoutButton } from "@/components/auth/logoutButton";
-
-import useSession from "@/lib/supabase/useSession";
-
-const landings = [
-  {
-    id: 1,
-    title: "Landing 01",
-    route: "/project-management",
-  },
-  {
-    id: 2,
-    title: "Landing 02",
-    route: "/crm-landing",
-  },
-];
 const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
   ({ className, title, children, ...props }, ref) => {
     return (
@@ -69,81 +39,7 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
 );
 ListItem.displayName = "ListItem";
 
-const unAuthenticatedComponents = () => {
-  return (
-    <div className="flex gap-2 pl-2">
-      <Link href="/auth">
-        <Button variant="secondary" className="border-2 border-border">
-          Login
-        </Button>
-      </Link>
-      <Button>Sign up</Button>
-    </div>
-  );
-};
-
-const authenticatedComponents = () => {
-  let notifications = 100;
-  const displayValue = notifications >= 100 ? "..." : notifications;
-  return (
-    <div className="flex gap-3 pl-2 items-center">
-      <Link href={"/notification"}>
-        {" "}
-        <div className="relative inline-block">
-          <Bell className="h-6 w-6" />
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full">
-            {displayValue}
-          </span>
-        </div>
-      </Link>
-      <Heart />
-      <Wallet />
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-            <Avatar>
-              <AvatarImage src="https://api.dicebear.com/9.x/pixel-art/svg" />
-              <AvatarFallback>1</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <LogoutButton />
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
-};
-
 export function NavigationBar() {
-  const { session, loading } = useSession();
-  const user = session?.user;
-  const [sessionLoaded, setSessionLoaded] = React.useState(false);
-  const [searchActive, setSearchActive] = React.useState(false);
-  const router = useRouter();
-
-  React.useEffect(() => {
-    if (!loading) {
-      setSessionLoaded(true);
-    }
-  }, [loading]);
-
-  const handleKeyDown = async (k: React.KeyboardEvent<HTMLInputElement>) => {
-    if (k.key === "Enter") {
-      const query = (k.target as HTMLInputElement).value.trim();
-      if (query) {
-        router.push(`/find?query=${encodeURIComponent(query)}`);
-      }
-    }
-  };
-
   const businessComponents = [
     {
       title: "Business",
@@ -232,17 +128,7 @@ export function NavigationBar() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem className="pl-5 flex">
-                  <Search onClick={() => setSearchActive(!searchActive)} className="cursor-pointer" />
-                  {/* search bar's input */}
-                  <input
-                    type="text"
-                    placeholder="Enter business name..."
-                    className={cn(
-                      "ml-2 border rounded-md px-2 py-1 transition-all duration-300 ease-in-out ",
-                      searchActive ? "w-48 opacity-100" : "w-0 opacity-0"
-                    )}
-                    onKeyDown={handleKeyDown}
-                  />
+                  <SearchBar />
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
@@ -250,17 +136,7 @@ export function NavigationBar() {
             <div className="flex gap-2 pl-2">
               <ThemeToggle />
               <Separator orientation="vertical" className="mx-3" />
-              {sessionLoaded ? (
-                user ? (
-                  authenticatedComponents()
-                ) : (
-                  unAuthenticatedComponents()
-                )
-              ) : (
-                <div>
-                  <Skeleton className="rounded-lg h-full w-[160px]" />
-                </div>
-              )}
+              <ProfileBar />
             </div>
           </div>
         </div>
