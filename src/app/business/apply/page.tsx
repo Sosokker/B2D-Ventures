@@ -57,30 +57,42 @@ export default function Apply() {
           All requested information in this section is required.
         </p>
         {/* form */}
-        <div className="ml-96 mt-5">
+        <div className="ml-96 mt-5 space-y-5">
           {/* company name */}
           <Label htmlFor="companyName" className="font-bold text-lg">
             Company name
           </Label>
-          <Input type="text" id="companyName" className="mt-2 w-96" />
-          <div className="mt-5">
+          <div className="flex space-x-5">
+            <Input type="text" id="companyName" className="w-96" />
+            <span className="text-[13px] text-neutral-500 self-center">
+              This should be the name your company uses on your <br />
+              website and in the market.
+            </span>
+          </div>
+          <div className="mt-5 space-y-5">
             {/* industry */}
             <Label htmlFor="industry" className="font-bold text-lg mt-10">
               Industry
             </Label>
-            <Select>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select an industry" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Industry</SelectLabel>
-                  {industry.map((i) => (
-                    <SelectItem value={i}>{i}</SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <div className="flex space-x-5">
+              <Select>
+                <SelectTrigger className="w-96">
+                  <SelectValue placeholder="Select an industry" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Industry</SelectLabel>
+                    {industry.map((i) => (
+                      <SelectItem value={i}>{i}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <span className="text-[13px] text-neutral-500 self-center">
+                This should be the name your company uses on your <br />
+                website and in the market.
+              </span>
+            </div>
           </div>
         </div>
       </div>
