@@ -1,8 +1,39 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
+import { useEffect, useState } from "react";
 
 export default function Apply() {
+  let supabase = createSupabaseClient();
+  const [industry, setIndustry] = useState<string[]>([]);
+
+  const fetchIndustry = async () => {
+    let { data: BusinessType, error } = await supabase
+      .from("BusinessType")
+      .select("value");
+
+    if (error) {
+      console.error(error);
+    } else {
+      if (BusinessType) {
+        console.table();
+        setIndustry(BusinessType.map((item) => item.value));
+      }
+    }
+  };
+  useEffect(() => {
+    fetchIndustry();
+  }, []);
   return (
     <div>
       <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-100 dark:bg-gray-800 p-5">
@@ -27,10 +58,30 @@ export default function Apply() {
         </p>
         {/* form */}
         <div className="ml-96 mt-5">
+          {/* company name */}
           <Label htmlFor="companyName" className="font-bold text-lg">
             Company name
           </Label>
-          <Input type="email" id="companyName" className="mt-2 w-96" />
+          <Input type="text" id="companyName" className="mt-2 w-96" />
+          <div className="mt-5">
+            {/* industry */}
+            <Label htmlFor="industry" className="font-bold text-lg mt-10">
+              Industry
+            </Label>
+            <Select>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select an industry" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Industry</SelectLabel>
+                  {industry.map((i) => (
+                    <SelectItem value={i}>{i}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
     </div>

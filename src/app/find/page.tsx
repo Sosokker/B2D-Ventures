@@ -3,12 +3,17 @@
 import { useSearchParams } from "next/navigation";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ExtendableCard } from "@/components/extendableCard";
 import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface ProjectInvestmentDetail {
   minInvestment: number;
@@ -35,7 +40,10 @@ interface Business {
 }
 
 function getBusinesses(client: SupabaseClient, query: string | null) {
-  return client.from("Business").select("id, businessName, joinedDate").ilike("businessName", `%${query}%`);
+  return client
+    .from("Business")
+    .select("id, businessName, joinedDate")
+    .ilike("businessName", `%${query}%`);
 }
 
 function getProjects(client: SupabaseClient, businessIds: string[]) {
@@ -59,11 +67,17 @@ function getProjects(client: SupabaseClient, businessIds: string[]) {
 }
 
 function getTags(client: SupabaseClient, projectIds: string[]) {
-  return client.from("ItemTag").select("itemId, Tag (value)").in("itemId", projectIds);
+  return client
+    .from("ItemTag")
+    .select("itemId, Tag (value)")
+    .in("itemId", projectIds);
 }
 
 function getInvestmentCounts(client: SupabaseClient, projectIds: string[]) {
-  return client.from("InvestmentDeal").select("*", { count: "exact", head: true }).in("projectId", projectIds);
+  return client
+    .from("InvestmentDeal")
+    .select("*", { count: "exact", head: true })
+    .in("projectId", projectIds);
 }
 
 export default function Find() {
@@ -84,24 +98,34 @@ export default function Find() {
     data: projects,
     isLoading: isLoadingProjects,
     error: projectError,
-  } = useQuery(getProjects(supabase, businessIds), { enabled: businessIds.length > 0 });
+  } = useQuery(getProjects(supabase, businessIds), {
+    enabled: businessIds.length > 0,
+  });
 
   const projectIds = projects?.map((p) => p.id) || [];
   const {
     data: tags,
     isLoading: isLoadingTags,
     error: tagError,
-  } = useQuery(getTags(supabase, projectIds), { enabled: projectIds.length > 0 });
+  } = useQuery(getTags(supabase, projectIds), {
+    enabled: projectIds.length > 0,
+  });
 
   const {
     data: investmentCounts,
     isLoading: isLoadingInvestments,
     error: investmentError,
-  } = useQuery(getInvestmentCounts(supabase, projectIds), { enabled: projectIds.length > 0 });
+  } = useQuery(getInvestmentCounts(supabase, projectIds), {
+    enabled: projectIds.length > 0,
+  });
 
   // -----
 
-  const isLoading = isLoadingBusinesses || isLoadingProjects || isLoadingTags || isLoadingInvestments;
+  const isLoading =
+    isLoadingBusinesses ||
+    isLoadingProjects ||
+    isLoadingTags ||
+    isLoadingInvestments;
   const error = businessError || projectError || tagError || investmentError;
 
   const results: Business[] =
@@ -112,8 +136,13 @@ export default function Find() {
           ?.filter((project) => project.businessId === business.id)
           .map((project) => ({
             ...project,
-            tags: tags?.filter((tag) => tag.itemId === project.id).map((tag) => tag.Tag.value) || [],
-            investmentCount: investmentCounts?.find((ic) => ic.projectId === project.id)?.count || 0,
+            tags:
+              tags
+                ?.filter((tag) => tag.itemId === project.id)
+                .map((tag) => tag.Tag.value) || [],
+            investmentCount:
+              investmentCounts?.find((ic) => ic.projectId === project.id)
+                ?.count || 0,
           })) || [],
     })) || [];
 
@@ -151,7 +180,10 @@ export default function Find() {
                 <Card className="w-full">
                   <CardHeader>
                     <CardTitle>{business.businessName}</CardTitle>
-                    <CardDescription>Joined Date: {new Date(business.joinedDate).toLocaleDateString()}</CardDescription>
+                    <CardDescription>
+                      Joined Date:{" "}
+                      {new Date(business.joinedDate).toLocaleDateString()}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     {business.Projects.map((project) => (
@@ -161,10 +193,17 @@ export default function Find() {
                         description={project.projectName}
                         joinDate={project.projectName}
                         location={"Bangkok"}
-                        minInvestment={project.ProjectInvestmentDetail[0]?.minInvestment}
-                        totalInvestor={project.ProjectInvestmentDetail[0]?.totalInvestment}
-                        totalRaised={project.ProjectInvestmentDetail[0]?.targetInvestment}
+                        minInvestment={
+                          project.ProjectInvestmentDetail[0]?.minInvestment
+                        }
+                        totalInvestor={
+                          project.ProjectInvestmentDetail[0]?.totalInvestment
+                        }
+                        totalRaised={
+                          project.ProjectInvestmentDetail[0]?.targetInvestment
+                        }
                         tags={[]}
+                        imageUri={null}
                       />
                     ))}
                   </CardContent>
