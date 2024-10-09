@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { useEffect, useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Apply() {
   let supabase = createSupabaseClient();
@@ -20,8 +21,9 @@ export default function Apply() {
   const [isInUS, setIsInUS] = useState("");
   const [isForSale, setIsForSale] = useState("");
   const [isGenerating, setIsGenarting] = useState("");
-  const [pitch, setPitch] = useState("");
+  const [businessPitch, setBusinessPitch] = useState("");
   const [projectType, setProjectType] = useState<string[]>([]);
+  const [projectPitch, setProjectPitch] = useState("");
   const communitySize = [
     "N/A",
     "0-5K",
@@ -245,15 +247,15 @@ export default function Apply() {
             </Label>
             <div className="flex space-x-2 w-96">
               <Button
-                variant={pitch === "text" ? "default" : "outline"}
-                onClick={() => setPitch("text")}
+                variant={businessPitch === "text" ? "default" : "outline"}
+                onClick={() => setBusinessPitch("text")}
                 className="w-32 h-12 text-base"
               >
                 Paste URL
               </Button>
               <Button
-                variant={pitch === "file" ? "default" : "outline"}
-                onClick={() => setPitch("file")}
+                variant={businessPitch === "file" ? "default" : "outline"}
+                onClick={() => setBusinessPitch("file")}
                 className="w-32 h-12 text-base"
               >
                 Upload a file
@@ -261,7 +263,7 @@ export default function Apply() {
             </div>
             <div className="flex space-x-5">
               <Input
-                type={pitch}
+                type={businessPitch}
                 id="companyName"
                 className="w-96"
                 placeholder="https:// "
@@ -361,7 +363,49 @@ export default function Apply() {
               Short description
             </Label>
             <div className="flex space-x-5">
-              <Input type="text" id="companyName" className="w-96" />
+              <Textarea id="shortDescription" className="w-96" />
+              <span className="text-[12px] text-neutral-500 self-center">
+                Could you provide a brief description of your project <br /> in
+                one or two sentences?
+              </span>
+            </div>
+          </div>
+
+          {/* Pitch deck */}
+          <div className="mt-10 space-y-5">
+            <Label htmlFor="companyName" className="font-bold text-lg">
+              Pitch deck
+            </Label>
+            <div className="flex space-x-2 w-96">
+              <Button
+                variant={projectPitch === "text" ? "default" : "outline"}
+                onClick={() => setProjectPitch("text")}
+                className="w-32 h-12 text-base"
+              >
+                Paste URL
+              </Button>
+              <Button
+                variant={projectPitch === "file" ? "default" : "outline"}
+                onClick={() => setProjectPitch("file")}
+                className="w-32 h-12 text-base"
+              >
+                Upload a file
+              </Button>
+            </div>
+            <div className="flex space-x-5">
+              <Input
+                type={projectPitch}
+                id="companyName"
+                className="w-96"
+                placeholder="https:// "
+              />
+              <span className="text-[12px] text-neutral-500 self-center">
+                Please upload a file or paste a link to your pitch, which should{" "}
+                <br />
+                cover key aspects of your project: what it will do, what
+                investors <br /> can expect to gain, and any highlights that
+                make it stand out.
+              </span>
             </div>
           </div>
         </div>
