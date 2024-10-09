@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,6 +17,7 @@ import { useEffect, useState } from "react";
 export default function Apply() {
   let supabase = createSupabaseClient();
   const [industry, setIndustry] = useState<string[]>([]);
+  const [isInUS, setIsInUS] = useState("");
 
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
@@ -57,20 +59,23 @@ export default function Apply() {
           All requested information in this section is required.
         </p>
         {/* form */}
-        <div className="ml-96 mt-5 space-y-5">
-          {/* company name */}
-          <Label htmlFor="companyName" className="font-bold text-lg">
-            Company name
-          </Label>
-          <div className="flex space-x-5">
-            <Input type="text" id="companyName" className="w-96" />
-            <span className="text-[13px] text-neutral-500 self-center">
-              This should be the name your company uses on your <br />
-              website and in the market.
-            </span>
+
+        {/* company name */}
+        <div className="ml-96 mt-5 space-y-10">
+          <div className="mt-10 space-y-5">
+            <Label htmlFor="companyName" className="font-bold text-lg">
+              Company name
+            </Label>
+            <div className="flex space-x-5">
+              <Input type="text" id="companyName" className="w-96" />
+              <span className="text-[13px] text-neutral-500 self-center">
+                This should be the name your company uses on your <br />
+                website and in the market.
+              </span>
+            </div>
           </div>
-          <div className="mt-5 space-y-5">
-            {/* industry */}
+          {/* industry */}
+          <div className="mt-10 space-y-5">
             <Label htmlFor="industry" className="font-bold text-lg mt-10">
               Industry
             </Label>
@@ -89,8 +94,83 @@ export default function Apply() {
                 </SelectContent>
               </Select>
               <span className="text-[13px] text-neutral-500 self-center">
-                This should be the name your company uses on your <br />
-                website and in the market.
+                Choose the industry that best aligns with your business.
+              </span>
+            </div>
+          </div>
+          {/* How much money has your company raised to date? */}
+          <div className="space-y-5">
+            <Label htmlFor="companyName" className="font-bold text-lg">
+              How much money has your company <br /> raised to date?
+            </Label>
+            <div className="flex space-x-5">
+              <Input type="text" id="companyName" className="w-96" />
+              <span className="text-[13px] text-neutral-500 self-center">
+                The sum total of past financing, including angel or venture{" "}
+                <br />
+                capital, loans, grants, or token sales.
+              </span>
+            </div>
+          </div>
+          {/* Is your company incorporated in the United States? */}
+          <div className="space-y-5">
+            <Label htmlFor="companyName" className="font-bold text-lg">
+              Is your company incorporated in the <br />
+              United States?
+            </Label>
+            <div className="flex space-x-5">
+              <div className="flex space-x-2 w-96">
+                <Button
+                  variant={isInUS === "Yes" ? "default" : "outline"}
+                  onClick={() => setIsInUS("Yes")}
+                  className="w-20 h-12 text-base"
+                >
+                  Yes
+                </Button>
+                <Button
+                  variant={isInUS === "No" ? "default" : "outline"}
+                  onClick={() => setIsInUS("No")}
+                  className="w-20 h-12 text-base"
+                >
+                  No
+                </Button>
+              </div>
+              <span className="text-[13px] text-neutral-500 self-center">
+                Only companies that are incorporated or formed in the US are{" "}
+                <br />
+                eligible to raise via Reg CF. If your company is incorporated{" "}
+                <br />
+                outside the US, we still encourage you to apply.
+              </span>
+            </div>
+          </div>
+
+          {/* Is your product available (for sale) in market? */}
+          <div className="space-y-5">
+            <Label htmlFor="companyName" className="font-bold text-lg">
+              Is your product available (for sale) in market?
+            </Label>
+            <div className="flex space-x-5">
+              <div className="flex space-x-2 w-96">
+                <Button
+                  variant={isInUS === "Yes" ? "default" : "outline"}
+                  onClick={() => setIsInUS("Yes")}
+                  className="w-20 h-12 text-base"
+                >
+                  Yes
+                </Button>
+                <Button
+                  variant={isInUS === "No" ? "default" : "outline"}
+                  onClick={() => setIsInUS("No")}
+                  className="w-20 h-12 text-base"
+                >
+                  No
+                </Button>
+              </div>
+              <span className="text-[13px] text-neutral-500 self-center">
+                Only check this box if customers can access, use, or buy your{" "}
+                <br />
+                product today.
               </span>
             </div>
           </div>
