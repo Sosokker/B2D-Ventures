@@ -1,69 +1,23 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ExtendableCard } from "@/components/extendableCard";
+import { ProjectCard } from "@/components/projectCard";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getBusinesses, getInvestmentCounts, getProjects, getTags } from "@/lib/data/query";
+import { Tables } from "@/types/database.types";
 
-interface ProjectInvestmentDetail {
-  minInvestment: number;
-  totalInvestment: number;
-  targetInvestment: number;
-}
+interface ProjectInvestmentDetail extends Tables<"ProjectInvestmentDetail"> {}
 
-interface Project {
-  id: string;
-  projectName: string;
-  businessId: string;
-  investmentCount: number;
-  projectShortDescription: string;
-  publishedTime: string;
+interface Project extends Tables<"Project"> {
   ProjectInvestmentDetail: ProjectInvestmentDetail[];
-  tags: string[];
 }
 
-interface Business {
-  id: string;
-  businessName: string;
-  joinedDate: string;
+interface Business extends Tables<"Business"> {
   Projects: Project[];
-}
-
-function getBusinesses(client: SupabaseClient, query: string | null) {
-  return client.from("Business").select("id, businessName, joinedDate").ilike("businessName", `%${query}%`);
-}
-
-function getProjects(client: SupabaseClient, businessIds: string[]) {
-  return client
-    .from("Project")
-    .select(
-      `
-            id,
-            projectName,
-            businessId,
-            publishedTime,
-            projectShortDescription,
-            ProjectInvestmentDetail (
-                minInvestment,
-                totalInvestment,
-                targetInvestment
-            )
-        `
-    )
-    .in("businessId", businessIds);
-}
-
-function getTags(client: SupabaseClient, projectIds: string[]) {
-  return client.from("ItemTag").select("itemId, Tag (value)").in("itemId", projectIds);
-}
-
-function getInvestmentCounts(client: SupabaseClient, projectIds: string[]) {
-  return client.from("InvestmentDeal").select("*", { count: "exact", head: true }).in("projectId", projectIds);
 }
 
 export default function Find() {
@@ -132,22 +86,6 @@ export default function Find() {
           <ul>
             {results.map((business) => (
               <li key={business.id}>
-                {/* <h2>{business.businessName}</h2>
-                <p>Joined Date: {new Date(business.joinedDate).toLocaleDateString()}</p>
-                {business.Projects.map((project) => (
-                  <ExtendableCard
-                    key={project.id}
-                    name={project.projectName}
-                    description={project.projectName}
-                    joinDate={project.projectName}
-                    location={"Bangkok"}
-                    minInvestment={project.ProjectInvestmentDetail[0]?.minInvestment}
-                    totalInvestor={project.ProjectInvestmentDetail[0]?.totalInvestment}
-                    totalRaised={project.ProjectInvestmentDetail[0]?.targetInvestment}
-                    tags={null}
-                  />
-                ))} */}
-
                 <Card className="w-full">
                   <CardHeader>
                     <CardTitle>{business.businessName}</CardTitle>
@@ -155,7 +93,7 @@ export default function Find() {
                   </CardHeader>
                   <CardContent>
                     {business.Projects.map((project) => (
-                      <ExtendableCard
+                      <ProjectCard
                         key={project.id}
                         name={project.projectName}
                         description={project.projectName}

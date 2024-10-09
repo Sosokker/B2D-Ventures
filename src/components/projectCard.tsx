@@ -8,7 +8,7 @@ interface XMap {
   [tag: string]: string;
 }
 
-interface ExtendableCardProps {
+interface ProjectCardProps {
   name: string;
   description: string;
   joinDate: string;
@@ -21,7 +21,7 @@ interface ExtendableCardProps {
   className?: string;
 }
 
-export function ExtendableCard(props: ExtendableCardProps) {
+export function ProjectCard(props: ProjectCardProps) {
   return (
     <div
       className={cn(
@@ -35,14 +35,14 @@ export function ExtendableCard(props: ExtendableCardProps) {
             <Image
               src={props.imageUri}
               alt="Card image"
-              layout="fill"
+              fill
               className="rounded-t-xl bg-background dark:bg-background h-full"
             />
           ) : (
             <Image
               src="/money.png"
               alt="Card image"
-              layout="fill"
+              fill
               className="rounded-t-xl bg-background dark:bg-background h-full"
             />
           )}
