@@ -38,20 +38,26 @@ export default function Find() {
     data: projects,
     isLoading: isLoadingProjects,
     error: projectError,
-  } = useQuery(getProjects(supabase, businessIds), { enabled: businessIds.length > 0 });
+  } = useQuery(getProjects(supabase, businessIds), {
+    enabled: businessIds.length > 0,
+  });
 
   const projectIds = projects?.map((p) => p.id) || [];
   const {
     data: tags,
     isLoading: isLoadingTags,
     error: tagError,
-  } = useQuery(getTags(supabase, projectIds), { enabled: projectIds.length > 0 });
+  } = useQuery(getTags(supabase, projectIds), {
+    enabled: projectIds.length > 0,
+  });
 
   const {
     data: investmentCounts,
     isLoading: isLoadingInvestments,
     error: investmentError,
-  } = useQuery(getInvestmentCounts(supabase, projectIds), { enabled: projectIds.length > 0 });
+  } = useQuery(getInvestmentCounts(supabase, projectIds), {
+    enabled: projectIds.length > 0,
+  });
 
   // -----
 
@@ -103,6 +109,7 @@ export default function Find() {
                         totalInvestor={project.ProjectInvestmentDetail[0]?.totalInvestment}
                         totalRaised={project.ProjectInvestmentDetail[0]?.targetInvestment}
                         tags={[]}
+                        imageUri={null}
                       />
                     ))}
                   </CardContent>

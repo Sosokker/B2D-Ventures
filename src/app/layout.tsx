@@ -39,8 +39,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <NavigationBar />
               <div className="flex-1 bg-background">{children}</div>
             </div>
+            <SiteFooter />
           </ThemeProvider>
-          <SiteFooter />
         </body>
       </html>
     </ReactQueryClientProvider>

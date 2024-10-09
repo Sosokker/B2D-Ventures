@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="pt-6">
-      <div className="flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row bg-foreground text-background">
+    <footer className="pt-6 ">
+      <div className="flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row text-background bg-foreground">
         <div className="container max-w-screen-xl flex flex-col md:flex-row justify-between items-center py-6">
           {/* Logo or Brand */}
           <div className="flex items-center space-x-4">
