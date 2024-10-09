@@ -21,6 +21,7 @@ export default function Apply() {
   const [isForSale, setIsForSale] = useState("");
   const [isGenerating, setIsGenarting] = useState("");
   const [pitch, setPitch] = useState("");
+  const communitySize = ["N/A", "0-5K", "5-10K", "10-20K", "20-50K", "50-100K", "100K+"];
 
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
@@ -248,6 +249,33 @@ export default function Apply() {
                 Please make sure this document is publicly accessible. This can{" "}
                 <br />
                 be a DocSend, Box, Dropbox, Google Drive or other link.
+              </span>
+            </div>
+          </div>
+
+          {/* What's the rough size of your community? */}
+          <div className="mt-10 space-y-5">
+            <Label htmlFor="industry" className="font-bold text-lg mt-10">
+              What's the rough size of your <br /> community?
+            </Label>
+            <div className="flex space-x-5">
+              <Select>
+                <SelectTrigger className="w-96">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Select</SelectLabel>
+                    {communitySize.map((i) => (
+                      <SelectItem value={i}>{i}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <span className="text-[12px] text-neutral-500 self-center">
+                Include your email list, social media following (i.e. Instagram,{" "}
+                <br /> Discord, Facebook, Twitter, TikTok). We’d like to
+                understand the <br /> rough size of your current audience.
               </span>
             </div>
           </div>
