@@ -289,6 +289,12 @@ export default function Apply() {
           </div>
         </div>
       </div>
+      {/* Submit */}
+      <center>
+        <Button className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5">
+          Submit application
+        </Button>
+      </center>
     </div>
   );
 }
