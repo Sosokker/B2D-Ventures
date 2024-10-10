@@ -154,13 +154,13 @@ export default function Apply() {
             </div>
             {/* How much money has your company raised to date? */}
             <div className="space-y-5">
-              <Label htmlFor="companyName" className="font-bold text-lg">
+              <Label htmlFor="totalRaised" className="font-bold text-lg">
                 How much money has your company <br /> raised to date?
               </Label>
               <div className="flex space-x-5">
                 <Input
                   type="text"
-                  id="companyName"
+                  id="totalRaised"
                   className="w-96"
                   placeholder="$   1,000,000"
                   {...register}
@@ -174,13 +174,14 @@ export default function Apply() {
             </div>
             {/* Is your company incorporated in the United States? */}
             <div className="space-y-5">
-              <Label htmlFor="companyName" className="font-bold text-lg">
+              <Label htmlFor="isInUS" className="font-bold text-lg">
                 Is your company incorporated in the <br />
                 United States?
               </Label>
               <div className="flex space-x-5">
                 <div className="flex space-x-2 w-96">
                   <Button
+                    type="button"
                     variant={isInUS === "Yes" ? "default" : "outline"}
                     onClick={() => setIsInUS("Yes")}
                     className="w-20 h-12 text-base"
@@ -188,6 +189,7 @@ export default function Apply() {
                     Yes
                   </Button>
                   <Button
+                    type="button"
                     variant={isInUS === "No" ? "default" : "outline"}
                     onClick={() => setIsInUS("No")}
                     className="w-20 h-12 text-base"
@@ -207,13 +209,14 @@ export default function Apply() {
 
             {/* Is your product available (for sale) in market? */}
             <div className="space-y-5">
-              <Label htmlFor="companyName" className="font-bold text-lg">
+              <Label htmlFor="isForSale" className="font-bold text-lg">
                 Is your product available (for sale) <br />
                 in market?
               </Label>
               <div className="flex space-x-5">
                 <div className="flex space-x-2 w-96">
                   <Button
+                    type="button"
                     variant={isForSale === "Yes" ? "default" : "outline"}
                     onClick={() => setIsForSale("Yes")}
                     className="w-20 h-12 text-base"
@@ -221,6 +224,7 @@ export default function Apply() {
                     Yes
                   </Button>
                   <Button
+                    type="button"
                     variant={isForSale === "No" ? "default" : "outline"}
                     onClick={() => setIsForSale("No")}
                     className="w-20 h-12 text-base"
@@ -238,12 +242,13 @@ export default function Apply() {
 
             {/* Is your company generating revenue?*/}
             <div className="space-y-5">
-              <Label htmlFor="companyName" className="font-bold text-lg">
+              <Label htmlFor="isGenerating" className="font-bold text-lg">
                 Is your company generating revenue?
               </Label>
               <div className="flex space-x-5">
                 <div className="flex space-x-2 w-96">
                   <Button
+                    type="button"
                     variant={isGenerating === "Yes" ? "default" : "outline"}
                     onClick={() => setIsGenarting("Yes")}
                     className="w-20 h-12 text-base"
@@ -251,6 +256,7 @@ export default function Apply() {
                     Yes
                   </Button>
                   <Button
+                    type="button"
                     variant={isGenerating === "No" ? "default" : "outline"}
                     onClick={() => setIsGenarting("No")}
                     className="w-20 h-12 text-base"
@@ -267,11 +273,12 @@ export default function Apply() {
 
             {/* Pitch deck */}
             <div className="space-y-5">
-              <Label htmlFor="companyName" className="font-bold text-lg">
+              <Label htmlFor="pitchDeck" className="font-bold text-lg">
                 Pitch deck
               </Label>
               <div className="flex space-x-2 w-96">
                 <Button
+                  type="button"
                   variant={businessPitch === "text" ? "default" : "outline"}
                   onClick={() => setBusinessPitch("text")}
                   className="w-32 h-12 text-base"
@@ -279,6 +286,7 @@ export default function Apply() {
                   Paste URL
                 </Button>
                 <Button
+                  type="button"
                   variant={businessPitch === "file" ? "default" : "outline"}
                   onClick={() => setBusinessPitch("file")}
                   className="w-32 h-12 text-base"
@@ -306,7 +314,7 @@ export default function Apply() {
 
             {/* What's the rough size of your community? */}
             <div className="mt-10 space-y-5">
-              <Label htmlFor="industry" className="font-bold text-lg mt-10">
+              <Label htmlFor="companySize" className="font-bold text-lg mt-10">
                 What's the rough size of your <br /> community?
               </Label>
               <div className="flex space-x-5">
@@ -360,7 +368,7 @@ export default function Apply() {
 
             {/* project type */}
             <div className="mt-10 space-y-5">
-              <Label htmlFor="industry" className="font-bold text-lg mt-10">
+              <Label htmlFor="projectType" className="font-bold text-lg mt-10">
                 Project type
               </Label>
               <div className="flex space-x-5">
@@ -385,7 +393,7 @@ export default function Apply() {
 
             {/* short description */}
             <div className="mt-10 space-y-5">
-              <Label htmlFor="companyName" className="font-bold text-lg">
+              <Label htmlFor="shortDescription" className="font-bold text-lg">
                 Short description
               </Label>
               <div className="flex space-x-5">
@@ -399,11 +407,12 @@ export default function Apply() {
 
             {/* Pitch deck */}
             <div className="mt-10 space-y-5">
-              <Label htmlFor="companyName" className="font-bold text-lg">
+              <Label htmlFor="projectPitchDeck" className="font-bold text-lg">
                 Pitch deck
               </Label>
               <div className="flex space-x-2 w-96">
                 <Button
+                  type="button"
                   variant={projectPitch === "text" ? "default" : "outline"}
                   onClick={() => setProjectPitch("text")}
                   className="w-32 h-12 text-base"
@@ -411,6 +420,7 @@ export default function Apply() {
                   Paste URL
                 </Button>
                 <Button
+                  type="button"
                   variant={projectPitch === "file" ? "default" : "outline"}
                   onClick={() => setProjectPitch("file")}
                   className="w-32 h-12 text-base"
@@ -421,7 +431,7 @@ export default function Apply() {
               <div className="flex space-x-5">
                 <Input
                   type={projectPitch}
-                  id="companyName"
+                  id="projectPitchDeck"
                   className="w-96"
                   placeholder="https:// "
                 />
@@ -438,14 +448,14 @@ export default function Apply() {
         </div>
         {/* Submit */}
         <center>
-          <Button className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5">
+          <Button
+            className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
+            type="button"
+          >
             Submit application
           </Button>
         </center>
       </form>
     </div>
   );
-}
-function setValue(arg0: string, value: string) {
-  throw new Error("Function not implemented.");
 }
