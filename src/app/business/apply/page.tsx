@@ -22,10 +22,27 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function Apply() {
+  const formSchema = z.object({
+    companyName: z.string().min(5, {
+      message: "Company name must be at least 5 characters.",
+    }),
+    totalRaised: z.number().int({
+      message: "Total raised must be an integer.",
+    }),
+  });
   let supabase = createSupabaseClient();
-  const { register, handleSubmit, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(formSchema),
+  });
   const [industry, setIndustry] = useState<string[]>([]);
   const [selectedIndustry, setSelectedIndustry] = useState("");
   const [isInUS, setIsInUS] = useState("");
@@ -153,6 +170,15 @@ export default function Apply() {
                   website and in the market.
                 </span>
               </div>
+              {errors.companyName && (
+                <p className="text-red-500 text-sm">
+                  {errors.companyName && (
+                    <p className="text-red-500 text-sm">
+                      {errors.companyName.message as string}
+                    </p>
+                  )}
+                </p>
+              )}
             </div>
             {/* industry */}
             <div className="mt-10 space-y-5">
