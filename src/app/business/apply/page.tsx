@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/tooltip";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Selector } from "@/components/selector";
 
 export default function Apply() {
   const formSchema = z.object({
@@ -237,104 +238,66 @@ export default function Apply() {
               </div>
             </div>
             {/* Is your company incorporated in the United States? */}
-            <div className="space-y-5">
-              <Label htmlFor="isInUS" className="font-bold text-lg">
-                Is your company incorporated in the <br />
-                United States?
-              </Label>
-              <div className="flex space-x-5">
-                <div className="flex space-x-2 w-96">
-                  <Button
-                    type="button"
-                    variant={isInUS === "Yes" ? "default" : "outline"}
-                    onClick={() => handleFieldChange("isInUS", "Yes")}
-                    className="w-20 h-12 text-base"
-                  >
-                    Yes
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={isInUS === "No" ? "default" : "outline"}
-                    onClick={() => handleFieldChange("isInUS", "No")}
-                    className="w-20 h-12 text-base"
-                  >
-                    No
-                  </Button>
-                  <input type="hidden" value={isInUS} {...register("isInUS")} />
-                </div>
-                <span className="text-[12px] text-neutral-500 self-center">
+            <Selector
+              label={
+                <>
+                  Is your company incorporated in the <br />
+                  United States?
+                </>
+              }
+              name="isInUS"
+              choice1="Yes"
+              choice2="No"
+              handleFunction={handleFieldChange}
+              description={
+                <>
                   Only companies that are incorporated or formed in the US are{" "}
                   <br />
                   eligible to raise via Reg CF. If your company is incorporated{" "}
                   <br />
                   outside the US, we still encourage you to apply.
-                </span>
-              </div>
-            </div>
+                </>
+              }
+              value={isInUS}
+            />
 
             {/* Is your product available (for sale) in market? */}
-            <div className="space-y-5">
-              <Label htmlFor="isForSale" className="font-bold text-lg">
-                Is your product available (for sale) <br />
-                in market?
-              </Label>
-              <div className="flex space-x-5">
-                <div className="flex space-x-2 w-96">
-                  <Button
-                    type="button"
-                    variant={isForSale === "Yes" ? "default" : "outline"}
-                    onClick={() => handleFieldChange("isForSale", "Yes")}
-                    className="w-20 h-12 text-base"
-                  >
-                    Yes
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={isForSale === "No" ? "default" : "outline"}
-                    onClick={() => handleFieldChange("isForSale", "No")}
-                    className="w-20 h-12 text-base"
-                  >
-                    No
-                  </Button>
-                </div>
-                <span className="text-[12px] text-neutral-500 self-center">
+            <Selector
+              label={
+                <>
+                  Is your product available (for sale) <br />
+                  in market?
+                </>
+              }
+              name="isForSale"
+              choice1="Yes"
+              choice2="No"
+              handleFunction={handleFieldChange}
+              description={
+                <>
                   Only check this box if customers can access, use, or buy your{" "}
                   <br />
                   product today.
-                </span>
-              </div>
-            </div>
+                </>
+              }
+              value={isForSale}
+            />
 
             {/* Is your company generating revenue?*/}
-            <div className="space-y-5">
-              <Label htmlFor="isGenerating" className="font-bold text-lg">
-                Is your company generating revenue?
-              </Label>
-              <div className="flex space-x-5">
-                <div className="flex space-x-2 w-96">
-                  <Button
-                    type="button"
-                    variant={isGenerating === "Yes" ? "default" : "outline"}
-                    onClick={() => handleFieldChange("isGenerating", "Yes")}
-                    className="w-20 h-12 text-base"
-                  >
-                    Yes
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={isGenerating === "No" ? "default" : "outline"}
-                    onClick={() => handleFieldChange("isGenerating", "No")}
-                    className="w-20 h-12 text-base"
-                  >
-                    No
-                  </Button>
-                </div>
-                <span className="text-[12px] text-neutral-500 self-center">
+            <Selector
+              label={<>Is your company generating revenue?</>}
+              name="isGenerating"
+              choice1="Yes"
+              choice2="No"
+              handleFunction={handleFieldChange}
+              description={
+                <>
                   Only check this box if your company is making money. <br />
                   Please elaborate on revenue and other traction below.
-                </span>
-              </div>
-            </div>
+                </>
+              }
+              value={isGenerating}
+            />
 
             {/* Pitch deck */}
             <div className="space-y-5">
