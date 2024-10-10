@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -15,6 +16,12 @@ import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function Apply() {
   let supabase = createSupabaseClient();
@@ -27,6 +34,7 @@ export default function Apply() {
   const [businessPitch, setBusinessPitch] = useState("");
   const [projectType, setProjectType] = useState<string[]>([]);
   const [projectPitch, setProjectPitch] = useState("");
+  const [applyProject, setApplyProject] = useState(false);
   const communitySize = [
     "N/A",
     "0-5K",
@@ -339,118 +347,162 @@ export default function Apply() {
                 </span>
               </div>
             </div>
+            <div className="flex space-x-5">
+              <Switch onCheckedChange={() => setApplyProject(!applyProject)}>
+                Apply your first project!
+              </Switch>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="text-[12px] text-neutral-500 self-center cursor-pointer">
+                      Would you like to apply for your first fundraising project
+                      as well?
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-[11px]">
+                      Toggling this option allows you to begin your first
+                      project, <br /> which is crucial for unlocking the tools
+                      necessary to raise funds.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
         </div>
 
         {/* apply first project */}
-        <div className="grid auto-rows-max w-3/4 ml-48 bg-zinc-100 dark:bg-zinc-900 mt-10 pt-12 pb-12">
-          {/* header */}
-          <div className="ml-96">
-            <h1 className="text-3xl font-bold mt-10">
-              Begin Your First Fundraising Project
-            </h1>
-            <p className="mt-3 text-sm text-neutral-500">
-              Starting a fundraising project is mandatory for all businesses.
-              This step is crucial <br />
-              to begin your journey and unlock the necessary tools for raising
-              funds.
-            </p>
+        {applyProject && (
+          <div className="grid auto-rows-max w-3/4 ml-48 bg-zinc-100 dark:bg-zinc-900 mt-10 pt-12 pb-12">
+            {/* header */}
+            <div className="ml-96">
+              <h1 className="text-3xl font-bold mt-10">
+                Begin Your First Fundraising Project
+              </h1>
+              <p className="mt-3 text-sm text-neutral-500">
+                Starting a fundraising project is mandatory for all businesses.
+                This step is crucial <br />
+                to begin your journey and unlock the necessary tools for raising
+                funds.
+              </p>
 
-            {/* project's name */}
-            <div className="mt-10 space-y-5">
-              <Label htmlFor="projectName" className="font-bold text-lg">
-                Project name
-              </Label>
-              <div className="flex space-x-5">
-                <Input type="text" id="projectName" className="w-96" />
+              {/* project's name */}
+              <div className="mt-10 space-y-5">
+                <Label htmlFor="projectName" className="font-bold text-lg">
+                  Project name
+                </Label>
+                <div className="flex space-x-5">
+                  <Input type="text" id="projectName" className="w-96" />
+                </div>
               </div>
-            </div>
 
-            {/* project type */}
-            <div className="mt-10 space-y-5">
-              <Label htmlFor="projectType" className="font-bold text-lg mt-10">
-                Project type
-              </Label>
-              <div className="flex space-x-5">
-                <Select>
-                  <SelectTrigger className="w-96">
-                    <SelectValue placeholder="Select a Project type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Project type</SelectLabel>
-                      {projectType.map((i) => (
-                        <SelectItem value={i}>{i}</SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <span className="text-[12px] text-neutral-500 self-center">
-                  Please specify the primary purpose of the funds
-                </span>
-              </div>
-            </div>
-
-            {/* short description */}
-            <div className="mt-10 space-y-5">
-              <Label htmlFor="shortDescription" className="font-bold text-lg">
-                Short description
-              </Label>
-              <div className="flex space-x-5">
-                <Textarea id="shortDescription" className="w-96" />
-                <span className="text-[12px] text-neutral-500 self-center">
-                  Could you provide a brief description of your project <br />{" "}
-                  in one or two sentences?
-                </span>
-              </div>
-            </div>
-
-            {/* Pitch deck */}
-            <div className="mt-10 space-y-5">
-              <Label htmlFor="projectPitchDeck" className="font-bold text-lg">
-                Pitch deck
-              </Label>
-              <div className="flex space-x-2 w-96">
-                <Button
-                  type="button"
-                  variant={projectPitch === "text" ? "default" : "outline"}
-                  onClick={() => setProjectPitch("text")}
-                  className="w-32 h-12 text-base"
+              {/* project type */}
+              <div className="mt-10 space-y-5">
+                <Label
+                  htmlFor="projectType"
+                  className="font-bold text-lg mt-10"
                 >
-                  Paste URL
-                </Button>
-                <Button
-                  type="button"
-                  variant={projectPitch === "file" ? "default" : "outline"}
-                  onClick={() => setProjectPitch("file")}
-                  className="w-32 h-12 text-base"
-                >
-                  Upload a file
-                </Button>
+                  Project type
+                </Label>
+                <div className="flex space-x-5">
+                  <Select>
+                    <SelectTrigger className="w-96">
+                      <SelectValue placeholder="Select a Project type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Project type</SelectLabel>
+                        {projectType.map((i) => (
+                          <SelectItem value={i}>{i}</SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    Please specify the primary purpose of the funds
+                  </span>
+                </div>
               </div>
-              <div className="flex space-x-5">
-                <Input
-                  type={projectPitch}
-                  id="projectPitchDeck"
-                  className="w-96"
-                  placeholder="https:// "
-                />
-                <span className="text-[12px] text-neutral-500 self-center">
-                  Please upload a file or paste a link to your pitch, which
-                  should <br />
-                  cover key aspects of your project: what it will do, what
-                  investors <br /> can expect to gain, and any highlights that
-                  make it stand out.
-                </span>
+
+              {/* short description */}
+              <div className="mt-10 space-y-5">
+                <Label htmlFor="shortDescription" className="font-bold text-lg">
+                  Short description
+                </Label>
+                <div className="flex space-x-5">
+                  <Textarea id="shortDescription" className="w-96" />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    Could you provide a brief description of your project <br />{" "}
+                    in one or two sentences?
+                  </span>
+                </div>
+              </div>
+
+              {/* Pitch deck */}
+              <div className="mt-10 space-y-5">
+                <Label htmlFor="projectPitchDeck" className="font-bold text-lg">
+                  Pitch deck
+                </Label>
+                <div className="flex space-x-2 w-96">
+                  <Button
+                    type="button"
+                    variant={projectPitch === "text" ? "default" : "outline"}
+                    onClick={() => setProjectPitch("text")}
+                    className="w-32 h-12 text-base"
+                  >
+                    Paste URL
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={projectPitch === "file" ? "default" : "outline"}
+                    onClick={() => setProjectPitch("file")}
+                    className="w-32 h-12 text-base"
+                  >
+                    Upload a file
+                  </Button>
+                </div>
+                <div className="flex space-x-5">
+                  <Input
+                    type={projectPitch}
+                    id="projectPitchDeck"
+                    className="w-96"
+                    placeholder="https:// "
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    Please upload a file or paste a link to your pitch, which
+                    should <br />
+                    cover key aspects of your project: what it will do, what
+                    investors <br /> can expect to gain, and any highlights that
+                    make it stand out.
+                  </span>
+                </div>
+              </div>
+
+              {/* project logo */}
+              <div className="mt-10 space-y-5">
+                <Label
+                  htmlFor="projectLogo"
+                  className="font-bold text-lg mt-10"
+                >
+                  Project logo
+                </Label>
+                <div className="flex space-x-5">
+                  <Input type="file" id="projectPitchDeck" className="w-96" />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    Please upload the logo picture that best represents your
+                    project.
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
         {/* Submit */}
         <center>
           <Button
             className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
-            type="button"
+            type="submit"
           >
             Submit application
           </Button>
