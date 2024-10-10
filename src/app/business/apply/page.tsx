@@ -35,6 +35,8 @@ export default function Apply() {
   const [projectType, setProjectType] = useState<string[]>([]);
   const [projectPitch, setProjectPitch] = useState("");
   const [applyProject, setApplyProject] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+
   const communitySize = [
     "N/A",
     "0-5K",
@@ -44,6 +46,17 @@ export default function Apply() {
     "50-100K",
     "100K+",
   ];
+
+  const handleRemoveImage = (index: number) => {
+    const updatedImages = selectedImages.filter((_, i) => i !== index);
+    setSelectedImages(updatedImages);
+  };
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const filesArray = Array.from(event.target.files);
+      setSelectedImages((prevImages) => [...prevImages, ...filesArray]);
+    }
+  };
 
   const onSubmit = (data: any) => {
     alert(JSON.stringify(data));
@@ -493,6 +506,49 @@ export default function Apply() {
                     Please upload the logo picture that best represents your
                     project.
                   </span>
+                </div>
+              </div>
+
+              {/* Project pictures */}
+              <div className="mt-10 space-y-5">
+                <Label
+                  htmlFor="projectPicture"
+                  className="font-bold text-lg mt-10"
+                >
+                  Project pictures
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="file"
+                    id="projectPicture"
+                    multiple
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="w-96"
+                    value={selectedImages.length === 0 ? "" : undefined}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    Feel free to upload any additional images that provide{" "}
+                    <br />
+                    further insight into your project.
+                  </span>
+                </div>
+                <div className="mt-5 space-y-2 w-96">
+                  {selectedImages.map((image, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center border p-2 rounded"
+                    >
+                      <span>{image.name}</span>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleRemoveImage(index)}
+                        className="ml-4"
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
