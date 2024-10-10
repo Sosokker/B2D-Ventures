@@ -501,7 +501,12 @@ export default function Apply() {
                   Project logo
                 </Label>
                 <div className="flex space-x-5">
-                  <Input type="file" id="projectPitchDeck" className="w-96" />
+                  <Input
+                    type="file"
+                    id="projectPitchDeck"
+                    className="w-96"
+                    accept="image/*"
+                  />
                   <span className="text-[12px] text-neutral-500 self-center">
                     Please upload the logo picture that best represents your
                     project.
@@ -549,6 +554,64 @@ export default function Apply() {
                       </Button>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Minimum Investment */}
+              <div className="space-y-5 mt-10">
+                <Label htmlFor="minInvest" className="font-bold text-lg">
+                  Minimum investment
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="text"
+                    id="minInvest"
+                    className="w-96"
+                    placeholder="$   500"
+                    {...register}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    This helps set clear expectations for investors
+                  </span>
+                </div>
+              </div>
+              {/* Target Investment */}
+              <div className="space-y-5 mt-10">
+                <Label htmlFor="targetInvest" className="font-bold text-lg">
+                  Target investment
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="text"
+                    id="targetInvest"
+                    className="w-96"
+                    placeholder="$   1,000,000"
+                    {...register}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    We encourage you to set a specific target investment <br />{" "}
+                    amount that reflects your funding goals.
+                  </span>
+                </div>
+              </div>
+
+              {/* Deadline */}
+              <div className="space-y-5 mt-10">
+                <Label htmlFor="deadline" className="font-bold text-lg">
+                  Deadline
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="datetime-local"
+                    id="deadline"
+                    className="w-96"
+                    {...register}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    What is the deadline for your fundraising project? Setting{" "}
+                    <br /> a clear timeline can help motivate potential
+                    investors.
+                  </span>
                 </div>
               </div>
             </div>
