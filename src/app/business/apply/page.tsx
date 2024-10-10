@@ -30,7 +30,7 @@ export default function Apply() {
   const [selectedIndustry, setSelectedIndustry] = useState("");
   const [isInUS, setIsInUS] = useState("");
   const [isForSale, setIsForSale] = useState("");
-  const [isGenerating, setIsGenarting] = useState("");
+  const [isGenerating, setIsGenerating] = useState("");
   const [businessPitch, setBusinessPitch] = useState("");
   const [projectType, setProjectType] = useState<string[]>([]);
   const [projectPitch, setProjectPitch] = useState("");
@@ -59,11 +59,24 @@ export default function Apply() {
   };
 
   const onSubmit = (data: any) => {
-    alert(JSON.stringify(data));
+    console.table(data);
   };
-  const handleSelectChange = (value: string) => {
-    setSelectedIndustry(value);
-    setValue("industry", value);
+  const handleFieldChange = (fieldName: string, value: string) => {
+    switch (fieldName) {
+      case "industry":
+        setSelectedIndustry(value);
+        break;
+      case "isInUS":
+        setIsInUS(value);
+        break;
+      case "isForSale":
+        setIsForSale(value);
+        break;
+      case "isGenerating":
+        setIsGenerating(value);
+        break;
+    }
+    setValue(fieldName, value);
   };
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
@@ -147,7 +160,11 @@ export default function Apply() {
                 Industry
               </Label>
               <div className="flex space-x-5">
-                <Select onValueChange={(value) => handleSelectChange(value)}>
+                <Select
+                  onValueChange={(value) =>
+                    handleFieldChange("industry", value)
+                  }
+                >
                   <SelectTrigger className="w-96">
                     <SelectValue placeholder="Select an industry" />
                   </SelectTrigger>
@@ -184,7 +201,7 @@ export default function Apply() {
                   id="totalRaised"
                   className="w-96"
                   placeholder="$   1,000,000"
-                  {...register}
+                  {...register("totalRaised")}
                 />
                 <span className="text-[12px] text-neutral-500 self-center">
                   The sum total of past financing, including angel or venture{" "}
@@ -204,7 +221,7 @@ export default function Apply() {
                   <Button
                     type="button"
                     variant={isInUS === "Yes" ? "default" : "outline"}
-                    onClick={() => setIsInUS("Yes")}
+                    onClick={() => handleFieldChange("isInUS", "Yes")}
                     className="w-20 h-12 text-base"
                   >
                     Yes
@@ -212,11 +229,12 @@ export default function Apply() {
                   <Button
                     type="button"
                     variant={isInUS === "No" ? "default" : "outline"}
-                    onClick={() => setIsInUS("No")}
+                    onClick={() => handleFieldChange("isInUS", "No")}
                     className="w-20 h-12 text-base"
                   >
                     No
                   </Button>
+                  <input type="hidden" value={isInUS} {...register("isInUS")} />
                 </div>
                 <span className="text-[12px] text-neutral-500 self-center">
                   Only companies that are incorporated or formed in the US are{" "}
@@ -239,7 +257,7 @@ export default function Apply() {
                   <Button
                     type="button"
                     variant={isForSale === "Yes" ? "default" : "outline"}
-                    onClick={() => setIsForSale("Yes")}
+                    onClick={() => handleFieldChange("isForSale", "Yes")}
                     className="w-20 h-12 text-base"
                   >
                     Yes
@@ -247,7 +265,7 @@ export default function Apply() {
                   <Button
                     type="button"
                     variant={isForSale === "No" ? "default" : "outline"}
-                    onClick={() => setIsForSale("No")}
+                    onClick={() => handleFieldChange("isForSale", "No")}
                     className="w-20 h-12 text-base"
                   >
                     No
@@ -271,7 +289,7 @@ export default function Apply() {
                   <Button
                     type="button"
                     variant={isGenerating === "Yes" ? "default" : "outline"}
-                    onClick={() => setIsGenarting("Yes")}
+                    onClick={() => handleFieldChange("isGenerating", "Yes")}
                     className="w-20 h-12 text-base"
                   >
                     Yes
@@ -279,7 +297,7 @@ export default function Apply() {
                   <Button
                     type="button"
                     variant={isGenerating === "No" ? "default" : "outline"}
-                    onClick={() => setIsGenarting("No")}
+                    onClick={() => handleFieldChange("isGenerating", "No")}
                     className="w-20 h-12 text-base"
                   >
                     No
