@@ -33,7 +33,30 @@ export default function Apply() {
       message: "Company name must be at least 5 characters.",
     }),
     industry: z.string(),
-    isInUS: z.string(),
+    isInUS: z
+      .string({
+        required_error: "Please select either 'Yes' or 'No'.",
+      })
+      .transform((val) => val.toLowerCase())
+      .refine((val) => val === "yes" || val === "no", {
+        message: "Please select either 'Yes' or 'No'.",
+      }),
+    isForSale: z
+      .string({
+        required_error: "Please select either 'Yes' or 'No'.",
+      })
+      .transform((val) => val.toLowerCase())
+      .refine((val) => val === "yes" || val === "no", {
+        message: "Please select either 'Yes' or 'No'.",
+      }),
+    isGenerating: z
+      .string({
+        required_error: "Please select either 'Yes' or 'No'.",
+      })
+      .transform((val) => val.toLowerCase())
+      .refine((val) => val === "yes" || val === "no", {
+        message: "Please select either 'Yes' or 'No'.",
+      }),
     totalRaised: z
       .number({
         required_error: "Total raised must be a number.",
@@ -90,7 +113,28 @@ export default function Apply() {
   };
 
   const onSubmit = (data: any) => {
-    console.table(data);
+    // console.table(data);
+    // convert any yes and no to true or false
+    const transformedData = Object.entries(data).reduce(
+      (acc: Record<any, any>, [key, value]) => {
+        if (typeof value === "string") {
+          const lowerValue = value.toLowerCase();
+          if (lowerValue === "yes") {
+            acc[key] = true;
+          } else if (lowerValue === "no") {
+            acc[key] = false;
+          } else {
+            acc[key] = value; // keep other string values unchanged
+          }
+        } else {
+          acc[key] = value; // keep other types unchanged
+        }
+        return acc;
+      },
+      {}
+    );
+
+    alert(JSON.stringify(transformedData));
   };
   const handleFieldChange = (fieldName: string, value: any) => {
     switch (fieldName) {
@@ -264,6 +308,15 @@ export default function Apply() {
               }
               value={isInUS}
             />
+            {errors.isInUS && (
+              <p className="text-red-500 text-sm">
+                {errors.isInUS && (
+                  <p className="text-red-500 text-sm">
+                    {errors.isInUS.message as string}
+                  </p>
+                )}
+              </p>
+            )}
 
             {/* Is your product available (for sale) in market? */}
             <DualOptionSelector
@@ -328,10 +381,15 @@ export default function Apply() {
               </div>
               <div className="flex space-x-5">
                 <Input
-                  type={businessPitch}
+                  type={businessPitch === "file" ? "file" : "text"}
                   id="companyName"
                   className="w-96"
-                  placeholder="https:// "
+                  placeholder={
+                    businessPitch === "file"
+                      ? "Upload your Markdown file"
+                      : "https:// "
+                  }
+                  accept={businessPitch === "file" ? ".md" : undefined} // accept only markdown file
                 />
                 <span className="text-[12px] text-neutral-500 self-center">
                   Your pitch deck and other application info will be used for{" "}
