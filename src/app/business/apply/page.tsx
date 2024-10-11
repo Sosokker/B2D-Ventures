@@ -28,11 +28,24 @@ import { DualOptionSelector } from "@/components/dualSelector";
 import { MultipleOptionSelector } from "@/components/multipleSelector";
 
 export default function Apply() {
+  const pitchDeckSchema = z
+    .union([
+      z.string().url("Pitch deck must be a valid URL."),
+      z.instanceof(File).refine((file) => file.size > 0, {
+        message: "A file must be selected.",
+      }),
+    ])
+    .refine((value) => typeof value === "string" || value instanceof File, {
+      message: "Pitch deck must be either a file or a URL.",
+    });
+
   const formSchema = z.object({
     companyName: z.string().min(5, {
       message: "Company name must be at least 5 characters.",
     }),
-    industry: z.string(),
+    industry: z.string({
+      required_error: "Please select one of the option",
+    }),
     isInUS: z
       .string({
         required_error: "Please select either 'Yes' or 'No'.",
@@ -64,6 +77,10 @@ export default function Apply() {
       })
       .positive()
       .max(9999999999, "Total raised must be a realistic amount."),
+    communitySize: z.string({
+      required_error: "Please select one of the option",
+    }),
+    pitchDeck: pitchDeckSchema,
   });
   let supabase = createSupabaseClient();
   const {
@@ -133,9 +150,19 @@ export default function Apply() {
       },
       {}
     );
-
+    if (data.pitchDeck instanceof File) {
+      console.log("File Uploaded:", data.pitchDeck.name);
+    } else {
+      console.log("URL Provided:", data.pitchDeck);
+    }
     alert(JSON.stringify(transformedData));
   };
+  const handleBusinessPitchChange = (type: string) => {
+    setBusinessPitch(type);
+    // clear out old data
+    setValue("pitchDeck", "");
+  };
+
   const handleFieldChange = (fieldName: string, value: any) => {
     switch (fieldName) {
       case "isInUS":
@@ -204,7 +231,8 @@ export default function Apply() {
         <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2">
           <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
           <p className="ml-96 mt-5 text-neutral-500">
-            All requested information in this section is required.
+            <span className="text-red-500 font-bold">**</span>All requested
+            information in this section is required.
           </p>
 
           {/* company name */}
@@ -248,6 +276,11 @@ export default function Apply() {
               placeholder="Select an industry"
               selectLabel="Industry"
             />
+            {errors.industry && (
+              <p className="text-red-500 text-sm">
+                {errors.industry.message as string}
+              </p>
+            )}
             {/* <input
               type="hidden"
               {...register("industry")}
@@ -277,11 +310,7 @@ export default function Apply() {
               </div>
               {errors.totalRaised && (
                 <p className="text-red-500 text-sm">
-                  {errors.totalRaised && (
-                    <p className="text-red-500 text-sm">
-                      {errors.totalRaised.message as string}
-                    </p>
-                  )}
+                  {errors.totalRaised.message as string}
                 </p>
               )}
             </div>
@@ -310,11 +339,7 @@ export default function Apply() {
             />
             {errors.isInUS && (
               <p className="text-red-500 text-sm">
-                {errors.isInUS && (
-                  <p className="text-red-500 text-sm">
-                    {errors.isInUS.message as string}
-                  </p>
-                )}
+                {errors.isInUS.message as string}
               </p>
             )}
 
@@ -339,6 +364,11 @@ export default function Apply() {
               }
               value={isForSale}
             />
+            {errors.isForSale && (
+              <p className="text-red-500 text-sm">
+                {errors.isForSale.message as string}
+              </p>
+            )}
 
             {/* Is your company generating revenue?*/}
             <DualOptionSelector
@@ -355,7 +385,11 @@ export default function Apply() {
               }
               value={isGenerating}
             />
-
+            {errors.isGenerating && (
+              <p className="text-red-500 text-sm">
+                {errors.isGenerating.message as string}
+              </p>
+            )}
             {/* Pitch deck */}
             <div className="space-y-5">
               <Label htmlFor="pitchDeck" className="font-bold text-lg">
@@ -365,7 +399,7 @@ export default function Apply() {
                 <Button
                   type="button"
                   variant={businessPitch === "text" ? "default" : "outline"}
-                  onClick={() => setBusinessPitch("text")}
+                  onClick={() => handleBusinessPitchChange("text")}
                   className="w-32 h-12 text-base"
                 >
                   Paste URL
@@ -373,24 +407,27 @@ export default function Apply() {
                 <Button
                   type="button"
                   variant={businessPitch === "file" ? "default" : "outline"}
-                  onClick={() => setBusinessPitch("file")}
+                  onClick={() => handleBusinessPitchChange("file")}
                   className="w-32 h-12 text-base"
                 >
                   Upload a file
                 </Button>
               </div>
               <div className="flex space-x-5">
+                {businessPitch}
                 <Input
                   type={businessPitch === "file" ? "file" : "text"}
-                  id="companyName"
+                  id="pitchDeck"
                   className="w-96"
                   placeholder={
                     businessPitch === "file"
                       ? "Upload your Markdown file"
                       : "https:// "
                   }
-                  accept={businessPitch === "file" ? ".md" : undefined} // accept only markdown file
+                  accept={businessPitch === "file" ? ".md" : undefined}
+                  {...register("pitchDeck", { required: true })}
                 />
+
                 <span className="text-[12px] text-neutral-500 self-center">
                   Your pitch deck and other application info will be used for{" "}
                   <br />
@@ -401,12 +438,17 @@ export default function Apply() {
                 </span>
               </div>
             </div>
-
+            {errors.pitchDeck && (
+              <p className="text-red-500 text-sm">
+                {errors.pitchDeck.message as string}
+              </p>
+            )}
             {/* What's the rough size of your community? */}
-            <div className="mt-10 space-y-5">
-              <Label htmlFor="companySize" className="font-bold text-lg mt-10">
-                What's the rough size of your <br /> community?
-              </Label>
+            {/* <div className="mt-10 space-y-5">
+              <Label
+                htmlFor="companySize"
+                className="font-bold text-lg mt-10"
+              ></Label>
               <div className="flex space-x-5">
                 <Select>
                   <SelectTrigger className="w-96">
@@ -421,14 +463,36 @@ export default function Apply() {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <span className="text-[12px] text-neutral-500 self-center">
+                <span className="text-[12px] text-neutral-500 self-center"></span>
+              </div>
+            </div> */}
+
+            <MultipleOptionSelector
+              header={
+                <>
+                  What's the rough size of your <br /> community?
+                </>
+              }
+              fieldName="communitySize"
+              choices={communitySize}
+              handleFunction={handleFieldChange}
+              description={
+                <>
+                  {" "}
                   Include your email list, social media following (i.e.
                   Instagram, <br /> Discord, Facebook, Twitter, TikTok). We’d
                   like to understand the <br /> rough size of your current
                   audience.
-                </span>
-              </div>
-            </div>
+                </>
+              }
+              placeholder="Select"
+              selectLabel="Select"
+            />
+            {errors.communitySize && (
+              <p className="text-red-500 text-sm">
+                {errors.communitySize.message as string}
+              </p>
+            )}
 
             <div className="flex space-x-5">
               <Switch
