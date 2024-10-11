@@ -12,7 +12,7 @@ interface SelectorInterface {
   description: ReactElement;
 }
 
-export function Selector(props: SelectorInterface) {
+export function DualOptionSelector(props: SelectorInterface) {
   return (
     <div className="space-y-5">
       <Label htmlFor={props.name} className="font-bold text-lg">

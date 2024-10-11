@@ -24,16 +24,23 @@ import {
 } from "@/components/ui/tooltip";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Selector } from "@/components/selector";
+import { DualOptionSelector } from "@/components/dualSelector";
+import { MultipleOptionSelector } from "@/components/multipleSelector";
 
 export default function Apply() {
   const formSchema = z.object({
     companyName: z.string().min(5, {
       message: "Company name must be at least 5 characters.",
     }),
-    totalRaised: z.number().int({
-      message: "Total raised must be an integer.",
-    }),
+    industry: z.string(),
+    isInUS: z.string(),
+    totalRaised: z
+      .number({
+        required_error: "Total raised must be a number.",
+        invalid_type_error: "Total raised must be a valid number.",
+      })
+      .positive()
+      .max(9999999999, "Total raised must be a realistic amount."),
   });
   let supabase = createSupabaseClient();
   const {
@@ -45,7 +52,6 @@ export default function Apply() {
     resolver: zodResolver(formSchema),
   });
   const [industry, setIndustry] = useState<string[]>([]);
-  const [selectedIndustry, setSelectedIndustry] = useState("");
   const [isInUS, setIsInUS] = useState("");
   const [isForSale, setIsForSale] = useState("");
   const [isGenerating, setIsGenerating] = useState("");
@@ -65,6 +71,13 @@ export default function Apply() {
     "100K+",
   ];
 
+  useEffect(() => {
+    register("industry");
+    register("isInUS");
+    register("isForSale");
+    register("isGenerating");
+  }, [register]);
+
   const handleRemoveImage = (index: number) => {
     const updatedImages = selectedImages.filter((_, i) => i !== index);
     setSelectedImages(updatedImages);
@@ -79,11 +92,8 @@ export default function Apply() {
   const onSubmit = (data: any) => {
     console.table(data);
   };
-  const handleFieldChange = (fieldName: string, value: string) => {
+  const handleFieldChange = (fieldName: string, value: any) => {
     switch (fieldName) {
-      case "industry":
-        setSelectedIndustry(value);
-        break;
       case "isInUS":
         setIsInUS(value);
         break;
@@ -147,7 +157,7 @@ export default function Apply() {
       </div>
       {/* form */}
       <form action="" onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-flow-row auto-rows-max w-3/4 ml-48">
+        <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2">
           <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
           <p className="ml-96 mt-5 text-neutral-500">
             All requested information in this section is required.
@@ -182,41 +192,24 @@ export default function Apply() {
               )}
             </div>
             {/* industry */}
-            <div className="mt-10 space-y-5">
-              <Label htmlFor="industry" className="font-bold text-lg mt-10">
-                Industry
-              </Label>
-              <div className="flex space-x-5">
-                <Select
-                  onValueChange={(value) =>
-                    handleFieldChange("industry", value)
-                  }
-                >
-                  <SelectTrigger className="w-96">
-                    <SelectValue placeholder="Select an industry" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Industry</SelectLabel>
-                      {industry.map((i) => (
-                        <SelectItem key={i} value={i}>
-                          {i}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <input
-                  type="hidden"
-                  {...register("industry")}
-                  value={selectedIndustry}
-                />
-                {/* {selectedIndustry} */}
-                <span className="text-[12px] text-neutral-500 self-center">
-                  Choose the industry that best aligns with your business.
-                </span>
-              </div>
-            </div>
+
+            <MultipleOptionSelector
+              header={<>Industry</>}
+              fieldName="industry"
+              choices={industry}
+              handleFunction={handleFieldChange}
+              description={
+                <>Choose the industry that best aligns with your business.</>
+              }
+              placeholder="Select an industry"
+              selectLabel="Industry"
+            />
+            {/* <input
+              type="hidden"
+              {...register("industry")}
+              value={selectedIndustry}
+            /> */}
+            {/* {selectedIndustry} */}
             {/* How much money has your company raised to date? */}
             <div className="space-y-5">
               <Label htmlFor="totalRaised" className="font-bold text-lg">
@@ -224,11 +217,13 @@ export default function Apply() {
               </Label>
               <div className="flex space-x-5">
                 <Input
-                  type="text"
+                  type="number"
                   id="totalRaised"
                   className="w-96"
                   placeholder="$   1,000,000"
-                  {...register("totalRaised")}
+                  {...register("totalRaised", {
+                    valueAsNumber: true,
+                  })}
                 />
                 <span className="text-[12px] text-neutral-500 self-center">
                   The sum total of past financing, including angel or venture{" "}
@@ -236,9 +231,18 @@ export default function Apply() {
                   capital, loans, grants, or token sales.
                 </span>
               </div>
+              {errors.totalRaised && (
+                <p className="text-red-500 text-sm">
+                  {errors.totalRaised && (
+                    <p className="text-red-500 text-sm">
+                      {errors.totalRaised.message as string}
+                    </p>
+                  )}
+                </p>
+              )}
             </div>
             {/* Is your company incorporated in the United States? */}
-            <Selector
+            <DualOptionSelector
               label={
                 <>
                   Is your company incorporated in the <br />
@@ -262,7 +266,7 @@ export default function Apply() {
             />
 
             {/* Is your product available (for sale) in market? */}
-            <Selector
+            <DualOptionSelector
               label={
                 <>
                   Is your product available (for sale) <br />
@@ -284,7 +288,7 @@ export default function Apply() {
             />
 
             {/* Is your company generating revenue?*/}
-            <Selector
+            <DualOptionSelector
               label={<>Is your company generating revenue?</>}
               name="isGenerating"
               choice1="Yes"
@@ -367,10 +371,11 @@ export default function Apply() {
                 </span>
               </div>
             </div>
+
             <div className="flex space-x-5">
-              <Switch onCheckedChange={() => setApplyProject(!applyProject)}>
-                Apply your first project!
-              </Switch>
+              <Switch
+                onCheckedChange={() => setApplyProject(!applyProject)}
+              ></Switch>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -396,7 +401,7 @@ export default function Apply() {
         {applyProject && (
           <div className="grid auto-rows-max w-3/4 ml-48 bg-zinc-100 dark:bg-zinc-900 mt-10 pt-12 pb-12">
             {/* header */}
-            <div className="ml-96">
+            <div className="ml-[15%]">
               <h1 className="text-3xl font-bold mt-10">
                 Begin Your First Fundraising Project
               </h1>
