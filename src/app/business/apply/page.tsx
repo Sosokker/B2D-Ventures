@@ -16,10 +16,14 @@ import { useEffect, useState } from "react";
 
 export default function Apply() {
   let supabase = createSupabaseClient();
+
+  const [companyName, setCompanyName] = useState("");
+  const [selectedIndustry, setSelectedIndustry] = useState("");
   const [industry, setIndustry] = useState<string[]>([]);
+
   const [isInUS, setIsInUS] = useState("");
   const [isForSale, setIsForSale] = useState("");
-  const [isGenerating, setIsGenarting] = useState("");
+  const [isGenerating, setIsGenerating] = useState("");
   const [pitch, setPitch] = useState("");
   const communitySize = [
     "N/A",
@@ -36,18 +40,25 @@ export default function Apply() {
       .from("BusinessType")
       .select("value");
 
-    if (error) {
+    if (!BusinessType) {
       console.error(error);
     } else {
-      if (BusinessType) {
-        console.table();
-        setIndustry(BusinessType.map((item) => item.value));
-      }
+      setIndustry(BusinessType.map((item) => item.value));
     }
   };
   useEffect(() => {
     fetchIndustry();
   }, []);
+
+  /* temp */
+  let format = {
+    "Company Name: ": companyName,
+    "Industry": selectedIndustry,
+  }
+
+  /* TEMP log */
+  const submitApplication = () => alert(JSON.stringify(format));
+
   return (
     <div>
       <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-100 dark:bg-gray-800 p-5">
@@ -57,9 +68,7 @@ export default function Apply() {
         <div className="mt-5 justify-self-center">
           <p className="text-sm md:text-base text-neutral-500">
             All information submitted in this application is for internal use
-            only and is treated with the utmost{" "}
-          </p>
-          <p className="text-sm md:text-base text-neutral-500">
+            only and is treated with the utmost {" "}<br />
             confidentiality. Companies may apply to raise with B2DVentures more
             than once.
           </p>
@@ -68,7 +77,7 @@ export default function Apply() {
       <div className="grid grid-flow-row auto-rows-max w-full ml-48">
         <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
         <p className="ml-96 mt-5 text-neutral-500">
-          All requested information in this section is required.
+          All requested information in this section are required.
         </p>
         {/* form */}
 
@@ -76,10 +85,10 @@ export default function Apply() {
         <div className="ml-96 mt-5 space-y-10">
           <div className="mt-10 space-y-5">
             <Label htmlFor="companyName" className="font-bold text-lg">
-              Company name
+              Company Name
             </Label>
             <div className="flex space-x-5">
-              <Input type="text" id="companyName" className="w-96" />
+              <Input onChange={(event) => setCompanyName(event.target.value)} type="text" id="companyName" className="w-96" />
               <span className="text-[12px] text-neutral-500 self-center">
                 This should be the name your company uses on your <br />
                 website and in the market.
@@ -92,7 +101,7 @@ export default function Apply() {
               Industry
             </Label>
             <div className="flex space-x-5">
-              <Select>
+              <Select onValueChange={(value) => setSelectedIndustry(value)}>
                 <SelectTrigger className="w-96">
                   <SelectValue placeholder="Select an industry" />
                 </SelectTrigger>
@@ -100,7 +109,7 @@ export default function Apply() {
                   <SelectGroup>
                     <SelectLabel>Industry</SelectLabel>
                     {industry.map((i) => (
-                      <SelectItem value={i}>{i}</SelectItem>
+                      <SelectItem key={i} value={i}>{i}</SelectItem>
                     ))}
                   </SelectGroup>
                 </SelectContent>
@@ -202,14 +211,14 @@ export default function Apply() {
               <div className="flex space-x-2 w-96">
                 <Button
                   variant={isGenerating === "Yes" ? "default" : "outline"}
-                  onClick={() => setIsGenarting("Yes")}
+                  onClick={() => setIsGenerating("Yes")}
                   className="w-20 h-12 text-base"
                 >
                   Yes
                 </Button>
                 <Button
                   variant={isGenerating === "No" ? "default" : "outline"}
-                  onClick={() => setIsGenarting("No")}
+                  onClick={() => setIsGenerating("No")}
                   className="w-20 h-12 text-base"
                 >
                   No
@@ -225,7 +234,7 @@ export default function Apply() {
           {/* Pitch deck */}
           <div className="space-y-5">
             <Label htmlFor="companyName" className="font-bold text-lg">
-              Pitch deck
+              Pitch Deck
             </Label>
             <div className="flex space-x-2 w-96">
               <Button
@@ -264,7 +273,7 @@ export default function Apply() {
           {/* What's the rough size of your community? */}
           <div className="mt-10 space-y-5">
             <Label htmlFor="industry" className="font-bold text-lg mt-10">
-              What's the rough size of your <br /> community?
+              What{"'"}s the rough size of your <br /> community?
             </Label>
             <div className="flex space-x-5">
               <Select>
@@ -275,7 +284,7 @@ export default function Apply() {
                   <SelectGroup>
                     <SelectLabel>Select</SelectLabel>
                     {communitySize.map((i) => (
-                      <SelectItem value={i}>{i}</SelectItem>
+                      <SelectItem key={i} value={i}>{i}</SelectItem>
                     ))}
                   </SelectGroup>
                 </SelectContent>
@@ -291,8 +300,8 @@ export default function Apply() {
       </div>
       {/* Submit */}
       <center>
-        <Button className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5">
-          Submit application
+        <Button onClick={submitApplication} className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5">
+          Submit Application
         </Button>
       </center>
     </div>
