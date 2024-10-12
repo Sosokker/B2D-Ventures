@@ -223,7 +223,7 @@ export default function Apply() {
       </div>
       {/* form */}
       <form action="" onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2">
+        <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2 lg:ml-[10%]">
           <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
           <p className="ml-96 mt-5 text-neutral-500">
             <span className="text-red-500 font-bold">**</span>All requested
