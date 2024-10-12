@@ -28,16 +28,10 @@ import { DualOptionSelector } from "@/components/dualSelector";
 import { MultipleOptionSelector } from "@/components/multipleSelector";
 
 export default function Apply() {
-  const pitchDeckSchema = z
-    .union([
-      z.string().url("Pitch deck must be a valid URL."),
-      z.instanceof(File).refine((file) => file.size > 0, {
-        message: "A file must be selected.",
-      }),
-    ])
-    .refine((value) => typeof value === "string" || value instanceof File, {
-      message: "Pitch deck must be either a file or a URL.",
-    });
+  const pitchDeckSchema = z.union([
+    z.string().url("Pitch deck must be a valid URL."),
+    z.object({}),
+  ]);
 
   const formSchema = z.object({
     companyName: z.string().min(5, {
@@ -155,6 +149,7 @@ export default function Apply() {
     } else {
       console.log("URL Provided:", data.pitchDeck);
     }
+    console.table(transformedData);
     alert(JSON.stringify(transformedData));
   };
   const handleBusinessPitchChange = (type: string) => {
@@ -281,12 +276,6 @@ export default function Apply() {
                 {errors.industry.message as string}
               </p>
             )}
-            {/* <input
-              type="hidden"
-              {...register("industry")}
-              value={selectedIndustry}
-            /> */}
-            {/* {selectedIndustry} */}
             {/* How much money has your company raised to date? */}
             <div className="space-y-5">
               <Label htmlFor="totalRaised" className="font-bold text-lg">
@@ -414,7 +403,6 @@ export default function Apply() {
                 </Button>
               </div>
               <div className="flex space-x-5">
-                {businessPitch}
                 <Input
                   type={businessPitch === "file" ? "file" : "text"}
                   id="pitchDeck"
@@ -443,30 +431,6 @@ export default function Apply() {
                 {errors.pitchDeck.message as string}
               </p>
             )}
-            {/* What's the rough size of your community? */}
-            {/* <div className="mt-10 space-y-5">
-              <Label
-                htmlFor="companySize"
-                className="font-bold text-lg mt-10"
-              ></Label>
-              <div className="flex space-x-5">
-                <Select>
-                  <SelectTrigger className="w-96">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Select</SelectLabel>
-                      {communitySize.map((i) => (
-                        <SelectItem value={i}>{i}</SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <span className="text-[12px] text-neutral-500 self-center"></span>
-              </div>
-            </div> */}
-
             <MultipleOptionSelector
               header={
                 <>
