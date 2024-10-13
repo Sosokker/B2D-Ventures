@@ -83,12 +83,11 @@ const CheckoutPage = ({
             const supabase = createSupabaseClient();
             const { data, error } = await supabase.from("investment_deal").insert([
               {
-                investorId: investor_id,
-                projectId: project_id,
-                dealAmount: amount,
+                investor_id: investor_id,
+                project_id: project_id,
+                deal_amount: amount,
               },
             ]);
-            console.log("ADADSADWADWWAD");
 
             if (error) {
               console.error("Supabase Insert Error:", error.message);

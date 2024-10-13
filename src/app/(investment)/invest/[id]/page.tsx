@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
@@ -52,12 +52,25 @@ const term_data = [
 export default function InvestPage() {
   const [checkedTerms, setCheckedTerms] = useState(Array(term_data.length).fill(false));
   const [investAmount, setInvestAmount] = useState(10);
-
-  const { session } = useSession();
-  const investor_id = session!.user.id;
+  const [investor_id, setInvestorId] = useState<string>("");
 
   const params = useParams<{ id: string }>();
   const supabase = createSupabaseClient();
+
+  useEffect(() => {
+    const fetchInvestorData = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Error fetching session:", error);
+        return;
+      }
+      if (data.session) {
+        setInvestorId(data.session.user.id);
+      }
+    };
+
+    fetchInvestorData();
+  }, [supabase]);
 
   const { data: projectData, isLoading: isLoadingProject } = useQuery(getProjectDataQuery(supabase, Number(params.id)));
 
