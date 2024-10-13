@@ -3,15 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,11 +19,76 @@ import { DualOptionSelector } from "@/components/dualSelector";
 import { MultipleOptionSelector } from "@/components/multipleSelector";
 
 export default function Apply() {
+  const MAX_FILE_SIZE = 5000000;
+  const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
   const pitchDeckSchema = z.union([
     z.string().url("Pitch deck must be a valid URL."),
     z.object({}),
   ]);
-  const projectFormSchema = z.object({});
+  const projectFormSchema = z.object({
+    projectName: z.string().min(5, {
+      message: "Project name must be at least 5 characters.",
+    }),
+    projectType: z.string({
+      required_error: "Please select one of the option",
+    }),
+    shortDescription: z
+      .string({
+        required_error: "Please provide a brief description for your project",
+      })
+      .min(40, {
+        message: "Short description must be at least 40 characters.",
+      }),
+    projectPitchDeck: pitchDeckSchema,
+    projectLogo: z
+      .any()
+      .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+      .refine(
+        (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+        "Only .jpg, .jpeg, and .png formats are supported."
+      ),
+    projectPhotos: z
+      .array(
+        z.object({
+          file: z
+            .any()
+            .refine(
+              (file) => file?.size <= MAX_FILE_SIZE,
+              `Max image size is 5MB.`
+            )
+            .refine(
+              (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+              "Only .jpg, .jpeg, and .png formats are supported."
+            ),
+        })
+      )
+      .min(1, "You must upload at least one photo.")
+      .max(10, "You can upload a maximum of 10 photos."),
+    minInvest: z
+      .number({
+        required_error: "Minimum invesment must be a number.",
+        invalid_type_error: "Minimum invesment must be a valid number.",
+      })
+      .positive()
+      .max(9999999999, "Minimum invesment must be a realistic amount."),
+    targetInvest: z
+      .number({
+        required_error: "Target invesment must be a number.",
+        invalid_type_error: "Target invesment must be a valid number.",
+      })
+      .positive()
+      .max(9999999999, "Target invesment must be a realistic amount."),
+    deadline: z
+      .string()
+      .min(1, "Deadline is required.")
+      .refine((value) => !isNaN(Date.parse(value)), {
+        message: "Invalid date-time format.",
+      })
+      .transform((value) => new Date(value))
+      .refine((date) => date > new Date(), {
+        message: "Deadline must be in the future.",
+      }),
+  });
   const businessFormSchema = z.object({
     companyName: z.string().min(5, {
       message: "Company name must be at least 5 characters.",
@@ -74,7 +130,7 @@ export default function Apply() {
     communitySize: z.string({
       required_error: "Please select one of the option",
     }),
-    pitchDeck: pitchDeckSchema,
+    businessPitchDeck: pitchDeckSchema,
   });
   let supabase = createSupabaseClient();
   const {
@@ -422,7 +478,7 @@ export default function Apply() {
                       : "https:// "
                   }
                   accept={businessPitch === "file" ? ".md" : undefined}
-                  {...registerBusiness("pitchDeck", { required: true })}
+                  {...registerBusiness("businessPitchDeck", { required: true })}
                 />
 
                 <span className="text-[12px] text-neutral-500 self-center">
@@ -518,7 +574,12 @@ export default function Apply() {
                     Project name
                   </Label>
                   <div className="flex space-x-5">
-                    <Input type="text" id="projectName" className="w-96" />
+                    <Input
+                      type="text"
+                      id="projectName"
+                      className="w-96"
+                      {...registerProject("projectName")}
+                    />
                   </div>
                 </div>
 
@@ -667,7 +728,7 @@ export default function Apply() {
                   </Label>
                   <div className="flex space-x-5">
                     <Input
-                      type="text"
+                      type="number"
                       id="minInvest"
                       className="w-96"
                       placeholder="$   500"
@@ -685,7 +746,7 @@ export default function Apply() {
                   </Label>
                   <div className="flex space-x-5">
                     <Input
-                      type="text"
+                      type="number"
                       id="targetInvest"
                       className="w-96"
                       placeholder="$   1,000,000"
