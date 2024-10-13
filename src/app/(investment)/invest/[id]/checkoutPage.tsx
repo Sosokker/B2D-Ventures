@@ -81,7 +81,7 @@ const CheckoutPage = ({
         } else {
           try {
             const supabase = createSupabaseClient();
-            const { data, error } = await supabase.from("InvestmentDeal").insert([
+            const { data, error } = await supabase.from("investment_deal").insert([
               {
                 investorId: investor_id,
                 projectId: project_id,
