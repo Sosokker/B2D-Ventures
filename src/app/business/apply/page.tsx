@@ -41,12 +41,14 @@ export default function Apply() {
       }),
     projectPitchDeck: pitchDeckSchema,
     projectLogo: z
-      .any()
-      .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
-      .refine(
-        (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-        "Only .jpg, .jpeg, and .png formats are supported."
-      ),
+      .instanceof(File)
+      .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+        message: "Only .jpg, .jpeg, and .png formats are supported.",
+      })
+      .refine((file) => file.size <= MAX_FILE_SIZE, {
+        message: "Max image size is 5MB.",
+      }),
+
     projectPhotos: z
       .array(
         z.object({
