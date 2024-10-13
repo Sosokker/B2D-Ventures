@@ -19,12 +19,14 @@ export default function Apply() {
 
   const [companyName, setCompanyName] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState("");
-  const [industry, setIndustry] = useState<string[]>([]);
-
+  const [moneyRaisedToDate, setMoneyRaisedToDate] = useState("");
   const [isInUS, setIsInUS] = useState("");
   const [isForSale, setIsForSale] = useState("");
-  const [isGenerating, setIsGenerating] = useState("");
-  const [pitch, setPitch] = useState("");
+  const [isGeneratingRevenue, setIsGeneratingRevenue] = useState("");
+  const [businessPitch, setBusinessPitch] = useState("");
+  const [selectedCommunitySize, setSelectedCommunitySize] = useState("");
+
+  const [industry, setIndustry] = useState<string[]>([]);
   const communitySize = [
     "N/A",
     "0-5K",
@@ -35,9 +37,10 @@ export default function Apply() {
     "100K+",
   ];
 
+  // move to lib?
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
-      .from("BusinessType")
+      .from("business_type")
       .select("value");
 
     if (!BusinessType) {
@@ -50,14 +53,22 @@ export default function Apply() {
     fetchIndustry();
   }, []);
 
-  /* temp */
-  let format = {
+  const createFormat = () => ({
     "Company Name: ": companyName,
     "Industry": selectedIndustry,
-  }
+    "Money Raised to Date": moneyRaisedToDate,
+    "Is in USA": isInUS,
+    "Is for sale": isForSale,
+    "Is generating revenue": isGeneratingRevenue,
+    "Business Pitch": businessPitch,
+    "Community Size": selectedCommunitySize,
+    "Created At": new Date().toString()
+  });
 
-  /* TEMP log */
-  const submitApplication = () => alert(JSON.stringify(format));
+  const submitApplication = () => {
+    let format = createFormat();
+    alert(JSON.stringify(format));
+  }
 
   return (
     <div>
@@ -126,6 +137,7 @@ export default function Apply() {
             </Label>
             <div className="flex space-x-5">
               <Input
+                onChange={(event) => setMoneyRaisedToDate(event.target.value)}
                 type="text"
                 id="companyName"
                 className="w-96"
@@ -210,15 +222,15 @@ export default function Apply() {
             <div className="flex space-x-5">
               <div className="flex space-x-2 w-96">
                 <Button
-                  variant={isGenerating === "Yes" ? "default" : "outline"}
-                  onClick={() => setIsGenerating("Yes")}
+                  variant={isGeneratingRevenue === "Yes" ? "default" : "outline"}
+                  onClick={() => setIsGeneratingRevenue("Yes")}
                   className="w-20 h-12 text-base"
                 >
                   Yes
                 </Button>
                 <Button
-                  variant={isGenerating === "No" ? "default" : "outline"}
-                  onClick={() => setIsGenerating("No")}
+                  variant={isGeneratingRevenue === "No" ? "default" : "outline"}
+                  onClick={() => setIsGeneratingRevenue("No")}
                   className="w-20 h-12 text-base"
                 >
                   No
@@ -238,15 +250,15 @@ export default function Apply() {
             </Label>
             <div className="flex space-x-2 w-96">
               <Button
-                variant={pitch === "text" ? "default" : "outline"}
-                onClick={() => setPitch("text")}
+                variant={businessPitch === "text" ? "default" : "outline"}
+                onClick={() => setBusinessPitch("text")}
                 className="w-32 h-12 text-base"
               >
                 Paste URL
               </Button>
               <Button
-                variant={pitch === "file" ? "default" : "outline"}
-                onClick={() => setPitch("file")}
+                variant={businessPitch === "file" ? "default" : "outline"}
+                onClick={() => setBusinessPitch("file")}
                 className="w-32 h-12 text-base"
               >
                 Upload a file
@@ -254,7 +266,7 @@ export default function Apply() {
             </div>
             <div className="flex space-x-5">
               <Input
-                type={pitch}
+                type={businessPitch}
                 id="companyName"
                 className="w-96"
                 placeholder="https:// "
@@ -276,7 +288,7 @@ export default function Apply() {
               What{"'"}s the rough size of your <br /> community?
             </Label>
             <div className="flex space-x-5">
-              <Select>
+              <Select onValueChange={(value) => setSelectedCommunitySize(value)}>
                 <SelectTrigger className="w-96">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
