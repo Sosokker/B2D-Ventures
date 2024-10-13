@@ -25,15 +25,15 @@ const TopProjects = async () => {
       {topProjectsData.map((project) => (
         <Link href={`/deals/${project.id}`} key={project.id}>
           <ProjectCard
-            name={project.projectName}
-            description={project.projectShortDescription}
-            imageUri={project.cardImage}
-            joinDate={new Date(project.publishedTime).toLocaleDateString()}
-            location={project.Business.location}
-            tags={project.ItemTag.map((item) => item.Tag.value)}
-            minInvestment={project.ProjectInvestmentDetail[0]?.minInvestment || 0}
+            name={project.project_name}
+            description={project.project_short_description}
+            imageUri={project.card_image_url}
+            joinDate={new Date(project.published_time).toLocaleDateString()}
+            location={project.business.location}
+            tags={project.item_tag.map((item) => item.tag.value)}
+            minInvestment={project.project_investment_detail[0]?.min_investment || 0}
             totalInvestor={0}
-            totalRaised={project.ProjectInvestmentDetail[0]?.totalInvestment || 0}
+            totalRaised={project.project_investment_detail[0]?.total_investment || 0}
           />
         </Link>
       ))}
