@@ -36,8 +36,8 @@ export default function Apply() {
       .string({
         required_error: "Please provide a brief description for your project",
       })
-      .min(40, {
-        message: "Short description must be at least 40 characters.",
+      .min(10, {
+        message: "Short description must be at least 10 characters.",
       }),
     projectPitchDeck: pitchDeckSchema,
     projectLogo: z
@@ -133,23 +133,7 @@ export default function Apply() {
     businessPitchDeck: pitchDeckSchema,
   });
   let supabase = createSupabaseClient();
-  const {
-    register: registerBusiness,
-    handleSubmit: handleSubmitBusiness,
-    setValue: setValueBusiness,
-    formState: { errors: errorsBusiness },
-  } = useForm({
-    resolver: zodResolver(businessFormSchema),
-  });
 
-  const {
-    register: registerProject,
-    handleSubmit: handleSubmitProject,
-    setValue: setValueProject,
-    formState: { errors: errorsProject },
-  } = useForm({
-    resolver: zodResolver(projectFormSchema),
-  });
   const [industry, setIndustry] = useState<string[]>([]);
   const [isInUS, setIsInUS] = useState("");
   const [isForSale, setIsForSale] = useState("");
@@ -159,6 +143,23 @@ export default function Apply() {
   const [projectPitch, setProjectPitch] = useState("");
   const [applyProject, setApplyProject] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setValue: setValueBusiness,
+    formState: { errors: errorsBusiness },
+  } = useForm({
+    resolver: zodResolver(businessFormSchema),
+  });
+  const {
+    register: registerSecondForm,
+    handleSubmit: handleSecondSubmit,
+    formState: { errors: errorsProject },
+    setValue: setValueProject,
+  } = useForm({
+    resolver: zodResolver(projectFormSchema),
+  });
 
   const communitySize = [
     "N/A",
@@ -171,11 +172,11 @@ export default function Apply() {
   ];
 
   useEffect(() => {
-    registerBusiness("industry");
-    registerBusiness("isInUS");
-    registerBusiness("isForSale");
-    registerBusiness("isGenerating");
-  }, [registerBusiness]);
+    register("industry");
+    register("isInUS");
+    register("isForSale");
+    register("isGenerating");
+  }, [register]);
 
   const handleRemoveImage = (index: number) => {
     const updatedImages = selectedImages.filter((_, i) => i !== index);
@@ -185,10 +186,11 @@ export default function Apply() {
     if (event.target.files) {
       const filesArray = Array.from(event.target.files);
       setSelectedImages((prevImages) => [...prevImages, ...filesArray]);
+      setValueProject("projectPhotos", filesArray);
     }
   };
 
-  const onSubmit = (data: any) => {
+  const transformChoice = (data: any) => {
     // console.table(data);
     // convert any yes and no to true or false
     const transformedData = Object.entries(data).reduce(
@@ -209,13 +211,7 @@ export default function Apply() {
       },
       {}
     );
-    if (data.pitchDeck instanceof File) {
-      console.log("File Uploaded:", data.pitchDeck.name);
-    } else {
-      console.log("URL Provided:", data.pitchDeck);
-    }
-    console.table(transformedData);
-    alert(JSON.stringify(transformedData));
+    return transformedData;
   };
   const handleBusinessPitchChange = (type: string) => {
     setBusinessPitch(type);
@@ -223,7 +219,7 @@ export default function Apply() {
     setValueBusiness("pitchDeck", "");
   };
 
-  const handleFieldChange = (fieldName: string, value: any) => {
+  const handleBusinessFieldChange = (fieldName: string, value: any) => {
     switch (fieldName) {
       case "isInUS":
         setIsInUS(value);
@@ -237,6 +233,12 @@ export default function Apply() {
     }
     setValueBusiness(fieldName, value);
   };
+  const handleProjectFieldChange = (fieldName: string, value: any) => {
+    switch (fieldName) {
+    }
+    setValueProject(fieldName, value);
+  };
+
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
       .from("BusinessType")
@@ -249,6 +251,27 @@ export default function Apply() {
         // console.table();
         setIndustry(BusinessType.map((item) => item.value));
       }
+    }
+  };
+
+  const onSubmitSingleForm = (data: any) => {
+    alert(JSON.stringify(data));
+  };
+
+  const onSubmitBothForms = (firstFormData: any, secondFormData: any) => {
+    alert(JSON.stringify(firstFormData));
+    alert(JSON.stringify(secondFormData));
+    console.log("Both forms submitted:", { firstFormData, secondFormData });
+  };
+
+  const handleSubmitForms = (firstFormData: any) => {
+    const transformedData = transformChoice(firstFormData);
+    if (applyProject) {
+      handleSecondSubmit((secondFormData: any) => {
+        onSubmitBothForms(transformedData, secondFormData);
+      })();
+    } else {
+      onSubmitSingleForm(transformedData);
     }
   };
   const fetchProjectType = async () => {
@@ -287,7 +310,7 @@ export default function Apply() {
         </div>
       </div>
       {/* form */}
-      <form action="" onSubmit={handleSubmitBusiness(onSubmit)}>
+      <form action="" onSubmit={handleSubmit(handleSubmitForms)}>
         <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2 lg:ml-[10%]">
           <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
           <p className="ml-96 mt-5 text-neutral-500">
@@ -306,7 +329,7 @@ export default function Apply() {
                   type="text"
                   id="companyName"
                   className="w-96"
-                  {...registerBusiness("companyName")}
+                  {...register("companyName")}
                 />
                 <span className="text-[12px] text-neutral-500 self-center">
                   This should be the name your company uses on your <br />
@@ -329,7 +352,7 @@ export default function Apply() {
               header={<>Industry</>}
               fieldName="industry"
               choices={industry}
-              handleFunction={handleFieldChange}
+              handleFunction={handleBusinessFieldChange}
               description={
                 <>Choose the industry that best aligns with your business.</>
               }
@@ -352,7 +375,7 @@ export default function Apply() {
                   id="totalRaised"
                   className="w-96"
                   placeholder="$   1,000,000"
-                  {...registerBusiness("totalRaised", {
+                  {...register("totalRaised", {
                     valueAsNumber: true,
                   })}
                 />
@@ -379,7 +402,7 @@ export default function Apply() {
               name="isInUS"
               choice1="Yes"
               choice2="No"
-              handleFunction={handleFieldChange}
+              handleFunction={handleBusinessFieldChange}
               description={
                 <>
                   Only companies that are incorporated or formed in the US are{" "}
@@ -408,7 +431,7 @@ export default function Apply() {
               name="isForSale"
               choice1="Yes"
               choice2="No"
-              handleFunction={handleFieldChange}
+              handleFunction={handleBusinessFieldChange}
               description={
                 <>
                   Only check this box if customers can access, use, or buy your{" "}
@@ -430,7 +453,7 @@ export default function Apply() {
               name="isGenerating"
               choice1="Yes"
               choice2="No"
-              handleFunction={handleFieldChange}
+              handleFunction={handleBusinessFieldChange}
               description={
                 <>
                   Only check this box if your company is making money. <br />
@@ -478,7 +501,7 @@ export default function Apply() {
                       : "https:// "
                   }
                   accept={businessPitch === "file" ? ".md" : undefined}
-                  {...registerBusiness("businessPitchDeck", { required: true })}
+                  {...register("businessPitchDeck", { required: true })}
                 />
 
                 <span className="text-[12px] text-neutral-500 self-center">
@@ -508,7 +531,7 @@ export default function Apply() {
               }
               fieldName="communitySize"
               choices={communitySize}
-              handleFunction={handleFieldChange}
+              handleFunction={handleBusinessFieldChange}
               description={
                 <>
                   {" "}
@@ -555,231 +578,289 @@ export default function Apply() {
         {/* apply first project */}
         {applyProject && (
           <div className="grid auto-rows-max w-3/4 ml-48 bg-zinc-100 dark:bg-zinc-900 mt-10 pt-12 pb-12">
-            <form action="" onSubmit={handleSubmitProject(onSubmit)}>
-              {/* header */}
-              <div className="ml-[15%]">
-                <h1 className="text-3xl font-bold mt-10">
-                  Begin Your First Fundraising Project
-                </h1>
-                <p className="mt-3 text-sm text-neutral-500">
-                  Starting a fundraising project is mandatory for all
-                  businesses. This step is crucial <br />
-                  to begin your journey and unlock the necessary tools for
-                  raising funds.
-                </p>
+            {/* header */}
+            <div className="ml-[15%]">
+              <h1 className="text-3xl font-bold mt-10">
+                Begin Your First Fundraising Project
+              </h1>
+              <p className="mt-3 text-sm text-neutral-500">
+                Starting a fundraising project is mandatory for all businesses.
+                This step is crucial <br />
+                to begin your journey and unlock the necessary tools for raising
+                funds.
+              </p>
 
-                {/* project's name */}
-                <div className="mt-10 space-y-5">
-                  <Label htmlFor="projectName" className="font-bold text-lg">
-                    Project name
-                  </Label>
-                  <div className="flex space-x-5">
-                    <Input
-                      type="text"
-                      id="projectName"
-                      className="w-96"
-                      {...registerProject("projectName")}
-                    />
-                  </div>
-                </div>
-
-                {/* project type */}
-                <MultipleOptionSelector
-                  header={<>Project type</>}
-                  fieldName="projectType"
-                  choices={projectType}
-                  handleFunction={handleFieldChange}
-                  description={
-                    <>Please specify the primary purpose of the funds</>
-                  }
-                  placeholder="Select a Project type"
-                  selectLabel="Project type"
-                />
-
-                {/* short description */}
-                <div className="mt-10 space-y-5">
-                  <Label
-                    htmlFor="shortDescription"
-                    className="font-bold text-lg"
-                  >
-                    Short description
-                  </Label>
-                  <div className="flex space-x-5">
-                    <Textarea id="shortDescription" className="w-96" />
-                    <span className="text-[12px] text-neutral-500 self-center">
-                      Could you provide a brief description of your project{" "}
-                      <br /> in one or two sentences?
-                    </span>
-                  </div>
-                </div>
-
-                {/* Pitch deck */}
-                <div className="mt-10 space-y-5">
-                  <Label
-                    htmlFor="projectPitchDeck"
-                    className="font-bold text-lg"
-                  >
-                    Pitch deck
-                  </Label>
-                  <div className="flex space-x-2 w-96">
-                    <Button
-                      type="button"
-                      variant={projectPitch === "text" ? "default" : "outline"}
-                      onClick={() => setProjectPitch("text")}
-                      className="w-32 h-12 text-base"
-                    >
-                      Paste URL
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={projectPitch === "file" ? "default" : "outline"}
-                      onClick={() => setProjectPitch("file")}
-                      className="w-32 h-12 text-base"
-                    >
-                      Upload a file
-                    </Button>
-                  </div>
-                  <div className="flex space-x-5">
-                    <Input
-                      type={projectPitch}
-                      id="projectPitchDeck"
-                      className="w-96"
-                      placeholder="https:// "
-                    />
-                    <span className="text-[12px] text-neutral-500 self-center">
-                      Please upload a file or paste a link to your pitch, which
-                      should <br />
-                      cover key aspects of your project: what it will do, what
-                      investors <br /> can expect to gain, and any highlights
-                      that make it stand out.
-                    </span>
-                  </div>
-                </div>
-
-                {/* project logo */}
-                <div className="mt-10 space-y-5">
-                  <Label
-                    htmlFor="projectLogo"
-                    className="font-bold text-lg mt-10"
-                  >
-                    Project logo
-                  </Label>
-                  <div className="flex space-x-5">
-                    <Input
-                      type="file"
-                      id="projectPitchDeck"
-                      className="w-96"
-                      accept="image/*"
-                    />
-                    <span className="text-[12px] text-neutral-500 self-center">
-                      Please upload the logo picture that best represents your
-                      project.
-                    </span>
-                  </div>
-                </div>
-
-                {/* Project pictures */}
-                <div className="mt-10 space-y-5">
-                  <Label
-                    htmlFor="projectPicture"
-                    className="font-bold text-lg mt-10"
-                  >
-                    Project pictures
-                  </Label>
-                  <div className="flex space-x-5">
-                    <Input
-                      type="file"
-                      id="projectPicture"
-                      multiple
-                      onChange={handleFileChange}
-                      accept="image/*"
-                      className="w-96"
-                      value={selectedImages.length === 0 ? "" : undefined}
-                    />
-                    <span className="text-[12px] text-neutral-500 self-center">
-                      Feel free to upload any additional images that provide{" "}
-                      <br />
-                      further insight into your project.
-                    </span>
-                  </div>
-                  <div className="mt-5 space-y-2 w-96">
-                    {selectedImages.map((image, index) => (
-                      <div
-                        key={index}
-                        className="flex justify-between items-center border p-2 rounded"
-                      >
-                        <span>{image.name}</span>
-                        <Button
-                          variant="outline"
-                          onClick={() => handleRemoveImage(index)}
-                          className="ml-4"
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Minimum Investment */}
-                <div className="space-y-5 mt-10">
-                  <Label htmlFor="minInvest" className="font-bold text-lg">
-                    Minimum investment
-                  </Label>
-                  <div className="flex space-x-5">
-                    <Input
-                      type="number"
-                      id="minInvest"
-                      className="w-96"
-                      placeholder="$   500"
-                      {...registerProject}
-                    />
-                    <span className="text-[12px] text-neutral-500 self-center">
-                      This helps set clear expectations for investors
-                    </span>
-                  </div>
-                </div>
-                {/* Target Investment */}
-                <div className="space-y-5 mt-10">
-                  <Label htmlFor="targetInvest" className="font-bold text-lg">
-                    Target investment
-                  </Label>
-                  <div className="flex space-x-5">
-                    <Input
-                      type="number"
-                      id="targetInvest"
-                      className="w-96"
-                      placeholder="$   1,000,000"
-                      {...registerProject}
-                    />
-                    <span className="text-[12px] text-neutral-500 self-center">
-                      We encourage you to set a specific target investment{" "}
-                      <br /> amount that reflects your funding goals.
-                    </span>
-                  </div>
-                </div>
-
-                {/* Deadline */}
-                <div className="space-y-5 mt-10">
-                  <Label htmlFor="deadline" className="font-bold text-lg">
-                    Deadline
-                  </Label>
-                  <div className="flex space-x-5">
-                    <Input
-                      type="datetime-local"
-                      id="deadline"
-                      className="w-96"
-                      {...registerProject}
-                    />
-                    <span className="text-[12px] text-neutral-500 self-center">
-                      What is the deadline for your fundraising project? Setting{" "}
-                      <br /> a clear timeline can help motivate potential
-                      investors.
-                    </span>
-                  </div>
+              {/* project's name */}
+              <div className="mt-10 space-y-5">
+                <Label htmlFor="projectName" className="font-bold text-lg">
+                  Project name
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="text"
+                    id="projectName"
+                    className="w-96"
+                    {...registerSecondForm("projectName")}
+                  />
                 </div>
               </div>
-            </form>
+              {errorsProject.projectName && (
+                <p className="text-red-500 text-sm">
+                  {errorsProject.projectName.message as string}
+                </p>
+              )}
+
+              {/* project type */}
+              <MultipleOptionSelector
+                header={<>Project type</>}
+                fieldName="projectType"
+                choices={projectType}
+                handleFunction={handleProjectFieldChange}
+                description={
+                  <>Please specify the primary purpose of the funds</>
+                }
+                placeholder="Select a Project type"
+                selectLabel="Project type"
+              />
+              {errorsProject.projectType && (
+                <p className="text-red-500 text-sm">
+                  {errorsProject.projectType.message as string}
+                </p>
+              )}
+
+              {/* short description */}
+              <div className="mt-10 space-y-5">
+                <Label htmlFor="shortDescription" className="font-bold text-lg">
+                  Short description
+                </Label>
+                <div className="flex space-x-5">
+                  <Textarea
+                    id="shortDescription"
+                    className="w-96"
+                    {...registerSecondForm("shortDescription")}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    Could you provide a brief description of your project <br />{" "}
+                    in one or two sentences?
+                  </span>
+                </div>
+              </div>
+              {errorsProject.shortDescription && (
+                <p className="text-red-500 text-sm">
+                  {errorsProject.shortDescription.message as string}
+                </p>
+              )}
+
+              {/* Pitch deck */}
+              <div className="mt-10 space-y-5">
+                <Label htmlFor="projectPitchDeck" className="font-bold text-lg">
+                  Pitch deck
+                </Label>
+                <div className="flex space-x-2 w-96">
+                  <Button
+                    type="button"
+                    variant={projectPitch === "text" ? "default" : "outline"}
+                    onClick={() => setProjectPitch("text")}
+                    className="w-32 h-12 text-base"
+                  >
+                    Paste URL
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={projectPitch === "file" ? "default" : "outline"}
+                    onClick={() => setProjectPitch("file")}
+                    className="w-32 h-12 text-base"
+                  >
+                    Upload a file
+                  </Button>
+                </div>
+                <div className="flex space-x-5">
+                  <Input
+                    type={projectPitch}
+                    id="projectPitchDeck"
+                    className="w-96"
+                    placeholder={
+                      projectPitch === "file"
+                        ? "Upload your Markdown file"
+                        : "https:// "
+                    }
+                    accept={projectPitch === "file" ? ".md" : undefined}
+                    {...registerSecondForm("projectPitchDeck", {
+                      required: true,
+                    })}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    Please upload a file or paste a link to your pitch, which
+                    should <br />
+                    cover key aspects of your project: what it will do, what
+                    investors <br /> can expect to gain, and any highlights that
+                    make it stand out.
+                  </span>
+                </div>
+              </div>
+              {errorsProject.projectPitchDeck && (
+                <p className="text-red-500 text-sm">
+                  {errorsProject.projectPitchDeck.message as string}
+                </p>
+              )}
+
+              {/* project logo */}
+              <div className="mt-10 space-y-5">
+                <Label
+                  htmlFor="projectLogo"
+                  className="font-bold text-lg mt-10"
+                >
+                  Project logo
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="file"
+                    id="projectLogo"
+                    className="w-96"
+                    accept="image/*"
+                    {...registerSecondForm("projectLogo", { required: true })}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    Please upload the logo picture that best represents your
+                    project.
+                  </span>
+                </div>
+              </div>
+              {errorsProject.projectLogo && (
+                <p className="text-red-500 text-sm">
+                  {errorsProject.projectLogo.message as string}
+                </p>
+              )}
+
+              {/* Project pictures */}
+              <div className="mt-10 space-y-5">
+                <Label
+                  htmlFor="projectPicture"
+                  className="font-bold text-lg mt-10"
+                >
+                  Project pictures
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="file"
+                    id="projectPicture"
+                    multiple
+                    accept="image/*"
+                    className="w-96"
+                    value={selectedImages.length === 0 ? "" : undefined}
+                    {...registerSecondForm("projectPhotos", {
+                      required: true,
+                      onChange: (e) => handleFileChange(e),
+                    })}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    Feel free to upload any additional images that provide{" "}
+                    <br />
+                    further insight into your project.
+                  </span>
+                </div>
+                <div className="mt-5 space-y-2 w-96">
+                  {selectedImages.map((image, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center border p-2 rounded"
+                    >
+                      <span>{image.name}</span>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleRemoveImage(index)}
+                        className="ml-4"
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {errorsProject.projectPhotos && (
+                <p className="text-red-500 text-sm">
+                  {errorsProject.projectPhotos.message as string}
+                </p>
+              )}
+
+              {/* Minimum Investment */}
+              <div className="space-y-5 mt-10">
+                <Label htmlFor="minInvest" className="font-bold text-lg">
+                  Minimum investment
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="number"
+                    id="minInvest"
+                    className="w-96"
+                    placeholder="$   500"
+                    {...registerSecondForm("minInvest", {
+                      valueAsNumber: true,
+                    })}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    This helps set clear expectations for investors
+                  </span>
+                </div>
+              </div>
+              {errorsProject.minInvest && (
+                <p className="text-red-500 text-sm">
+                  {errorsProject.minInvest.message as string}
+                </p>
+              )}
+
+              {/* Target Investment */}
+              <div className="space-y-5 mt-10">
+                <Label htmlFor="targetInvest" className="font-bold text-lg">
+                  Target investment
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="number"
+                    id="targetInvest"
+                    className="w-96"
+                    placeholder="$   1,000,000"
+                    {...registerSecondForm("targetInvest", {
+                      valueAsNumber: true,
+                    })}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    We encourage you to set a specific target investment <br />{" "}
+                    amount that reflects your funding goals.
+                  </span>
+                </div>
+              </div>
+              {errorsProject.targetInvest && (
+                <p className="text-red-500 text-sm">
+                  {errorsProject.targetInvest.message as string}
+                </p>
+              )}
+
+              {/* Deadline */}
+              <div className="space-y-5 mt-10">
+                <Label htmlFor="deadline" className="font-bold text-lg">
+                  Deadline
+                </Label>
+                <div className="flex space-x-5">
+                  <Input
+                    type="datetime-local"
+                    id="deadline"
+                    className="w-96"
+                    {...registerSecondForm("deadline")}
+                  />
+                  <span className="text-[12px] text-neutral-500 self-center">
+                    What is the deadline for your fundraising project? Setting{" "}
+                    <br /> a clear timeline can help motivate potential
+                    investors.
+                  </span>
+                </div>
+              </div>
+              {errorsProject.deadline && (
+                <p className="text-red-500 text-sm">
+                  {errorsProject.deadline.message as string}
+                </p>
+              )}
+            </div>
           </div>
         )}
         {/* Submit */}
