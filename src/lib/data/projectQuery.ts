@@ -1,11 +1,14 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
-async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 4) {
-    try {
-      const { data, error } = await client
-        .from("Project")
-        .select(
-          `
+async function getTopProjects(
+  client: SupabaseClient,
+  numberOfRecords: number = 4,
+) {
+  try {
+    const { data, error } = await client
+      .from("Project")
+      .select(
+        `
             id,
             projectName,
             businessId,
@@ -27,22 +30,44 @@ async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 
             Business (
               location
             )
-          `
-        )
-        .order("publishedTime", { ascending: false })
-        .limit(numberOfRecords);
+          `,
+      )
+      .order("publishedTime", { ascending: false })
+      .limit(numberOfRecords);
 
-      if (error) {
-        console.error("Error fetching top projects:", error.message);
-        return { data: null, error: error.message };
-      }
-
-      return { data, error: null };
-    } catch (err) {
-      console.error("Unexpected error:", err);
-      return { data: null, error: "An unexpected error occurred." };
+    if (error) {
+      console.error("Error fetching top projects:", error.message);
+      return { data: null, error: error.message };
     }
+
+    return { data, error: null };
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    return { data: null, error: "An unexpected error occurred." };
   }
+}
+
+function getProjectDataQuery(client: SupabaseClient, projectId: number) {
+  return client.from("Project").select(
+    `
+      project_name:projectName,
+      project_short_description:projectShortDescription,
+      project_description:projectDescription,
+      published_time:publishedTime,
+      ...ProjectInvestmentDetail!inner (
+        min_investment:minInvestment,
+        total_investment:totalInvestment,
+        target_investment:targetInvestment,
+        investment_deadline:investmentDeadline
+      ),
+      tags:ItemTag!inner (
+        ...Tag!inner (
+          tag_name:value
+        )
+      )
+    `,
+  ).eq("id", projectId).single();
+}
 
 async function getProjectData(client: SupabaseClient, projectId: number) {
   const query = client.from("Project").select(
@@ -62,11 +87,11 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
           tag_name:value
         )
       )
-    `
-  ).eq("id", projectId).single()
+    `,
+  ).eq("id", projectId).single();
 
-  const {data, error} = await query;
-  return { data, error }
+  const { data, error } = await query;
+  return { data, error };
 }
 
 export interface FilterParams {
@@ -79,14 +104,25 @@ export interface FilterParams {
 }
 
 export interface FilterProjectQueryParams extends FilterParams {
-  page: number,
-  pageSize: number
+  page: number;
+  pageSize: number;
 }
 
-function searchProjectsQuery(client: SupabaseClient, {searchTerm, tagsFilter, projectStatus, businessTypeFilter, sortByTimeFilter, page = 1, pageSize = 4}: FilterProjectQueryParams) {
+function searchProjectsQuery(
+  client: SupabaseClient,
+  {
+    searchTerm,
+    tagsFilter,
+    projectStatus,
+    businessTypeFilter,
+    sortByTimeFilter,
+    page = 1,
+    pageSize = 4,
+  }: FilterProjectQueryParams,
+) {
   const start = (page - 1) * pageSize;
   const end = start + pageSize - 1;
-  
+
   let query = client.from("Project").select(
     `
     project_id:id,
@@ -114,8 +150,8 @@ function searchProjectsQuery(client: SupabaseClient, {searchTerm, tagsFilter, pr
       ),
       business_location:location
     )
-    `
-  ).order("publishedTime", { ascending: false }).range(start, end)
+    `,
+  ).order("publishedTime", { ascending: false }).range(start, end);
 
   if (sortByTimeFilter === "all") {
     sortByTimeFilter = undefined;
@@ -134,24 +170,27 @@ function searchProjectsQuery(client: SupabaseClient, {searchTerm, tagsFilter, pr
   }
 
   if (searchTerm) {
-    query = query.ilike('projectName', `%${searchTerm}%`)
+    query = query.ilike("projectName", `%${searchTerm}%`);
   }
 
   if (tagsFilter) {
-    query = query.in('ItemTag.Tag.value', tagsFilter)
+    query = query.in("ItemTag.Tag.value", tagsFilter);
   }
 
   if (projectStatus) {
-    query = query.eq("ProjectStatus.value", projectStatus)
+    query = query.eq("ProjectStatus.value", projectStatus);
   }
 
   if (businessTypeFilter) {
-    query = query.eq("Business.businessType.value", businessTypeFilter)
+    query = query.eq("Business.businessType.value", businessTypeFilter);
   }
 
   return query;
 }
 
-
-export { getTopProjects, getProjectData, searchProjectsQuery };
-
+export {
+  getProjectData,
+  getProjectDataQuery,
+  getTopProjects,
+  searchProjectsQuery,
+};

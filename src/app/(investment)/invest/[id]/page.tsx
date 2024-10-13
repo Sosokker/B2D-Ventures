@@ -2,14 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 
 import convertToSubcurrency from "@/lib/convertToSubcurrency";
 import CheckoutPage from "./checkoutPage";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+
+import { getProjectDataQuery } from "@/lib/data/projectQuery";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
+import useSession from "@/lib/supabase/useSession";
 
 if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY === undefined) {
   throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
@@ -47,6 +53,14 @@ export default function InvestPage() {
   const [checkedTerms, setCheckedTerms] = useState(Array(term_data.length).fill(false));
   const [investAmount, setInvestAmount] = useState(10);
 
+  const { session } = useSession();
+  const investor_id = session!.user.id;
+
+  const params = useParams<{ id: string }>();
+  const supabase = createSupabaseClient();
+
+  const { data: projectData, isLoading: isLoadingProject } = useQuery(getProjectDataQuery(supabase, Number(params.id)));
+
   const handleCheckboxChange = (index: number) => {
     const updatedCheckedTerms = [...checkedTerms];
     updatedCheckedTerms[index] = !updatedCheckedTerms[index];
@@ -62,7 +76,7 @@ export default function InvestPage() {
 
   return (
     <div className="mx-10 md:mx-40 my-10">
-      <h1 className="text-2xl md:text-4xl font-bold">Invest on NVIDIA</h1>
+      <h1 className="text-2xl md:text-4xl font-bold">Invest on ${projectData?.project_name}</h1>
       <Separator className="my-4" />
       <div></div>
       <div>
@@ -113,7 +127,12 @@ export default function InvestPage() {
                 amount: convertToSubcurrency(investAmount),
                 currency: "usd",
               }}>
-              <CheckoutPage amount={investAmount} isAcceptTermAndService={isAcceptTermAndService} />
+              <CheckoutPage
+                amount={investAmount}
+                isAcceptTermAndService={isAcceptTermAndService}
+                project_id={Number(params.id)}
+                investor_id={investor_id}
+              />
             </Elements>
           </div>
         </div>

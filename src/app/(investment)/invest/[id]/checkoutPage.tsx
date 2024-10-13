@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import convertToSubcurrency from "@/lib/convertToSubcurrency";
 import {
   Dialog,
@@ -14,12 +14,19 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import useSession from "@/lib/supabase/useSession";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
+import { useRouter } from "next/navigation";
 
 const CheckoutPage = ({
   amount,
+  project_id,
+  investor_id,
   isAcceptTermAndService,
 }: {
   amount: number;
+  project_id: number;
+  investor_id: string;
   isAcceptTermAndService: () => boolean;
 }) => {
   const stripe = useStripe();
@@ -27,8 +34,12 @@ const CheckoutPage = ({
   const [errorMessage, setErrorMessage] = useState<string>();
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for dialog open/close
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const isAcceptTerm = isAcceptTermAndService();
+  const router = useRouter();
+
+  const { session } = useSession();
+  const user = session?.user;
 
   useEffect(() => {
     fetch("/api/create-payment-intent", {
@@ -58,19 +69,39 @@ const CheckoutPage = ({
       return;
     }
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      clientSecret,
-      confirmParams: {
-        return_url: `http://www.localhost:3000/payment-success?amount=${amount}`,
-      },
-    });
+    await stripe
+      .confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement)!,
+        },
+      })
+      .then(async (result) => {
+        if (result.error) {
+          setErrorMessage(result.error.message);
+        } else {
+          try {
+            const supabase = createSupabaseClient();
+            const { data, error } = await supabase.from("InvestmentDeal").insert([
+              {
+                investorId: investor_id,
+                projectId: project_id,
+                dealAmount: amount,
+              },
+            ]);
+            console.log("ADADSADWADWWAD");
 
-    if (error) {
-      setErrorMessage(error.message);
-    }
-
-    setLoading(false);
+            if (error) {
+              console.error("Supabase Insert Error:", error.message);
+            } else {
+              console.log("Insert successful:", data);
+              router.push(`http://www.localhost:3000/payment-success?amount=${amount}`);
+            }
+          } catch (err) {
+            console.error("Unexpected error during Supabase insert:", err);
+          }
+        }
+        setLoading(false);
+      });
   };
 
   if (!clientSecret || !stripe || !elements) {
@@ -89,7 +120,7 @@ const CheckoutPage = ({
 
   return (
     <div>
-      {clientSecret && <PaymentElement />}
+      {clientSecret && <CardElement />}
 
       {errorMessage && <div>{errorMessage}</div>}
 
