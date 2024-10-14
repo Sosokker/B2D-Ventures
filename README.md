@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# B2D-Ventures
 
-## Getting Started
+## About
 
-First, run the development server:
+B2D Ventures is a fund raising platform
 
+## Installation
+
+List of external services you need before initialize the project
+- [Supabase](https://supabase.com/)
+  - [Google OAuth2](https://developers.google.com/identity/protocols/oauth2) : Use with supabase authentication
+- [Stripe](https://stripe.com/en-th)
+
+1. Create .env to store environment variable
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env
+// Add tokens to .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependecies and start server
+```
+npm install
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Project Structure
 
-## Learn More
+```
+public/             Static assets
+src/
+├─ app/             Contains core application files, routing, and page components
+│  ├─ api/          API route handlers
+│  ├─ globals.css   Shadcn/ui theming
+├─ components/ 	    Reusable UI components for building the interface
+│  ├─ ui/           Shadcn/ui components
+├─ lib/             Utility functions and service libraries
+│  ├─ data/         Data-fetching logic or helper functions for handling data (Supabase queries)
+│  ├─ stripe/ 	    Configuration code related to Stripe payment integration.
+│  ├─ supabase/     Utilities for Supabase integration (database, authentication, etc.).
+├─ types/ 	    Infers types from Supabase and includes interfaces
+├─ middleware.ts    Custom middleware for processing each request
+tests/ 	            Playwright tests for end-to-end testing of the application
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Contributor
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1.  Nantawat Sukrisunt | [Nantawat6510545543](https://github.com/Nantawat6510545543)
+2.  Naytitorn Chaovirachot  | [CondricNay](https://github.com/CondricNay)
+3.  Sirin Puenggun | [sosokker](https://github.com/Sosokker)
+4.  Pattadon Loyprasert | [GGWPXXXX](https://github.com/GGWPXXXX)
