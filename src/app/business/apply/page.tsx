@@ -19,12 +19,59 @@ import { DualOptionSelector } from "@/components/dualSelector";
 import { MultipleOptionSelector } from "@/components/multipleSelector";
 
 export default function Apply() {
+  const [industry, setIndustry] = useState<string[]>([]);
+  const [isInUS, setIsInUS] = useState("");
+  const [isForSale, setIsForSale] = useState("");
+  const [isGenerating, setIsGenerating] = useState("");
+  const [businessPitch, setBusinessPitch] = useState("text");
+  const [projectType, setProjectType] = useState<string[]>([]);
+  const [projectPitch, setProjectPitch] = useState("text");
+  const [applyProject, setApplyProject] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [businessPitchFile, setBusinessPitchFile] = useState("");
   const MAX_FILE_SIZE = 5000000;
   const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
-  const pitchDeckSchema = z.union([
-    z.string().url("Pitch deck must be a valid URL."),
-    z.object({}),
-  ]);
+  const createPitchDeckSchema = (inputType: string) => {
+    if (inputType === "text") {
+      return z
+        .string()
+        .url("Pitch deck must be a valid URL.")
+        .refine((url) => url.endsWith(".md"), {
+          message: "Pitch deck URL must link to a markdown file (.md).",
+        });
+    } else if (inputType === "file") {
+      return z
+        .custom<File>(
+          (val) => {
+            // Confirm val is a File object
+            return val instanceof File; // Ensure it is a File instance
+          },
+          {
+            message: "Input must be a file.",
+          }
+        )
+        .refine((file) => file.size < MAX_FILE_SIZE, {
+          message: "File can't be bigger than 5MB.",
+        })
+        .refine((file) => file.name.endsWith(".md"), {
+          message: "File must be a markdown file (.md).",
+        });
+    } else {
+      return z.any(); // avoid undefined
+    }
+  };
+  const projectLogoSchema = z
+    .custom<File>(
+      (val) => val && typeof val === "object" && "size" in val && "type" in val,
+      { message: "Input must be a file." }
+    )
+    .refine((file) => file.size < MAX_FILE_SIZE, {
+      message: "File can't be bigger than 5MB.",
+    })
+    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+      message: "File format must be either jpg, jpeg, or png.",
+    });
+
   const projectFormSchema = z.object({
     projectName: z.string().min(5, {
       message: "Project name must be at least 5 characters.",
@@ -39,33 +86,26 @@ export default function Apply() {
       .min(10, {
         message: "Short description must be at least 10 characters.",
       }),
-    projectPitchDeck: pitchDeckSchema,
-    projectLogo: z
-      .instanceof(File)
-      .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
-        message: "Only .jpg, .jpeg, and .png formats are supported.",
-      })
-      .refine((file) => file.size <= MAX_FILE_SIZE, {
-        message: "Max image size is 5MB.",
-      }),
+    projectPitchDeck: createPitchDeckSchema(projectPitch),
+    projectLogo: projectLogoSchema,
 
-    projectPhotos: z
-      .array(
-        z.object({
-          file: z
-            .any()
-            .refine(
-              (file) => file?.size <= MAX_FILE_SIZE,
-              `Max image size is 5MB.`
-            )
-            .refine(
-              (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-              "Only .jpg, .jpeg, and .png formats are supported."
-            ),
-        })
-      )
-      .min(1, "You must upload at least one photo.")
-      .max(10, "You can upload a maximum of 10 photos."),
+    // projectPhotos: z
+    //   .array(
+    //     z.object({
+    //       file: z
+    //         .any()
+    //         .refine(
+    //           (file) => file?.size <= MAX_FILE_SIZE,
+    //           `Max image size is 5MB.`
+    //         )
+    //         .refine(
+    //           (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+    //           "Only .jpg, .jpeg, and .png formats are supported."
+    //         ),
+    //     })
+    //   )
+    //   .min(1, "You must upload at least one photo.")
+    //   .max(10, "You can upload a maximum of 10 photos."),
     minInvest: z
       .number({
         required_error: "Minimum invesment must be a number.",
@@ -132,23 +172,12 @@ export default function Apply() {
     communitySize: z.string({
       required_error: "Please select one of the option",
     }),
-    businessPitchDeck: pitchDeckSchema,
+    businessPitchDeck: createPitchDeckSchema(businessPitch),
   });
   let supabase = createSupabaseClient();
-
-  const [industry, setIndustry] = useState<string[]>([]);
-  const [isInUS, setIsInUS] = useState("");
-  const [isForSale, setIsForSale] = useState("");
-  const [isGenerating, setIsGenerating] = useState("");
-  const [businessPitch, setBusinessPitch] = useState("");
-  const [projectType, setProjectType] = useState<string[]>([]);
-  const [projectPitch, setProjectPitch] = useState("");
-  const [applyProject, setApplyProject] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const {
     register,
     handleSubmit,
-    setValue,
     setValue: setValueBusiness,
     formState: { errors: errorsBusiness },
   } = useForm({
@@ -243,7 +272,7 @@ export default function Apply() {
 
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
-      .from("BusinessType")
+      .from("business_type")
       .select("value");
 
     if (error) {
@@ -257,6 +286,9 @@ export default function Apply() {
   };
 
   const onSubmitSingleForm = (data: any) => {
+    const pitchDeckSchema = createPitchDeckSchema(businessPitch); // Ensure you create the schema dynamically
+    pitchDeckSchema.parse(data.businessPitchDeck); // Validate the specific field
+    console.log("Valid form input:", data);
     alert(JSON.stringify(data));
   };
 
@@ -278,7 +310,7 @@ export default function Apply() {
   };
   const fetchProjectType = async () => {
     let { data: ProjectType, error } = await supabase
-      .from("ProjectType")
+      .from("project_type")
       .select("value");
 
     if (error) {
@@ -503,9 +535,16 @@ export default function Apply() {
                       : "https:// "
                   }
                   accept={businessPitch === "file" ? ".md" : undefined}
-                  {...register("businessPitchDeck", { required: true })}
+                  {...(businessPitch === "text"
+                    ? register("businessPitchDeck", { required: true })
+                    : {
+                        onChange: (e) => {
+                          const file = e.target.files?.[0];
+                          setValueBusiness("businessPitchDeck", file);
+                          setBusinessPitchFile(file?.name || "");
+                        },
+                      })}
                 />
-
                 <span className="text-[12px] text-neutral-500 self-center">
                   Your pitch deck and other application info will be used for{" "}
                   <br />
@@ -519,10 +558,25 @@ export default function Apply() {
                   </p>
                 </span>
               </div>
+              {/* box to show file name */}
+              {businessPitchFile && (
+                <div className="flex justify-between items-center border p-2 rounded w-96 text-sm text-foreground">
+                  <span>1. {businessPitchFile}</span>
+                  <Button
+                    className="ml-4"
+                    onClick={() => {
+                      setValueBusiness("businessPitchDeck", null);
+                      setBusinessPitchFile("");
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
             </div>
-            {errorsBusiness.pitchDeck && (
+            {errorsBusiness.businessPitchDeck && (
               <p className="text-red-500 text-sm">
-                {errorsBusiness.pitchDeck.message as string}
+                {errorsBusiness.businessPitchDeck.message as string}
               </p>
             )}
             <MultipleOptionSelector
@@ -591,7 +645,6 @@ export default function Apply() {
                 to begin your journey and unlock the necessary tools for raising
                 funds.
               </p>
-
               {/* project's name */}
               <div className="mt-10 space-y-5">
                 <Label htmlFor="projectName" className="font-bold text-lg">
@@ -611,7 +664,6 @@ export default function Apply() {
                   {errorsProject.projectName.message as string}
                 </p>
               )}
-
               {/* project type */}
               <MultipleOptionSelector
                 header={<>Project type</>}
@@ -629,7 +681,6 @@ export default function Apply() {
                   {errorsProject.projectType.message as string}
                 </p>
               )}
-
               {/* short description */}
               <div className="mt-10 space-y-5">
                 <Label htmlFor="shortDescription" className="font-bold text-lg">
@@ -652,7 +703,6 @@ export default function Apply() {
                   {errorsProject.shortDescription.message as string}
                 </p>
               )}
-
               {/* Pitch deck */}
               <div className="mt-10 space-y-5">
                 <Label htmlFor="projectPitchDeck" className="font-bold text-lg">
@@ -705,7 +755,6 @@ export default function Apply() {
                   {errorsProject.projectPitchDeck.message as string}
                 </p>
               )}
-
               {/* project logo */}
               <div className="mt-10 space-y-5">
                 <Label
@@ -720,7 +769,16 @@ export default function Apply() {
                     id="projectLogo"
                     className="w-96"
                     accept="image/*"
-                    {...registerSecondForm("projectLogo", { required: true })}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      registerSecondForm("projectLogo").onChange({
+                        target: { name: "projectLogo", value: file },
+                      });
+                      // Set the file value directly in the form
+                      registerSecondForm("projectLogo").onChange({
+                        target: { name: "projectLogo", value: file },
+                      });
+                    }}
                   />
                   <span className="text-[12px] text-neutral-500 self-center">
                     Please upload the logo picture that best represents your
@@ -733,11 +791,10 @@ export default function Apply() {
                   {errorsProject.projectLogo.message as string}
                 </p>
               )}
-
-              {/* Project pictures */}
+              {/* Project Photos
               <div className="mt-10 space-y-5">
                 <Label
-                  htmlFor="projectPicture"
+                  htmlFor="projectPhotos"
                   className="font-bold text-lg mt-10"
                 >
                   Project pictures
@@ -745,7 +802,7 @@ export default function Apply() {
                 <div className="flex space-x-5">
                   <Input
                     type="file"
-                    id="projectPicture"
+                    id="projectPhotos"
                     multiple
                     accept="image/*"
                     className="w-96"
@@ -778,13 +835,12 @@ export default function Apply() {
                     </div>
                   ))}
                 </div>
-              </div>
-              {errorsProject.projectPhotos && (
+              </div> */}
+              {/* {errorsProject.projectPhotos && (
                 <p className="text-red-500 text-sm">
                   {errorsProject.projectPhotos.message as string}
                 </p>
-              )}
-
+              )} */}
               {/* Minimum Investment */}
               <div className="space-y-5 mt-10">
                 <Label htmlFor="minInvest" className="font-bold text-lg">
@@ -810,7 +866,6 @@ export default function Apply() {
                   {errorsProject.minInvest.message as string}
                 </p>
               )}
-
               {/* Target Investment */}
               <div className="space-y-5 mt-10">
                 <Label htmlFor="targetInvest" className="font-bold text-lg">
@@ -837,7 +892,6 @@ export default function Apply() {
                   {errorsProject.targetInvest.message as string}
                 </p>
               )}
-
               {/* Deadline */}
               <div className="space-y-5 mt-10">
                 <Label htmlFor="deadline" className="font-bold text-lg">
