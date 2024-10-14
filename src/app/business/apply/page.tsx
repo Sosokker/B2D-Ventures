@@ -37,37 +37,82 @@ export default function Apply() {
     "100K+",
   ];
 
-  // move to lib?
+  // get industry list to display in dropdown
   const fetchIndustry = async () => {
-    let { data: BusinessType, error } = await supabase
+    let { data: businessType, error } = await supabase
       .from("business_type")
       .select("value");
 
-    if (!BusinessType) {
+    if (!businessType) {
       console.error(error);
     } else {
-      setIndustry(BusinessType.map((item) => item.value));
+      setIndustry(businessType.map((item) => item.value));
     }
   };
   useEffect(() => {
     fetchIndustry();
   }, []);
 
-  const createFormat = () => ({
-    "Company Name: ": companyName,
-    "Industry": selectedIndustry,
-    "Money Raised to Date": moneyRaisedToDate,
-    "Is in USA": isInUS,
-    "Is for sale": isForSale,
-    "Is generating revenue": isGeneratingRevenue,
-    "Business Pitch": businessPitch,
-    "Community Size": selectedCommunitySize,
-    "Created At": new Date().toString()
-  });
+  // get business id from business type
+  const getBusinessTypeID = async () => {
+    const { data, error } = await supabase
+      .from('business_type')
+      .select('id')
+      .eq('value', selectedIndustry)
+      .single();
+  
+    if (error) {
+      console.error('Error fetching business ID:', error);
+      return;
+    }
 
-  const submitApplication = () => {
-    let format = createFormat();
-    alert(JSON.stringify(format));
+    return data.id;
+  };
+
+  // get current user id
+  const getUserID = async () => {
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      console.error('Error fetching user:', error);
+      return;
+    }
+
+    return user.id;
+  }
+
+  // format input data as json
+  const createFormat = async () => {
+    return {
+      "company_name": companyName,
+      "business_type_id": await getBusinessTypeID(),
+      "raise_to_date": moneyRaisedToDate,  //TODO change to money_raised_to_date in database and change type to number
+      "is_in_us": isInUS,
+      "is_for_sale": isForSale,
+      "is_generating_revenue": isGeneratingRevenue,
+      "pitch_deck_url": businessPitch,
+      "community_size": selectedCommunitySize,
+      "created_at": new Date(),
+      "user_id": await getUserID()
+    }
+  };
+
+  // insert into business_application database
+  const submitApplication = async () => {
+    let format = await createFormat();
+    // alert(JSON.stringify(format))          // debug message
+
+    const { data, error } = await supabase
+      .from('business_application')
+      .insert([format]);
+
+    if (error) {
+      // return div error here
+      console.error('Error inserting data:', error);
+      // alert("Error" + JSON.stringify(error));
+    } else {
+      alert("Data successfully submitted!")
+    }
   }
 
   return (
