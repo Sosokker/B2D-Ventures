@@ -86,7 +86,7 @@ export default function Apply() {
     return {
       "company_name": companyName,
       "business_type_id": await getBusinessTypeID(),
-      "raise_to_date": moneyRaisedToDate,  //TODO change to money_raised_to_date in database and change type to number
+      "money_raised_to_date": moneyRaisedToDate,
       "is_in_us": isInUS,
       "is_for_sale": isForSale,
       "is_generating_revenue": isGeneratingRevenue,
