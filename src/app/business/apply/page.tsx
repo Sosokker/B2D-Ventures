@@ -29,6 +29,7 @@ export default function Apply() {
   const [applyProject, setApplyProject] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [businessPitchFile, setBusinessPitchFile] = useState("");
+  const [projectPitchFile, setProjectPitchFile] = useState("");
   const MAX_FILE_SIZE = 5000000;
   const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
   const createPitchDeckSchema = (inputType: string) => {
@@ -535,6 +536,7 @@ export default function Apply() {
                       : "https:// "
                   }
                   accept={businessPitch === "file" ? ".md" : undefined}
+                  // if text use normal register
                   {...(businessPitch === "text"
                     ? register("businessPitchDeck", { required: true })
                     : {
@@ -737,9 +739,17 @@ export default function Apply() {
                         : "https:// "
                     }
                     accept={projectPitch === "file" ? ".md" : undefined}
-                    {...registerSecondForm("projectPitchDeck", {
-                      required: true,
-                    })}
+                    {...(projectPitch === "text"
+                      ? registerSecondForm("businessPitchDeck", {
+                          required: true,
+                        })
+                      : {
+                          onChange: (e) => {
+                            const file = e.target.files?.[0];
+                            setValueProject("businessPitchDeck", file);
+                            setProjectPitchFile(file?.name || "");
+                          },
+                        })}
                   />
                   <span className="text-[12px] text-neutral-500 self-center">
                     Please upload a file or paste a link to your pitch, which
@@ -749,6 +759,20 @@ export default function Apply() {
                     make it stand out.
                   </span>
                 </div>
+                {projectPitchFile && (
+                  <div className="flex justify-between items-center border p-2 rounded w-96 text-sm text-foreground">
+                    <span>1. {projectPitchFile}</span>
+                    <Button
+                      className="ml-4"
+                      onClick={() => {
+                        setValueProject("businessPitchDeck", null);
+                        setProjectPitchFile("");
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
               </div>
               {errorsProject.projectPitchDeck && (
                 <p className="text-red-500 text-sm">
@@ -771,10 +795,6 @@ export default function Apply() {
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      registerSecondForm("projectLogo").onChange({
-                        target: { name: "projectLogo", value: file },
-                      });
-                      // Set the file value directly in the form
                       registerSecondForm("projectLogo").onChange({
                         target: { name: "projectLogo", value: file },
                       });
