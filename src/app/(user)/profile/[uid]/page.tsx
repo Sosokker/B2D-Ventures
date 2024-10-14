@@ -1,5 +1,3 @@
-// components/ProfilePage.tsx
-
 import React from "react";
 import Image from "next/image";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
@@ -10,22 +8,11 @@ import ReactMarkdown from "react-markdown";
 
 interface Profile extends Tables<"Profiles"> {}
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
+  const uid = params.uid;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-red-500">No user found!</p>
-      </div>
-    );
-  }
-
-  const { data: profileData, error } = await getUserProfile(supabase, user.id);
+  const { data: profileData, error } = await getUserProfile(supabase, uid);
 
   if (error) {
     return (
