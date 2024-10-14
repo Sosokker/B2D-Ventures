@@ -3,7 +3,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 async function getUserProfile(client: SupabaseClient, userId: string) {
   try {
     const { data, error } = await client
-      .from("Profiles")
+      .from("profiles")
       .select("updated_at, username, full_name, avatar_url, website, bio")
       .eq("id", userId)
       .single();

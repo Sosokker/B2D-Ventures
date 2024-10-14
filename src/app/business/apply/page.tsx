@@ -16,11 +16,17 @@ import { useEffect, useState } from "react";
 
 export default function Apply() {
   let supabase = createSupabaseClient();
-  const [industry, setIndustry] = useState<string[]>([]);
+
+  const [companyName, setCompanyName] = useState("");
+  const [selectedIndustry, setSelectedIndustry] = useState("");
+  const [moneyRaisedToDate, setMoneyRaisedToDate] = useState("");
   const [isInUS, setIsInUS] = useState("");
   const [isForSale, setIsForSale] = useState("");
-  const [isGenerating, setIsGenarting] = useState("");
-  const [pitch, setPitch] = useState("");
+  const [isGeneratingRevenue, setIsGeneratingRevenue] = useState("");
+  const [businessPitch, setBusinessPitch] = useState("");
+  const [selectedCommunitySize, setSelectedCommunitySize] = useState("");
+
+  const [industry, setIndustry] = useState<string[]>([]);
   const communitySize = [
     "N/A",
     "0-5K",
@@ -31,23 +37,84 @@ export default function Apply() {
     "100K+",
   ];
 
+  // get industry list to display in dropdown
   const fetchIndustry = async () => {
-    let { data: BusinessType, error } = await supabase
-      .from("BusinessType")
+    let { data: businessType, error } = await supabase
+      .from("business_type")
       .select("value");
 
-    if (error) {
+    if (!businessType) {
       console.error(error);
     } else {
-      if (BusinessType) {
-        console.table();
-        setIndustry(BusinessType.map((item) => item.value));
-      }
+      setIndustry(businessType.map((item) => item.value));
     }
   };
   useEffect(() => {
     fetchIndustry();
   }, []);
+
+  // get business id from business type
+  const getBusinessTypeID = async () => {
+    const { data, error } = await supabase
+      .from('business_type')
+      .select('id')
+      .eq('value', selectedIndustry)
+      .single();
+  
+    if (error) {
+      console.error('Error fetching business ID:', error);
+      return;
+    }
+
+    return data.id;
+  };
+
+  // get current user id
+  const getUserID = async () => {
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      console.error('Error fetching user:', error);
+      return;
+    }
+
+    return user.id;
+  }
+
+  // format input data as json
+  const createFormat = async () => {
+    return {
+      "company_name": companyName,
+      "business_type_id": await getBusinessTypeID(),
+      "raise_to_date": moneyRaisedToDate,  //TODO change to money_raised_to_date in database and change type to number
+      "is_in_us": isInUS,
+      "is_for_sale": isForSale,
+      "is_generating_revenue": isGeneratingRevenue,
+      "pitch_deck_url": businessPitch,
+      "community_size": selectedCommunitySize,
+      "created_at": new Date(),
+      "user_id": await getUserID()
+    }
+  };
+
+  // insert into business_application database
+  const submitApplication = async () => {
+    let format = await createFormat();
+    // alert(JSON.stringify(format))          // debug message
+
+    const { data, error } = await supabase
+      .from('business_application')
+      .insert([format]);
+
+    if (error) {
+      // return div error here
+      console.error('Error inserting data:', error);
+      // alert("Error" + JSON.stringify(error));
+    } else {
+      alert("Data successfully submitted!")
+    }
+  }
+
   return (
     <div>
       <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-100 dark:bg-gray-800 p-5">
@@ -57,9 +124,7 @@ export default function Apply() {
         <div className="mt-5 justify-self-center">
           <p className="text-sm md:text-base text-neutral-500">
             All information submitted in this application is for internal use
-            only and is treated with the utmost{" "}
-          </p>
-          <p className="text-sm md:text-base text-neutral-500">
+            only and is treated with the utmost {" "}<br />
             confidentiality. Companies may apply to raise with B2DVentures more
             than once.
           </p>
@@ -68,7 +133,7 @@ export default function Apply() {
       <div className="grid grid-flow-row auto-rows-max w-full ml-48">
         <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
         <p className="ml-96 mt-5 text-neutral-500">
-          All requested information in this section is required.
+          All requested information in this section are required.
         </p>
         {/* form */}
 
@@ -76,10 +141,10 @@ export default function Apply() {
         <div className="ml-96 mt-5 space-y-10">
           <div className="mt-10 space-y-5">
             <Label htmlFor="companyName" className="font-bold text-lg">
-              Company name
+              Company Name
             </Label>
             <div className="flex space-x-5">
-              <Input type="text" id="companyName" className="w-96" />
+              <Input onChange={(event) => setCompanyName(event.target.value)} type="text" id="companyName" className="w-96" />
               <span className="text-[12px] text-neutral-500 self-center">
                 This should be the name your company uses on your <br />
                 website and in the market.
@@ -92,7 +157,7 @@ export default function Apply() {
               Industry
             </Label>
             <div className="flex space-x-5">
-              <Select>
+              <Select onValueChange={(value) => setSelectedIndustry(value)}>
                 <SelectTrigger className="w-96">
                   <SelectValue placeholder="Select an industry" />
                 </SelectTrigger>
@@ -100,7 +165,7 @@ export default function Apply() {
                   <SelectGroup>
                     <SelectLabel>Industry</SelectLabel>
                     {industry.map((i) => (
-                      <SelectItem value={i}>{i}</SelectItem>
+                      <SelectItem key={i} value={i}>{i}</SelectItem>
                     ))}
                   </SelectGroup>
                 </SelectContent>
@@ -117,6 +182,7 @@ export default function Apply() {
             </Label>
             <div className="flex space-x-5">
               <Input
+                onChange={(event) => setMoneyRaisedToDate(event.target.value)}
                 type="text"
                 id="companyName"
                 className="w-96"
@@ -201,15 +267,15 @@ export default function Apply() {
             <div className="flex space-x-5">
               <div className="flex space-x-2 w-96">
                 <Button
-                  variant={isGenerating === "Yes" ? "default" : "outline"}
-                  onClick={() => setIsGenarting("Yes")}
+                  variant={isGeneratingRevenue === "Yes" ? "default" : "outline"}
+                  onClick={() => setIsGeneratingRevenue("Yes")}
                   className="w-20 h-12 text-base"
                 >
                   Yes
                 </Button>
                 <Button
-                  variant={isGenerating === "No" ? "default" : "outline"}
-                  onClick={() => setIsGenarting("No")}
+                  variant={isGeneratingRevenue === "No" ? "default" : "outline"}
+                  onClick={() => setIsGeneratingRevenue("No")}
                   className="w-20 h-12 text-base"
                 >
                   No
@@ -225,19 +291,19 @@ export default function Apply() {
           {/* Pitch deck */}
           <div className="space-y-5">
             <Label htmlFor="companyName" className="font-bold text-lg">
-              Pitch deck
+              Pitch Deck
             </Label>
             <div className="flex space-x-2 w-96">
               <Button
-                variant={pitch === "text" ? "default" : "outline"}
-                onClick={() => setPitch("text")}
+                variant={businessPitch === "text" ? "default" : "outline"}
+                onClick={() => setBusinessPitch("text")}
                 className="w-32 h-12 text-base"
               >
                 Paste URL
               </Button>
               <Button
-                variant={pitch === "file" ? "default" : "outline"}
-                onClick={() => setPitch("file")}
+                variant={businessPitch === "file" ? "default" : "outline"}
+                onClick={() => setBusinessPitch("file")}
                 className="w-32 h-12 text-base"
               >
                 Upload a file
@@ -245,7 +311,7 @@ export default function Apply() {
             </div>
             <div className="flex space-x-5">
               <Input
-                type={pitch}
+                type={businessPitch}
                 id="companyName"
                 className="w-96"
                 placeholder="https:// "
@@ -264,10 +330,10 @@ export default function Apply() {
           {/* What's the rough size of your community? */}
           <div className="mt-10 space-y-5">
             <Label htmlFor="industry" className="font-bold text-lg mt-10">
-              What's the rough size of your <br /> community?
+              What{"'"}s the rough size of your <br /> community?
             </Label>
             <div className="flex space-x-5">
-              <Select>
+              <Select onValueChange={(value) => setSelectedCommunitySize(value)}>
                 <SelectTrigger className="w-96">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -275,7 +341,7 @@ export default function Apply() {
                   <SelectGroup>
                     <SelectLabel>Select</SelectLabel>
                     {communitySize.map((i) => (
-                      <SelectItem value={i}>{i}</SelectItem>
+                      <SelectItem key={i} value={i}>{i}</SelectItem>
                     ))}
                   </SelectGroup>
                 </SelectContent>
@@ -291,8 +357,8 @@ export default function Apply() {
       </div>
       {/* Submit */}
       <center>
-        <Button className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5">
-          Submit application
+        <Button onClick={submitApplication} className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5">
+          Submit Application
         </Button>
       </center>
     </div>
