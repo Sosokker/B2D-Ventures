@@ -44,7 +44,7 @@ export default function Apply() {
       return z
         .custom<File>(
           (val) => {
-            // Confirm val is a File object
+            // confirm val is a File object
             return val instanceof File; // Ensure it is a File instance
           },
           {
@@ -61,7 +61,7 @@ export default function Apply() {
       return z.any(); // avoid undefined
     }
   };
-  const projectLogoSchema = z
+  const imageSchema = z
     .custom<File>(
       (val) => val && typeof val === "object" && "size" in val && "type" in val,
       { message: "Input must be a file." }
@@ -88,25 +88,11 @@ export default function Apply() {
         message: "Short description must be at least 10 characters.",
       }),
     projectPitchDeck: createPitchDeckSchema(projectPitch),
-    projectLogo: projectLogoSchema,
+    projectLogo: imageSchema,
 
-    // projectPhotos: z
-    //   .array(
-    //     z.object({
-    //       file: z
-    //         .any()
-    //         .refine(
-    //           (file) => file?.size <= MAX_FILE_SIZE,
-    //           `Max image size is 5MB.`
-    //         )
-    //         .refine(
-    //           (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-    //           "Only .jpg, .jpeg, and .png formats are supported."
-    //         ),
-    //     })
-    //   )
-    //   .min(1, "You must upload at least one photo.")
-    //   .max(10, "You can upload a maximum of 10 photos."),
+    projectPhotos: z
+      .array(z.instanceof(File))
+      .min(1, "At least one project photo is required"),
     minInvest: z
       .number({
         required_error: "Minimum invesment must be a number.",
@@ -210,20 +196,36 @@ export default function Apply() {
     register("isGenerating");
   }, [register]);
 
-  const handleRemoveImage = (index: number) => {
-    const updatedImages = selectedImages.filter((_, i) => i !== index);
-    setSelectedImages(updatedImages);
-  };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const filesArray = Array.from(event.target.files);
-      setSelectedImages((prevImages) => [...prevImages, ...filesArray]);
-      setValueProject("projectPhotos", filesArray);
+      setSelectedImages((prevImages) => {
+        const updatedImages = [...prevImages, ...filesArray];
+        console.log("Updated Images Array:", updatedImages);
+        // ensure we're setting an array of File objects
+        setValueProject("projectPhotos", updatedImages);
+        return updatedImages;
+      });
     }
   };
 
+  const handleRemoveImage = (index: number) => {
+    setSelectedImages((prevImages) => {
+      const updatedImages = prevImages.filter((_, i) => i !== index);
+      console.log("After removal - Updated Images:", updatedImages);
+      // ensure we're setting an array of File objects
+      setValueProject("projectPhotos", updatedImages);
+      return updatedImages;
+    });
+  };
+
+  const ensureArrayValue = (value: any): File[] => {
+    if (Array.isArray(value)) return value;
+    if (value instanceof File) return [value];
+    return [];
+  };
+
   const transformChoice = (data: any) => {
-    // console.table(data);
     // convert any yes and no to true or false
     const transformedData = Object.entries(data).reduce(
       (acc: Record<any, any>, [key, value]) => {
@@ -287,16 +289,23 @@ export default function Apply() {
   };
 
   const onSubmitSingleForm = (data: any) => {
-    const pitchDeckSchema = createPitchDeckSchema(businessPitch); // Ensure you create the schema dynamically
-    pitchDeckSchema.parse(data.businessPitchDeck); // Validate the specific field
+    const pitchDeckSchema = createPitchDeckSchema(businessPitch);
+    pitchDeckSchema.parse(data.businessPitchDeck);
     console.log("Valid form input:", data);
     alert(JSON.stringify(data));
   };
 
   const onSubmitBothForms = (firstFormData: any, secondFormData: any) => {
+    const formattedSecondFormData = {
+      ...secondFormData,
+      projectPhotos: ensureArrayValue(secondFormData.projectPhotos),
+    };
     alert(JSON.stringify(firstFormData));
-    alert(JSON.stringify(secondFormData));
-    console.log("Both forms submitted:", { firstFormData, secondFormData });
+    alert(JSON.stringify(formattedSecondFormData));
+    console.log("Both forms submitted:", {
+      firstFormData,
+      formattedSecondFormData,
+    });
   };
 
   const handleSubmitForms = (firstFormData: any) => {
@@ -740,13 +749,13 @@ export default function Apply() {
                     }
                     accept={projectPitch === "file" ? ".md" : undefined}
                     {...(projectPitch === "text"
-                      ? registerSecondForm("businessPitchDeck", {
+                      ? registerSecondForm("projectPitchDeck", {
                           required: true,
                         })
                       : {
                           onChange: (e) => {
                             const file = e.target.files?.[0];
-                            setValueProject("businessPitchDeck", file);
+                            setValueProject("projectPitchDeck", file);
                             setProjectPitchFile(file?.name || "");
                           },
                         })}
@@ -765,7 +774,7 @@ export default function Apply() {
                     <Button
                       className="ml-4"
                       onClick={() => {
-                        setValueProject("businessPitchDeck", null);
+                        setValueProject("projectPitchDeck", "");
                         setProjectPitchFile("");
                       }}
                     >
@@ -811,13 +820,12 @@ export default function Apply() {
                   {errorsProject.projectLogo.message as string}
                 </p>
               )}
-              {/* Project Photos
               <div className="mt-10 space-y-5">
                 <Label
                   htmlFor="projectPhotos"
                   className="font-bold text-lg mt-10"
                 >
-                  Project pictures
+                  Project photos
                 </Label>
                 <div className="flex space-x-5">
                   <Input
@@ -829,7 +837,7 @@ export default function Apply() {
                     value={selectedImages.length === 0 ? "" : undefined}
                     {...registerSecondForm("projectPhotos", {
                       required: true,
-                      onChange: (e) => handleFileChange(e),
+                      onChange: handleFileChange,
                     })}
                   />
                   <span className="text-[12px] text-neutral-500 self-center">
@@ -849,19 +857,20 @@ export default function Apply() {
                         variant="outline"
                         onClick={() => handleRemoveImage(index)}
                         className="ml-4"
+                        type="reset"
                       >
                         Remove
                       </Button>
                     </div>
                   ))}
                 </div>
-              </div> */}
-              {/* {errorsProject.projectPhotos && (
+              </div>
+              {errorsProject.projectPhotos && (
                 <p className="text-red-500 text-sm">
                   {errorsProject.projectPhotos.message as string}
                 </p>
-              )} */}
-              {/* Minimum Investment */}
+              )}
+              {/*  Minimum Investment */}
               <div className="space-y-5 mt-10">
                 <Label htmlFor="minInvest" className="font-bold text-lg">
                   Minimum investment
