@@ -23,7 +23,7 @@ export function DualOptionSelector(props: SelectorInterface) {
           <Button
             type="button"
             variant={props.value === props.choice1 ? "default" : "outline"}
-            onClick={() => props.handleFunction(props.name, props.choice1)}
+            onClick={() => props.handleFunction(props.choice1)}
             className="w-20 h-12 text-base"
           >
             {props.choice1}
@@ -31,7 +31,7 @@ export function DualOptionSelector(props: SelectorInterface) {
           <Button
             type="button"
             variant={props.value === props.choice2 ? "default" : "outline"}
-            onClick={() => props.handleFunction(props.name, props.choice2)}
+            onClick={() => props.handleFunction(props.choice2)}
             className="w-20 h-12 text-base"
           >
             {props.choice2}

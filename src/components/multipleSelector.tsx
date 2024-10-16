@@ -10,17 +10,17 @@ import {
 } from "@/components/ui/select";
 import { ReactElement } from "react";
 
-interface MultipleOptionSelector {
+interface MultipleOptionSelectorProps {
   header: ReactElement;
   fieldName: string;
   choices: string[];
-  handleFunction: Function;
+  handleFunction: Function | null;
   description: ReactElement;
   placeholder: string;
   selectLabel: string;
 }
 
-export function MultipleOptionSelector(props: MultipleOptionSelector) {
+export function MultipleOptionSelector(props: MultipleOptionSelectorProps) {
   return (
     <div className="mt-10 space-y-5">
       <Label htmlFor={props.fieldName} className="font-bold text-lg mt-10">
@@ -29,8 +29,10 @@ export function MultipleOptionSelector(props: MultipleOptionSelector) {
       <div className="flex space-x-5">
         <Select
           onValueChange={(value) => {
-            props.handleFunction(props.fieldName, value);
-            // console.log(value, props.fieldName);
+            if (props.handleFunction) {
+              props.handleFunction(props.fieldName, value);
+              // console.log(value, props.fieldName);
+            }
           }}
         >
           <SelectTrigger className="w-96">
