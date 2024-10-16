@@ -28,10 +28,9 @@ type businessSchema = z.infer<typeof businessFormSchema>;
 
 interface BusinessFormProps {
   industry: string[];
+  handleSubmit: SubmitHandler<businessSchema>;
+  onSubmit: () => void;
 }
-const handleSubmit = (values: z.infer<typeof businessFormSchema>) => {
-  console.table(values);
-};
 const BusinessForm = ({
   onSubmit,
   industry,
@@ -49,29 +48,12 @@ const BusinessForm = ({
     resolver: zodResolver(businessFormSchema),
     defaultValues: {},
   });
-  const [isInUS, setIsInUS] = useState("");
-  const [isForSale, setIsForSale] = useState("");
-  const [isGenerating, setIsGenerating] = useState("");
   const [businessPitch, setBusinessPitch] = useState("text");
   const [businessPitchFile, setBusinessPitchFile] = useState("");
-  // const handleBusinessFieldChange = (fieldName: string, value: any) => {
-  //   switch (fieldName) {
-  //     case "isInUS":
-  //       setIsInUS(value);
-  //       break;
-  //     case "isForSale":
-  //       setIsForSale(value);
-  //       break;
-  //     case "isGenerating":
-  //       setIsGenerating(value);
-  //       break;
-  //   }
-  //   setValueBusiness(fieldName, value);
-  // };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2 lg:ml-[10%]">
           <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
           <p className="ml-96 mt-5 text-neutral-500">
@@ -170,7 +152,7 @@ const BusinessForm = ({
                     choice1="Yes"
                     choice2="No"
                     handleFunction={(selectedValues: string) => {
-                      setIsInUS;
+                      // setIsInUS;
                       field.onChange(selectedValues);
                     }}
                     description={
@@ -204,7 +186,7 @@ const BusinessForm = ({
                     choice1="Yes"
                     choice2="No"
                     handleFunction={(selectedValues: string) => {
-                      setIsForSale;
+                      // setIsForSale;
                       field.onChange(selectedValues);
                     }}
                     description={
@@ -235,7 +217,7 @@ const BusinessForm = ({
                     choice2="No"
                     value={field.value}
                     handleFunction={(selectedValues: string) => {
-                      setIsGenerating;
+                      // setIsGenerating;
                       field.onChange(selectedValues);
                     }}
                     description={
@@ -284,16 +266,9 @@ const BusinessForm = ({
                           : "https:// "
                       }
                       accept={businessPitch === "file" ? ".md" : undefined}
-                      // onChange={(e) => {
-                      //   if (businessPitch === "file") {
-                      //     setValueBusiness(
-                      //       "businessPitchDeck",
-                      //       e.target.files?.[0] || ""
-                      //     );
-                      //   } else {
-                      //     field.onChange(e);
-                      //   }
-                      // }}
+                      onChange={(e) => {
+                        field.onChange(e);
+                      }}
                       value={
                         businessPitch === "file" ? "" : (field.value as string)
                       }
@@ -304,7 +279,6 @@ const BusinessForm = ({
                         <Button
                           className="ml-4"
                           onClick={() => {
-                            // setValueBusiness("businessPitchDeck", null);
                             setBusinessPitchFile("");
                           }}
                         >
@@ -384,11 +358,6 @@ const BusinessForm = ({
               </FormItem>
             )}
           /> */}
-
-          {/* Submit Button */}
-          <Button type="submit" className="w-52 ml-[45%] my-10">
-            Continue
-          </Button>
         </div>
       </form>
     </Form>

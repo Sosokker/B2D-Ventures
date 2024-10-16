@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import {
   Tooltip,
   TooltipContent,
@@ -18,13 +18,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DualOptionSelector } from "@/components/dualSelector";
 import { MultipleOptionSelector } from "@/components/multipleSelector";
 import BusinessForm from "@/components/BusinessForm";
+import { businessFormSchema } from "@/types/schemas/application.schema";
 
+type businessSchema = z.infer<typeof businessFormSchema>;
 export default function Apply() {
+  const form1 = useForm();
   const [industry, setIndustry] = useState<string[]>([]);
-  // const [isInUS, setIsInUS] = useState("");
-  // const [isForSale, setIsForSale] = useState("");
-  // const [isGenerating, setIsGenerating] = useState("");
-  // const [businessPitch, setBusinessPitch] = useState("text");
   const [projectType, setProjectType] = useState<string[]>([]);
   const [projectPitch, setProjectPitch] = useState("text");
   const [applyProject, setApplyProject] = useState(false);
@@ -33,6 +32,18 @@ export default function Apply() {
   const [projectPitchFile, setProjectPitchFile] = useState("");
   const MAX_FILE_SIZE = 5000000;
   const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+
+  const handleSubmit: SubmitHandler<any> = (data) => {
+    console.log("Submitted Data:", data);
+    // add api logic
+  };
+
+  const onSubmit: SubmitHandler<businessSchema> = async (data) => {
+    // Your submit logic here
+    console.log(data);
+    // e.g. submit the data to an API
+  };
+
   const createPitchDeckSchema = (inputType: string) => {
     if (inputType === "text") {
       return z
@@ -45,8 +56,7 @@ export default function Apply() {
       return z
         .custom<File>(
           (val: any) => {
-            // confirm val is a File object
-            return val instanceof File; // Ensure it is a File instance
+            return val instanceof File;
           },
           {
             message: "Input must be a file.",
@@ -373,7 +383,7 @@ export default function Apply() {
       </div>
       {/* form */}
       {/* <form action="" onSubmit={handleSubmit(handleSubmitForms)}> */}
-      <BusinessForm onSubmit={onSubmitSingleForm} industry={industry} />
+      <BusinessForm industry={industry} onSubmit={onSubmit} />
 
       <div className="flex space-x-5">
         <Switch onCheckedChange={() => setApplyProject(!applyProject)}></Switch>
@@ -705,7 +715,6 @@ export default function Apply() {
           Submit application
         </Button>
       </center>
-      {/* </form> */}
     </div>
   );
 }
