@@ -150,6 +150,9 @@ const businessFormSchema = z.object({
         message: "File must be a markdown file (.md).",
       }),
   ]),
+  country: z.string({
+    required_error: "Please select one of the option",
+  }),
 });
 
 export { businessFormSchema, projectFormSchema };

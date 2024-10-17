@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { DualOptionSelector } from "@/components/dualSelector";
@@ -16,15 +16,21 @@ import { Input } from "@/components/ui/input";
 import { businessFormSchema } from "@/types/schemas/application.schema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@radix-ui/react-label";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"; 
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 
 interface BusinessFormProps {
   industry: string[];
+  applyProject: boolean;
+  setApplyProject: Function;
   onSubmit: SubmitHandler<businessSchema>;
 }
 const BusinessForm = ({
+  applyProject,
+  setApplyProject,
   onSubmit,
   industry,
 }: BusinessFormProps & { onSubmit: SubmitHandler<businessSchema> }) => {
@@ -43,14 +49,22 @@ const BusinessForm = ({
   });
   const [businessPitch, setBusinessPitch] = useState("text");
   const [businessPitchFile, setBusinessPitchFile] = useState("");
-
+  const [countries, setCountries] = useState([]);
+  useEffect(() => {
+    fetch("https://restcountries.com/v3.1/all")
+      .then((response) => response.json())
+      .then((data) => {
+        const countryList = data.map((country: { name: { common: any; }; }) => country.name.common);
+        setCountries(countryList.sort());
+      });
+  }, []);
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit as SubmitHandler<businessSchema>)}
         className="space-y-8"
       >
-        <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2 lg:ml-[10%]">
+        <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2 md:ml-[0%] ">
           <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
           <p className="ml-96 mt-5 text-neutral-500">
             <span className="text-red-500 font-bold">**</span>All requested
@@ -82,6 +96,31 @@ const BusinessForm = ({
                         </span>
                       </div>
                     </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* Country */}
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }: { field: any }) => (
+                <FormItem>
+                  <FormControl>
+                    <MultipleOptionSelector
+                      header={<>Country</>}
+                      fieldName="country"
+                      choices={countries}
+                      handleFunction={(selectedValues: string) => {
+                        field.onChange(selectedValues);
+                      }}
+                      description={
+                        <>Select the country where your business is based.</>
+                      }
+                      placeholder="Select a country"
+                      selectLabel="Country"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -293,15 +332,17 @@ const BusinessForm = ({
                               businessPitch === "file" ? ".md" : undefined
                             }
                             onChange={(e) => {
-                              field.onChange(e);
+                              const value = e.target;
+                              if (businessPitch === "file") {
+                                const file = value.files?.[0];
+                                field.onChange(file || "");
+                              } else {
+                                field.onChange(value.value);
+                              }
                             }}
                             className="w-96 mt-5"
-                            value={
-                              businessPitch === "file"
-                                ? ""
-                                : (field.value as string)
-                            }
                           />
+
                           <span className="text-[12px] text-neutral-500 self-center">
                             Your pitch deck and other application info will be
                             used for <br />
@@ -365,12 +406,36 @@ const BusinessForm = ({
                 </FormItem>
               )}
             />
-            <Button
-              className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
-              type="submit"
-            >
-              Submit application
-            </Button>
+            <div className="flex space-x-5">
+              <Switch
+                onCheckedChange={() => setApplyProject(!applyProject)}
+              ></Switch>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="text-[12px] text-neutral-500 self-center cursor-pointer">
+                      Would you like to apply for your first fundraising project
+                      as well?
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-[11px]">
+                      Toggling this option allows you to begin your first
+                      project, <br /> which is crucial for unlocking the tools
+                      necessary to raise funds.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <center>
+              <Button
+                className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
+                type="submit"
+              >
+                Submit application
+              </Button>
+            </center>
           </div>
         </div>
       </form>

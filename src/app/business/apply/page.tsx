@@ -2,46 +2,31 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm, SubmitHandler } from "react-hook-form";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DualOptionSelector } from "@/components/dualSelector";
-import { MultipleOptionSelector } from "@/components/multipleSelector";
 import BusinessForm from "@/components/BusinessForm";
 import { businessFormSchema } from "@/types/schemas/application.schema";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 export default function Apply() {
-  const form1 = useForm();
   const [industry, setIndustry] = useState<string[]>([]);
   const [projectType, setProjectType] = useState<string[]>([]);
   const [projectPitch, setProjectPitch] = useState("text");
   const [applyProject, setApplyProject] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [businessPitchFile, setBusinessPitchFile] = useState("");
   const [projectPitchFile, setProjectPitchFile] = useState("");
   const MAX_FILE_SIZE = 5000000;
   const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
-  const handleSubmit: SubmitHandler<any> = (data) => {
-    console.log("Submitted Data:", data);
-    // add api logic
-  };
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
-    // Your submit logic here
-    console.log(data);
-    // e.g. submit the data to an API
+    const transformedData = transformChoice(data);
+    console.log(transformedData);
+    
   };
 
   const createPitchDeckSchema = (inputType: string) => {
@@ -383,28 +368,14 @@ export default function Apply() {
       </div>
       {/* form */}
       {/* <form action="" onSubmit={handleSubmit(handleSubmitForms)}> */}
-      <BusinessForm industry={industry} onSubmit={onSubmit} />
+      <BusinessForm
+        industry={industry}
+        onSubmit={onSubmit}
+        applyProject={applyProject}
+        setApplyProject={setApplyProject}
+      />
 
-      <div className="flex space-x-5">
-        <Switch onCheckedChange={() => setApplyProject(!applyProject)}></Switch>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="text-[12px] text-neutral-500 self-center cursor-pointer">
-                Would you like to apply for your first fundraising project as
-                well?
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-[11px]">
-                Toggling this option allows you to begin your first project,{" "}
-                <br /> which is crucial for unlocking the tools necessary to
-                raise funds.
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
+
       {/* </div>
         </div> */}
 
