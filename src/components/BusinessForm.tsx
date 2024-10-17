@@ -28,8 +28,7 @@ type businessSchema = z.infer<typeof businessFormSchema>;
 
 interface BusinessFormProps {
   industry: string[];
-  handleSubmit: SubmitHandler<businessSchema>;
-  onSubmit: () => void;
+  onSubmit: SubmitHandler<businessSchema>;
 }
 const BusinessForm = ({
   onSubmit,
@@ -53,7 +52,12 @@ const BusinessForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(
+          onSubmit as unknown as SubmitHandler<businessSchema>
+        )}
+        className="space-y-8"
+      >
         <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2 lg:ml-[10%]">
           <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
           <p className="ml-96 mt-5 text-neutral-500">
@@ -358,6 +362,12 @@ const BusinessForm = ({
               </FormItem>
             )}
           /> */}
+          <Button
+            className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
+            type="submit"
+          >
+            Submit application
+          </Button>
         </div>
       </form>
     </Form>
