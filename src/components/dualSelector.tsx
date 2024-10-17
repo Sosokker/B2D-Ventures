@@ -14,7 +14,7 @@ interface SelectorInterface {
 
 export function DualOptionSelector(props: SelectorInterface) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 mt-10">
       <Label htmlFor={props.name} className="font-bold text-lg">
         {props.label}
       </Label>
