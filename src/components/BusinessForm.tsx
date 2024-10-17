@@ -222,25 +222,28 @@ const BusinessForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <DualOptionSelector
-                      name="isInUS"
-                      label={
-                        <>Is your company incorporated in the United States?</>
-                      }
-                      choice1="Yes"
-                      choice2="No"
-                      handleFunction={(selectedValues: string) => {
-                        // setIsInUS;
-                        field.onChange(selectedValues);
-                      }}
-                      description={
-                        <>
-                          Only companies that are incorporated or formed in the
-                          US are eligible to raise via Reg CF.
-                        </>
-                      }
-                      value={field.value}
-                    />
+                    <div className="flex space-x-5">
+                      <DualOptionSelector
+                        name="isInUS"
+                        label={
+                          <>
+                            Is your company incorporated in the United States?
+                          </>
+                        }
+                        choice1="Yes"
+                        choice2="No"
+                        handleFunction={(selectedValues: string) => {
+                          // setIsInUS;
+                          field.onChange(selectedValues);
+                        }}
+                        description={<></>}
+                        value={field.value}
+                      />
+                      <span className="text-[12px] text-neutral-500 self-center">
+                        Only companies that are incorporated or formed in the US
+                        are eligible to raise via Reg CF.
+                      </span>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -254,25 +257,27 @@ const BusinessForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <DualOptionSelector
-                      name="isForSale"
-                      value={field.value}
-                      label={
-                        <>Is your product available (for sale) in market?</>
-                      }
-                      choice1="Yes"
-                      choice2="No"
-                      handleFunction={(selectedValues: string) => {
-                        // setIsForSale;
-                        field.onChange(selectedValues);
-                      }}
-                      description={
-                        <>
-                          Only check this box if customers can access, use, or
-                          buy your product today.
-                        </>
-                      }
-                    />
+                    <div className="flex space-x-5">
+                      <DualOptionSelector
+                        name="isForSale"
+                        value={field.value}
+                        label={
+                          <>Is your product available (for sale) in market?</>
+                        }
+                        choice1="Yes"
+                        choice2="No"
+                        handleFunction={(selectedValues: string) => {
+                          // setIsForSale;
+                          field.onChange(selectedValues);
+                        }}
+                        description={
+                          <>
+                            Only check this box if customers can access, use, or
+                            buy your product today.
+                          </>
+                        }
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -286,22 +291,24 @@ const BusinessForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <DualOptionSelector
-                      name="isGenerating"
-                      label={<>Is your company generating revenue?</>}
-                      choice1="Yes"
-                      choice2="No"
-                      value={field.value}
-                      handleFunction={(selectedValues: string) => {
-                        field.onChange(selectedValues);
-                      }}
-                      description={
-                        <>
-                          Only check this box if your company is making money.
-                          Please elaborate on revenue below.
-                        </>
-                      }
-                    />
+                    <div className="flex space-x-5">
+                      <DualOptionSelector
+                        name="isGenerating"
+                        label={<>Is your company generating revenue?</>}
+                        choice1="Yes"
+                        choice2="No"
+                        value={field.value}
+                        handleFunction={(selectedValues: string) => {
+                          field.onChange(selectedValues);
+                        }}
+                        description={
+                          <>
+                            Only check this box if your company is making money.
+                            Please elaborate on revenue below.
+                          </>
+                        }
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
