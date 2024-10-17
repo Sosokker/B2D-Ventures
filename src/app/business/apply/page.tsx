@@ -13,7 +13,7 @@ import { businessFormSchema } from "@/types/schemas/application.schema";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 export default function Apply() {
-  const [industry, setIndustry] = useState<string[]>([]);
+  const [industry, setIndustry] = useState<{id: number, name: string }[]>([]);
   const [projectType, setProjectType] = useState<string[]>([]);
   const [projectPitch, setProjectPitch] = useState("text");
   const [applyProject, setApplyProject] = useState(false);
@@ -22,11 +22,35 @@ export default function Apply() {
   const MAX_FILE_SIZE = 5000000;
   const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
-
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
-    const transformedData = transformChoice(data);
+    const transformedData = await transformChoice(data);
     console.log(transformedData);
-    
+    await sendRegistration(transformedData);
+  };
+  const sendRegistration = async (recvData: any) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    // console.log(user?.id);
+
+    const { data, error } = await supabase
+      .from("business_application")
+      .insert([
+        {
+          user_id: user?.id,
+          business_name: recvData["companyName"],
+          business_type_id: recvData["industry"],
+          location: recvData["country"],
+          is_for_sale: recvData["isForSale"],
+          is_generating_revenue: recvData["isGenerating"],
+          is_in_us: recvData["isInUS"],
+          pitch_deck_url: recvData["businessPitchDeck"],
+          money_raised_to_date: recvData["totalRaised"],
+          community_size: recvData["communitySize"],
+        },
+      ])
+      .select();
+      console.table(data);
   };
 
   const createPitchDeckSchema = (inputType: string) => {
@@ -289,14 +313,19 @@ export default function Apply() {
   const fetchIndustry = async () => {
     let { data: BusinessType, error } = await supabase
       .from("business_type")
-      .select("value");
+      .select("id, value");
 
     if (error) {
       console.error(error);
     } else {
       if (BusinessType) {
         // console.table();
-        setIndustry(BusinessType.map((item) => item.value));
+        setIndustry(
+          BusinessType.map((item) => ({
+            id: item.id,
+            name: item.value,
+          }))
+        );
       }
     }
   };
@@ -374,7 +403,6 @@ export default function Apply() {
         applyProject={applyProject}
         setApplyProject={setApplyProject}
       />
-
 
       {/* </div>
         </div> */}

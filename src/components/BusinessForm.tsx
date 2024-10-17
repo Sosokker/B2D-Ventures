@@ -18,12 +18,17 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"; 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 
 interface BusinessFormProps {
-  industry: string[];
+  industry: {id: number, name:string}[];
   applyProject: boolean;
   setApplyProject: Function;
   onSubmit: SubmitHandler<businessSchema>;
@@ -35,13 +40,13 @@ const BusinessForm = ({
   industry,
 }: BusinessFormProps & { onSubmit: SubmitHandler<businessSchema> }) => {
   const communitySize = [
-    "N/A",
-    "0-5K",
-    "5-10K",
-    "10-20K",
-    "20-50K",
-    "50-100K",
-    "100K+",
+    { id: 1, name: "N/A" },
+    { id: 2, name: "0-5K" },
+    { id: 3, name: "5-10K" },
+    { id: 4, name: "10-20K" },
+    { id: 5, name: "20-50K" },
+    { id: 6, name: "50-100K" },
+    { id: 7, name: "100K+" },
   ];
   const form = useForm<businessSchema>({
     resolver: zodResolver(businessFormSchema),
@@ -49,14 +54,29 @@ const BusinessForm = ({
   });
   const [businessPitch, setBusinessPitch] = useState("text");
   const [businessPitchFile, setBusinessPitchFile] = useState("");
-  const [countries, setCountries] = useState([]);
+  const [countries, setCountries] = useState<{ id: number; name: string }[]>([]);
   useEffect(() => {
-    fetch("https://restcountries.com/v3.1/all")
-      .then((response) => response.json())
-      .then((data) => {
-        const countryList = data.map((country: { name: { common: any; }; }) => country.name.common);
-        setCountries(countryList.sort());
-      });
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch("https://restcountries.com/v3.1/all");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        const countryList = data.map(
+          (country: { name: { common: string } }, index: number) => ({
+            id: index + 1,
+            name: country.name.common,
+          })
+        );
+
+        setCountries(countryList.sort((a: { name: string; }, b: { name: any; }) => a.name.localeCompare(b.name)));
+      } catch (error) {
+        console.error("Error fetching countries:", error);
+      }
+    };
+
+    fetchCountries();
   }, []);
   return (
     <Form {...form}>
@@ -112,8 +132,9 @@ const BusinessForm = ({
                       header={<>Country</>}
                       fieldName="country"
                       choices={countries}
-                      handleFunction={(selectedValues: string) => {
-                        field.onChange(selectedValues);
+                      handleFunction={(selectedValues: any) => {
+                        // console.log("Country selected: " + selectedValues.name);
+                        field.onChange(selectedValues.name);
                       }}
                       description={
                         <>Select the country where your business is based.</>
@@ -138,8 +159,9 @@ const BusinessForm = ({
                       header={<>Industry</>}
                       fieldName="industry"
                       choices={industry}
-                      handleFunction={(selectedValues: string) => {
-                        field.onChange(selectedValues);
+                      handleFunction={(selectedValues: any) => {
+                        // console.log("Type of selected value:", selectedValues.id);
+                        field.onChange(selectedValues.id);
                       }}
                       description={
                         <>
@@ -389,8 +411,8 @@ const BusinessForm = ({
                       header={<>What's the rough size of your community?</>}
                       fieldName="communitySize"
                       choices={communitySize}
-                      handleFunction={(selectedValues: string) => {
-                        field.onChange(selectedValues);
+                      handleFunction={(selectedValues: any) => {
+                        field.onChange(selectedValues.name);
                       }}
                       description={
                         <>

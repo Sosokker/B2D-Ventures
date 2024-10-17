@@ -95,7 +95,7 @@ const businessFormSchema = z.object({
   companyName: z.string().min(5, {
     message: "Company name must be at least 5 characters.",
   }),
-  industry: z.string({
+  industry: z.number({
     required_error: "Please select one of the option",
   }),
   isInUS: z
