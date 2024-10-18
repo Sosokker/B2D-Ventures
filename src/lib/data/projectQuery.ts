@@ -130,7 +130,7 @@ function searchProjectsQuery(
     published_time,
     project_short_description,
     card_image_url,
-    ...project_status!project_project_status_id_fkey!inner (
+    ...project_status!inner (
       project_status:value
     ),
     ...project_investment_detail!inner (

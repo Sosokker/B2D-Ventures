@@ -32,7 +32,7 @@ const UnAuthenticatedComponents = () => {
   );
 };
 
-const AuthenticatedComponents = () => {
+const AuthenticatedComponents = ({ uid }: { uid: string }) => {
   let notifications = 100;
   const displayValue = notifications >= 100 ? "..." : notifications;
   return (
@@ -58,7 +58,7 @@ const AuthenticatedComponents = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
-            <Link href="/profile">Profile</Link>
+            <Link href={`/profile/${uid}`}>Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>Settings</DropdownMenuItem>
@@ -88,7 +88,7 @@ export function ProfileBar() {
     <>
       {sessionLoaded ? (
         user ? (
-          <AuthenticatedComponents />
+          <AuthenticatedComponents uid={user.id} />
         ) : (
           <UnAuthenticatedComponents />
         )
