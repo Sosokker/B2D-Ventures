@@ -10,12 +10,61 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 
 export default function Dashboard() {
+  let supabase = createSupabaseClient();
   const [graphType, setGraphType] = useState("line");
+  const [totalFundsRaised, setTotalFundsRaised] = useState();
+
+  // get current user id
+  // #TODO extract function to lib/util
+  const getUserID = async () => {
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      console.error('Error fetching user:', error);
+      return;
+    }
+
+    return user.id;
+  }
+
+  const fetchTotalFundsRaised = async () => {
+    const userId = await getUserID();
+
+    const { data: dealData, error } = await supabase
+    .from('business')
+    .select(`
+      id,
+      project (
+        id,
+        investment_deal (
+          deal_amount,
+          created_time,
+          investor_id
+        )
+      )
+    `)
+    .eq('user_id', userId)
+    .single();
+
+    if (error || !dealData) {
+      alert(JSON.stringify(error));
+      console.error('Error fetching deal amount:', error);
+    } else {
+      alert(JSON.stringify(dealData));
+      // setTotalFundsRaised(deal); #TODO
+    }
+  }
+
+  useEffect(() => {
+    fetchTotalFundsRaised();
+  }, []);
   return (
     <>
+    {totalFundsRaised}
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
