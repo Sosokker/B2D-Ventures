@@ -53,10 +53,10 @@ const projectFormSchema = z.object({
   projectPhotos: z.custom(
     (value) => {
       if (value instanceof FileList || Array.isArray(value)) {
-        if (value.length === 1) {
-          return false;
-        }
-        return Array.from(value).every((item) => item instanceof File);
+        return (
+          value.length > 0 &&
+          Array.from(value).every((item) => item instanceof File)
+        );
       }
       return false;
     },
@@ -65,6 +65,7 @@ const projectFormSchema = z.object({
         "Must be a FileList or an array of File objects with at least one file.",
     }
   ),
+
   minInvest: z
     .number({
       required_error: "Minimum investment must be a number.",
