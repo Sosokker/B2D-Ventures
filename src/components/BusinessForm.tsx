@@ -24,11 +24,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 
 interface BusinessFormProps {
-  industry: {id: number, name:string}[];
   applyProject: boolean;
   setApplyProject: Function;
   onSubmit: SubmitHandler<businessSchema>;
@@ -37,7 +37,6 @@ const BusinessForm = ({
   applyProject,
   setApplyProject,
   onSubmit,
-  industry,
 }: BusinessFormProps & { onSubmit: SubmitHandler<businessSchema> }) => {
   const communitySize = [
     { id: 1, name: "N/A" },
@@ -52,31 +51,58 @@ const BusinessForm = ({
     resolver: zodResolver(businessFormSchema),
     defaultValues: {},
   });
+  let supabase = createSupabaseClient();
   const [businessPitch, setBusinessPitch] = useState("text");
   const [businessPitchFile, setBusinessPitchFile] = useState("");
-  const [countries, setCountries] = useState<{ id: number; name: string }[]>([]);
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        const countryList = data.map(
-          (country: { name: { common: string } }, index: number) => ({
-            id: index + 1,
-            name: country.name.common,
-          })
+  const [countries, setCountries] = useState<{ id: number; name: string }[]>(
+    []
+  );
+  const [industry, setIndustry] = useState<{ id: number; name: string }[]>([]);
+  const fetchIndustry = async () => {
+    let { data: BusinessType, error } = await supabase
+      .from("business_type")
+      .select("id, value");
+
+    if (error) {
+      console.error(error);
+    } else {
+      if (BusinessType) {
+        // console.table();
+        setIndustry(
+          BusinessType.map((item) => ({
+            id: item.id,
+            name: item.value,
+          }))
         );
-
-        setCountries(countryList.sort((a: { name: string; }, b: { name: any; }) => a.name.localeCompare(b.name)));
-      } catch (error) {
-        console.error("Error fetching countries:", error);
       }
-    };
+    }
+  };
+  const fetchCountries = async () => {
+    try {
+      const response = await fetch("https://restcountries.com/v3.1/all");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      const countryList = data.map(
+        (country: { name: { common: string } }, index: number) => ({
+          id: index + 1,
+          name: country.name.common,
+        })
+      );
 
+      setCountries(
+        countryList.sort((a: { name: string }, b: { name: any }) =>
+          a.name.localeCompare(b.name)
+        )
+      );
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+  };
+  useEffect(() => {
     fetchCountries();
+    fetchIndustry();
   }, []);
   return (
     <Form {...form}>
