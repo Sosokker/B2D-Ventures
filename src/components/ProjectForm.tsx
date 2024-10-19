@@ -6,7 +6,6 @@ import { MultipleOptionSelector } from "@/components/multipleSelector";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,13 +24,14 @@ import {
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
+import { Textarea } from "./ui/textarea";
 
 type projectSchema = z.infer<typeof projectFormSchema>;
 
 interface ProjectFormProps {
   onSubmit: SubmitHandler<projectSchema>;
 }
-const BusinessForm = ({
+const ProjectForm = ({
   onSubmit,
 }: ProjectFormProps & { onSubmit: SubmitHandler<projectSchema> }) => {
   const form = useForm<projectSchema>({
@@ -46,6 +46,26 @@ const BusinessForm = ({
   const [applyProject, setApplyProject] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [projectPitchFile, setProjectPitchFile] = useState("");
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const filesArray = Array.from(event.target.files);
+      console.log("first file", filesArray);
+      setSelectedImages((prevImages) => {
+        const updatedImages = [...prevImages, ...filesArray];
+        console.log("Updated Images Array:", updatedImages);
+        return updatedImages;
+      });
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setSelectedImages((prevImages) => {
+      const updatedImages = prevImages.filter((_, i) => i !== index);
+      console.log("After removal - Updated Images:", updatedImages);
+      return updatedImages;
+    });
+  };
 
   const fetchProjectType = async () => {
     let { data: ProjectType, error } = await supabase
@@ -139,163 +159,25 @@ const BusinessForm = ({
             {/* short description */}
             <FormField
               control={form.control}
-              name="industry"
+              name="shortDescription"
               render={({ field }: { field: any }) => (
                 <FormItem>
                   <FormControl>
-                    <MultipleOptionSelector
-                      header={<>Industry</>}
-                      fieldName="industry"
-                      choices={industry}
-                      handleFunction={(selectedValues: any) => {
-                        // console.log("Type of selected value:", selectedValues.id);
-                        field.onChange(selectedValues.id);
-                      }}
-                      description={
-                        <>
-                          Choose the industry that best aligns with your
-                          business.
-                        </>
-                      }
-                      placeholder="Select an industry"
-                      selectLabel="Industry"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Raised Money */}
-            <FormField
-              control={form.control}
-              name="totalRaised"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="mt-10 space-y-5">
-                    <Label htmlFor="totalRaised" className="font-bold text-lg">
-                      How much money has your company <br /> raised to date?
-                    </Label>
-                    <FormControl>
+                    <div className="mt-10 space-y-5">
+                      <FormLabel className="font-bold text-lg">
+                        Short description
+                      </FormLabel>
                       <div className="flex space-x-5">
-                        <Input
-                          type="number"
-                          id="totalRaised"
+                        <Textarea
+                          id="shortDescription"
                           className="w-96"
-                          placeholder="$   1,000,000"
                           {...field}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            field.onChange(value ? parseFloat(value) : null);
-                          }}
-                          value={field.value}
                         />
                         <span className="text-[12px] text-neutral-500 self-center">
-                          The sum total of past financing, including angel or
-                          venture <br />
-                          capital, loans, grants, or token sales.
+                          Could you provide a brief description of your project{" "}
+                          <br /> in one or two sentences?
                         </span>
                       </div>
-                    </FormControl>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            {/* Incorporated in US */}
-            <FormField
-              control={form.control}
-              name="isInUS"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="flex space-x-5">
-                      <DualOptionSelector
-                        name="isInUS"
-                        label={
-                          <>
-                            Is your company incorporated in the United States?
-                          </>
-                        }
-                        choice1="Yes"
-                        choice2="No"
-                        handleFunction={(selectedValues: string) => {
-                          // setIsInUS;
-                          field.onChange(selectedValues);
-                        }}
-                        description={<></>}
-                        value={field.value}
-                      />
-                      <span className="text-[12px] text-neutral-500 self-center">
-                        Only companies that are incorporated or formed in the US
-                        are eligible to raise via Reg CF.
-                      </span>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Product for Sale */}
-            <FormField
-              control={form.control}
-              name="isForSale"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="flex space-x-5">
-                      <DualOptionSelector
-                        name="isForSale"
-                        value={field.value}
-                        label={
-                          <>Is your product available (for sale) in market?</>
-                        }
-                        choice1="Yes"
-                        choice2="No"
-                        handleFunction={(selectedValues: string) => {
-                          // setIsForSale;
-                          field.onChange(selectedValues);
-                        }}
-                        description={
-                          <>
-                            Only check this box if customers can access, use, or
-                            buy your product today.
-                          </>
-                        }
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Generating Revenue */}
-            <FormField
-              control={form.control}
-              name="isGenerating"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="flex space-x-5">
-                      <DualOptionSelector
-                        name="isGenerating"
-                        label={<>Is your company generating revenue?</>}
-                        choice1="Yes"
-                        choice2="No"
-                        value={field.value}
-                        handleFunction={(selectedValues: string) => {
-                          field.onChange(selectedValues);
-                        }}
-                        description={
-                          <>
-                            Only check this box if your company is making money.
-                            Please elaborate on revenue below.
-                          </>
-                        }
-                      />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -306,7 +188,7 @@ const BusinessForm = ({
             {/* Pitch Deck */}
             <FormField
               control={form.control}
-              name="businessPitchDeck"
+              name="projectPitchDeck"
               render={({ field }) => (
                 <FormItem>
                   <div className="space-y-5 mt-10">
@@ -319,9 +201,9 @@ const BusinessForm = ({
                           <Button
                             type="button"
                             variant={
-                              businessPitch === "text" ? "default" : "outline"
+                              projectPitch === "text" ? "default" : "outline"
                             }
-                            onClick={() => setBusinessPitch("text")}
+                            onClick={() => setProjectPitch("text")}
                             className="w-32 h-12 text-base"
                           >
                             Paste URL
@@ -329,9 +211,9 @@ const BusinessForm = ({
                           <Button
                             type="button"
                             variant={
-                              businessPitch === "file" ? "default" : "outline"
+                              projectPitch === "file" ? "default" : "outline"
                             }
-                            onClick={() => setBusinessPitch("file")}
+                            onClick={() => setProjectPitch("file")}
                             className="w-32 h-12 text-base"
                           >
                             Upload a file
@@ -339,18 +221,16 @@ const BusinessForm = ({
                         </div>
                         <div className="flex space-x-5">
                           <Input
-                            type={businessPitch === "file" ? "file" : "text"}
+                            type={projectPitch === "file" ? "file" : "text"}
                             placeholder={
-                              businessPitch === "file"
+                              projectPitch === "file"
                                 ? "Upload your Markdown file"
                                 : "https:// "
                             }
-                            accept={
-                              businessPitch === "file" ? ".md" : undefined
-                            }
+                            accept={projectPitch === "file" ? ".md" : undefined}
                             onChange={(e) => {
                               const value = e.target;
-                              if (businessPitch === "file") {
+                              if (projectPitch === "file") {
                                 const file = value.files?.[0];
                                 field.onChange(file || "");
                               } else {
@@ -361,26 +241,20 @@ const BusinessForm = ({
                           />
 
                           <span className="text-[12px] text-neutral-500 self-center">
-                            Your pitch deck and other application info will be
-                            used for <br />
-                            internal purposes only. <br />
-                            Please make sure this document is publicly
-                            accessible. This can <br />
-                            be a DocSend, Box, Dropbox, Google Drive or other
-                            link.
-                            <br />
-                            <p className="text-red-500">
-                              ** support only markdown(.md) format
-                            </p>
+                            Please upload a file or paste a link to your pitch,
+                            which should <br />
+                            cover key aspects of your project: what it will do,
+                            what investors <br /> can expect to gain, and any
+                            highlights that make it stand out.
                           </span>
                         </div>
-                        {businessPitchFile && (
+                        {projectPitchFile && (
                           <div className="flex justify-between items-center border p-2 rounded w-96 text-sm text-foreground">
-                            <span>1. {businessPitchFile}</span>
+                            <span>1. {projectPitchFile}</span>
                             <Button
                               className="ml-4"
                               onClick={() => {
-                                setBusinessPitchFile("");
+                                setProjectPitchFile("");
                               }}
                             >
                               Remove
@@ -391,6 +265,88 @@ const BusinessForm = ({
                     </FormControl>
                     <FormMessage />
                   </div>
+                </FormItem>
+              )}
+            />
+
+            {/* project logo */}
+            <FormField
+              control={form.control}
+              name="projectLogo"
+              render={({ field }: { field: any }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="mt-10 space-y-5">
+                      <FormLabel className="font-bold text-lg mt-10">
+                        Project logo
+                      </FormLabel>
+                      <Input
+                        type="file"
+                        id="projectLogo"
+                        className="w-96"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          field.onChange(file || "");
+                        }}
+                      />
+                      <span className="text-[12px] text-neutral-500 self-center">
+                        Please upload the logo picture that best represents your
+                        project.
+                      </span>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* project photos */}
+            <FormField
+              control={form.control}
+              name="projectPhotos"
+              render={({ field }: { field: any }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="mt-10 space-y-5">
+                      <FormLabel className="font-bold text-lg mt-10">
+                        Project photos
+                      </FormLabel>
+                      <div className="flex space-x-5">
+                        <Input
+                          type="file"
+                          id="projectPhotos"
+                          multiple
+                          accept="image/*"
+                          className="w-96"
+                          onChange={handleFileChange}
+                        />
+                        <span className="text-[12px] text-neutral-500 self-center">
+                          Please upload the logo picture that best represents
+                          your project.
+                        </span>
+                      </div>
+                      <div className="mt-5 space-y-2 w-96">
+                        {selectedImages.map((image, index) => (
+                          <div
+                            key={index}
+                            className="flex justify-between items-center border p-2 rounded"
+                          >
+                            <span>{image.name}</span>
+                            <Button
+                              variant="outline"
+                              onClick={() => handleRemoveImage(index)}
+                              className="ml-4"
+                              type="reset"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -460,4 +416,4 @@ const BusinessForm = ({
   );
 };
 
-export default BusinessForm;
+export default ProjectForm;
