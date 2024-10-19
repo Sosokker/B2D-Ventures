@@ -10,77 +10,15 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
-import { useEffect, useState } from "react";
-import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
+import { useState } from "react";
+
+import { useDealList } from "./hook";
 
 export default function Dashboard() {
-  type Deal = {
-    deal_amount: number;
-    created_time: Date;
-    investor_id: string;
-  };
-
-  let supabase = createSupabaseClient();
   const [graphType, setGraphType] = useState("line");
-  const [dealList, setDealList] = useState<Deal[]>();
+  const dealList = useDealList();
   const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
 
-  // get current user id
-  // #TODO extract function to lib/util
-  const getUserID = async () => {
-    const { data: { user }, error } = await supabase.auth.getUser();
-
-    if (error || !user) {
-      console.error('Error fetching user:', error);
-      return;
-    }
-
-    return user.id;
-  }
-
-  const getDealList = async () => {
-    const userId = await getUserID();
-    const { data: dealData, error } = await supabase
-    .from('business')
-    .select(`
-      id,
-      project (
-        id,
-        investment_deal (
-          deal_amount,
-          created_time,
-          investor_id
-        )
-      )
-    `)
-    .eq('user_id', userId)
-    .single();
-
-    if (error || !dealData) {
-      alert(JSON.stringify(error));
-      console.error('Error fetching deal amount:', error);
-    } else {
-      const dealList = dealData.project[0].investment_deal;
-
-      if (!dealList.length) {
-        alert("No data available");
-        return; // Exit early if there's no data
-      }
-
-      // Sort the dealList by created_time in descending order
-      const byCreatedTimeDesc = (a: Deal, b: Deal) =>
-        new Date(b.created_time).getTime() - new Date(a.created_time).getTime();
-      return dealList.sort(byCreatedTimeDesc);
-    }
-  }
-
-  const fetchDealList = async () => {
-    setDealList(await getDealList());
-  }
-
-  useEffect(() => {
-    fetchDealList();
-  }, []);
   return (
     <>
       {dealList?.map((deal, index) => (
