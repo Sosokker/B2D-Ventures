@@ -1,19 +1,20 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { useEffect, useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import BusinessForm from "@/components/BusinessForm";
 import { businessFormSchema } from "@/types/schemas/application.schema";
+import Swal from "sweetalert2";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
-export default function Apply() {
-  const [industry, setIndustry] = useState<{id: number, name: string }[]>([]);
+export default function ApplyBusiness() {
+  const [industry, setIndustry] = useState<{ id: number; name: string }[]>([]);
   const [projectType, setProjectType] = useState<string[]>([]);
   const [projectPitch, setProjectPitch] = useState("text");
   const [applyProject, setApplyProject] = useState(false);
@@ -50,7 +51,14 @@ export default function Apply() {
         },
       ])
       .select();
-      console.table(data);
+    console.table(data);
+    Swal.fire({
+      icon: error == null ? "success" : "error",
+      title: error == null ? "success" : "Error: " + error.code,
+      text:
+        error == null ? "your application has been submitted" : error.message,
+      confirmButtonColor: error == null ? "green" : "red",
+    });
   };
 
   const createPitchDeckSchema = (inputType: string) => {
@@ -403,12 +411,8 @@ export default function Apply() {
         applyProject={applyProject}
         setApplyProject={setApplyProject}
       />
-
-      {/* </div>
-        </div> */}
-
-      {/* apply first project */}
-      {applyProject && (
+      <div>
+        {" "}
         <div className="grid auto-rows-max w-3/4 ml-48 bg-zinc-100 dark:bg-zinc-900 mt-10 pt-12 pb-12">
           {/* header */}
           <div className="ml-[15%]">
@@ -704,16 +708,7 @@ export default function Apply() {
             )}
           </div>
         </div>
-      )}
-      {/* Submit */}
-      {/* <center>
-        <Button
-          className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
-          type="submit"
-        >
-          Submit application
-        </Button>
-      </center> */}
+      </div>
     </div>
   );
 }
