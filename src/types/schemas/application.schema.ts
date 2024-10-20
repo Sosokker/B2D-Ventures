@@ -90,6 +90,10 @@ const projectFormSchema = z.object({
     .refine((date) => date > new Date(), {
       message: "Deadline must be in the future.",
     }),
+  tag: z
+    .array(z.string())
+    .min(1, "Please provide at least one tag.")
+    .max(5, "You can provide up to 5 tags."),
 });
 
 const businessFormSchema = z.object({

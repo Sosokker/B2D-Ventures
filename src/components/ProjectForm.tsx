@@ -31,7 +31,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { ChevronsUpDown, Check } from "lucide-react";
+import { ChevronsUpDown, Check, X } from "lucide-react";
 
 type projectSchema = z.infer<typeof projectFormSchema>;
 type FieldType = ControllerRenderProps<any, "projectPhotos">;
@@ -55,7 +55,7 @@ const ProjectForm = ({
   const [projectPitchFile, setProjectPitchFile] = useState("");
   const [tag, setTag] = useState<{ id: number; value: string }[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedTag, setSelectedTag] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string[]>([]);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -485,7 +485,7 @@ const ProjectForm = ({
           {/* Tags */}
           <FormField
             control={form.control}
-            name="deadline"
+            name="tag"
             render={({ field }: { field: any }) => (
               <FormItem>
                 <div className="mt-10 space-y-5">
@@ -500,29 +500,29 @@ const ProjectForm = ({
                             aria-expanded={open}
                             className="w-96 justify-between"
                           >
-                            {selectedTag
-                              ? tag.find(
-                                  (framework) => framework.value === selectedTag
-                                )?.value
-                              : "Select framework..."}
+                            {selectedTag.length > 0
+                              ? selectedTag.join(", ")
+                              : "Select tags..."}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-96 p-0">
                           <Command>
-                            <CommandInput placeholder="Search framework..." />
+                            <CommandInput placeholder="Search tags..." />
                             <CommandList>
-                              <CommandEmpty>No tag found.</CommandEmpty>
+                              <CommandEmpty>No tags found.</CommandEmpty>
                               <CommandGroup>
                                 {tag.map((tag) => (
                                   <CommandItem
                                     key={tag.value}
                                     value={tag.value}
                                     onSelect={(currentValue) => {
-                                      setSelectedTag(
-                                        currentValue === selectedTag
-                                          ? ""
-                                          : currentValue
+                                      setSelectedTag((prev) =>
+                                        prev.includes(currentValue)
+                                          ? prev.filter(
+                                              (item) => item !== currentValue
+                                            )
+                                          : [...prev, currentValue]
                                       );
                                       setOpen(false);
                                     }}
@@ -530,7 +530,7 @@ const ProjectForm = ({
                                     <Check
                                       className={cn(
                                         "h-4",
-                                        selectedTag === tag.value
+                                        selectedTag.includes(tag.value)
                                           ? "opacity-100"
                                           : "opacity-0"
                                       )}
@@ -544,10 +544,32 @@ const ProjectForm = ({
                         </PopoverContent>
                       </Popover>
                       <span className="text-[12px] text-neutral-500 self-center">
-                        What is the deadline for your fundraising project?
-                        Setting <br /> a clear timeline can help motivate
-                        potential investors.
+                        Add 1 to 5 tags that describe your project. Tags help{" "}
+                        <br />
+                        investors understand your focus.
                       </span>
+
+                      {/* display selected tags */}
+                      <div className="flex flex-wrap space-x-2">
+                        {selectedTag.map((tag) => (
+                          <div
+                            key={tag}
+                            className="flex items-center space-x-1 bg-gray-200 p-1 rounded"
+                          >
+                            <span>{tag}</span>
+                            <button
+                              onClick={() =>
+                                setSelectedTag((prev) =>
+                                  prev.filter((item) => item !== tag)
+                                )
+                              }
+                            >
+                              {/* delete button */}
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </FormControl>
                 </div>
@@ -555,14 +577,12 @@ const ProjectForm = ({
               </FormItem>
             )}
           />
-          <center>
-            <Button
-              className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
-              type="submit"
-            >
-              Submit application
-            </Button>
-          </center>
+          <Button
+            className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
+            type="submit"
+          >
+            Submit application
+          </Button>
         </div>
       </form>
     </Form>
