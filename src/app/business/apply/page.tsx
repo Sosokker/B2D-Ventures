@@ -6,6 +6,7 @@ import { z } from "zod";
 import BusinessForm from "@/components/BusinessForm";
 import { businessFormSchema } from "@/types/schemas/application.schema";
 import Swal from "sweetalert2";
+import { getCurrentUserID } from "@/app/api/userApi";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 export default function ApplyBusiness() {
@@ -20,8 +21,7 @@ export default function ApplyBusiness() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    // console.log(user?.id);
-
+    
     const { data, error } = await supabase
       .from("business_application")
       .insert([
