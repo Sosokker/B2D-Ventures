@@ -2,66 +2,22 @@
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, LineChart, Line } from "recharts";
 
-const data = [
-  {
-    name: "Jan",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Apr",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jul",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Aug",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Sep",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Oct",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Nov",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Dec",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-];
-
-interface OverViewProps{
-    graphType:string;
+interface OverViewProps {
+  graphType: string;
+  graphData: Record<string, number>; // Object with month-year as keys and sum as value
 }
 
 export function Overview(props: OverViewProps) {
+    // Transform the grouped data into the format for the chart
+    const chartData = Object.entries(props.graphData).map(([monthYear, totalArray]) => ({
+      name: monthYear,
+      total: totalArray, // Get the total amount for the month
+    }));
+
     return (
         <ResponsiveContainer width="100%" height={350}>
           {props.graphType === 'line' ? (
-            <LineChart data={data}>
+            <LineChart data={chartData}>
               <XAxis
                 dataKey="name"
                 stroke="#888888"
@@ -83,7 +39,7 @@ export function Overview(props: OverViewProps) {
               />
             </LineChart>
           ) : (
-            <BarChart data={data}>
+            <BarChart data={chartData}>
               <XAxis
                 dataKey="name"
                 stroke="#888888"
@@ -106,5 +62,5 @@ export function Overview(props: OverViewProps) {
             </BarChart>
           )}
         </ResponsiveContainer>
-      );
+    );
 }

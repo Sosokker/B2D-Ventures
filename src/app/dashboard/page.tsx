@@ -12,10 +12,11 @@ import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
 import { useState } from "react";
 
-import { useDealList } from "./hook";
+import { useDealList, useGraphData } from "./hook";
 
 export default function Dashboard() {
   const [graphType, setGraphType] = useState("line");
+  const graphData = useGraphData();
   const dealList = useDealList();
   const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
 
@@ -166,7 +167,7 @@ export default function Dashboard() {
                     <CardTitle>Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview graphType={graphType} />
+                    <Overview graphType={graphType} graphData={graphData} />
                     {/* tab to switch between line and bar graph */}
                     <Tabs
                       defaultValue="line"
