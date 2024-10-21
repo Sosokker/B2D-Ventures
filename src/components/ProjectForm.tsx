@@ -489,7 +489,7 @@ const ProjectForm = ({
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="w-96 justify-between"
+                            className="w-96 justify-between overflow-hidden text-ellipsis whitespace-nowrap"
                           >
                             {selectedTag.length > 0
                               ? selectedTag.join(", ")
