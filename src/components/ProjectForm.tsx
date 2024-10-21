@@ -127,23 +127,14 @@ const ProjectForm = ({
         onSubmit={form.handleSubmit(onSubmit as SubmitHandler<projectSchema>)}
         className="space-y-8"
       >
-        <h1 className="text-3xl font-bold mt-10 ">
-          Begin Your First Fundraising Project
-        </h1>
-        <p className="mt-3 text-sm text-neutral-500">
-          Starting a fundraising project is mandatory for all businesses. This
-          step is crucial <br />
-          to begin your journey and unlock the necessary tools for raising
-          funds.
-        </p>
-        <div className="ml-96 mt-5 space-y-10">
+        <div className="ml-96 space-y-10">
           {/* project name */}
           <FormField
             control={form.control}
             name="projectName"
             render={({ field }: { field: any }) => (
               <FormItem>
-                <div className="mt-10 space-y-5">
+                <div className="space-y-5">
                   <FormLabel className="font-bold text-lg">
                     Project name
                   </FormLabel>
@@ -498,7 +489,7 @@ const ProjectForm = ({
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="w-96 justify-between"
+                            className="w-96 justify-between overflow-hidden text-ellipsis whitespace-nowrap"
                           >
                             {selectedTag.length > 0
                               ? selectedTag.join(", ")
@@ -517,13 +508,18 @@ const ProjectForm = ({
                                     key={tag.value}
                                     value={tag.value}
                                     onSelect={(currentValue) => {
-                                      setSelectedTag((prev) =>
-                                        prev.includes(currentValue)
+                                      setSelectedTag((prev) => {
+                                        const updatedTags = prev.includes(
+                                          currentValue
+                                        )
                                           ? prev.filter(
                                               (item) => item !== currentValue
                                             )
-                                          : [...prev, currentValue]
-                                      );
+                                          : [...prev, currentValue];
+                                        field.onChange(updatedTags);
+
+                                        return updatedTags;
+                                      });
                                       setOpen(false);
                                     }}
                                   >
@@ -548,42 +544,48 @@ const ProjectForm = ({
                         <br />
                         investors understand your focus.
                       </span>
-
-                      {/* display selected tags */}
-                      <div className="flex flex-wrap space-x-2">
-                        {selectedTag.map((tag) => (
-                          <div
-                            key={tag}
-                            className="flex items-center space-x-1 bg-gray-200 p-1 rounded"
-                          >
-                            <span>{tag}</span>
-                            <button
-                              onClick={() =>
-                                setSelectedTag((prev) =>
-                                  prev.filter((item) => item !== tag)
-                                )
-                              }
-                            >
-                              {/* delete button */}
-                              <X className="h-4 w-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
                     </div>
                   </FormControl>
                 </div>
                 <FormMessage />
+                {/* display selected tags */}
+                <div className="flex flex-wrap space-x-3">
+                  {selectedTag.map((tag) => (
+                    <div
+                      key={tag}
+                      className="flex items-center space-x-1 p-1 rounded mt-2 outline outline-offset-2 outline-1"
+                    >
+                      <span>{tag}</span>
+                      <button
+                        onClick={() =>
+                          setSelectedTag((prev) => {
+                            const updatedTags = prev.filter(
+                              (item) => item !== tag
+                            );
+                            field.onChange(updatedTags);
+
+                            return updatedTags;
+                          })
+                        }
+                      >
+                        {/* delete button */}
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </FormItem>
             )}
           />
+        </div>
+        <center>
           <Button
-            className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
+            className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5 "
             type="submit"
           >
             Submit application
           </Button>
-        </div>
+        </center>
       </form>
     </Form>
   );
