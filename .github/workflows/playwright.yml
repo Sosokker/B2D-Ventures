@@ -13,6 +13,19 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+      - name: Set environment variables
+        run: |
+          echo NEXT_PUBLIC_AUTH_GOOGLE_ID=${{ secrets.NEXT_PUBLIC_AUTH_GOOGLE_ID }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_AUTH_GOOGLE_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_GOOGLE_SECRET }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_DUMMY_EMAIL=${{ secrets.NEXT_PUBLIC_DUMMY_EMAIL }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_DUMMY_PASSWORD=${{ secrets.NEXT_PUBLIC_DUMMY_PASSWORD }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_STRIPE_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SUPABASE_URL_SOURCE=${{ secrets.NEXT_PUBLIC_SUPABASE_URL_SOURCE }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_TEST_URL=${{ secrets.NEXT_PUBLIC_TEST_URL }} >> $GITHUB_ENV
+          echo PROJECT_ID=${{ secrets.PROJECT_ID }} >> $GITHUB_ENV
+          echo STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} >> $GITHUB_ENV
       - name: Run Playwright tests
         run: npx playwright test
       - uses: actions/upload-artifact@v4
