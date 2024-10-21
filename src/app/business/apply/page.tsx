@@ -1,6 +1,6 @@
 "use client";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import BusinessForm from "@/components/BusinessForm";
@@ -8,18 +8,26 @@ import { businessFormSchema } from "@/types/schemas/application.schema";
 import Swal from "sweetalert2";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
+const BUCKET_NAME = "project-pitches";
 export default function ApplyBusiness() {
   const [applyProject, setApplyProject] = useState(false);
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
     const transformedData = await transformChoice(data);
-    console.log(transformedData);
-    await sendRegistration(transformedData);
+    await sendApplication(transformedData);
   };
-  const sendRegistration = async (recvData: any) => {
+  const sendApplication = async (recvData: any) => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+    const pitchType = typeof recvData["businessPitchDeck"];
+    if (pitchType === "object") {
+      if (user?.id) {
+        uploadFile(recvData["businessPitchDeck"], user.id, BUCKET_NAME);
+      } else {
+        console.error("User ID is undefined. Cannot upload file.");
+      }
+    }
 
     const { data, error } = await supabase
       .from("business_application")
@@ -32,7 +40,8 @@ export default function ApplyBusiness() {
           is_for_sale: recvData["isForSale"],
           is_generating_revenue: recvData["isGenerating"],
           is_in_us: recvData["isInUS"],
-          pitch_deck_url: recvData["businessPitchDeck"],
+          pitch_deck_url:
+            pitchType === "string" ? recvData["businessPitchDeck"] : "",
           money_raised_to_date: recvData["totalRaised"],
           community_size: recvData["communitySize"],
         },
@@ -53,18 +62,50 @@ export default function ApplyBusiness() {
       }
     });
   };
-  async function uploadFile(file: File) {
-    const { data, error } = await supabase.storage.listBuckets();
-    console.table(data);
-    // if (error) {
-    //   Swal.fire({
-    //     icon: error == null ? "success" : "error",
-    //     title: error == null ? "success" : "Error: " + error.cause,
-    //     text:
-    //       error == null ? "Your application has been submitted" : error.message,
-    //     confirmButtonColor: error == null ? "green" : "red",
-    //   });
-    // }
+  async function uploadFile(file: File, userID: string, bucketName: string) {
+    const folderPath = `${userID}/`;
+    const filePath = `${folderPath}${file.name}`;
+
+    // check if the folder exists
+    const { data: folderData, error: folderError } = await supabase.storage
+      .from(bucketName)
+      .list(folderPath);
+
+    if (folderError) {
+      console.error("Error checking for folder:", folderError.message);
+      return;
+    }
+
+    // if the folder exists, clear the folder
+    if (folderData && folderData.length > 0) {
+      console.log("Folder exists. Clearing contents...");
+
+      for (const fileItem of folderData) {
+        const { error: removeError } = await supabase.storage
+          .from(bucketName)
+          .remove([`${folderPath}${fileItem.name}`]);
+
+        if (removeError) {
+          console.error(
+            `Error removing file (${fileItem.name}):`,
+            removeError.message
+          );
+          return;
+        }
+      }
+    }
+
+    // upload new file to the folder
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(bucketName)
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error("Error uploading file:", uploadError.message);
+      return;
+    }
+
+    console.log("File uploaded successfully:", uploadData);
   }
 
   let supabase = createSupabaseClient();
@@ -90,6 +131,9 @@ export default function ApplyBusiness() {
     );
     return transformedData;
   };
+  // useEffect(() => {
+  //   uploadFile();
+  // }, []);
 
   return (
     <div>
