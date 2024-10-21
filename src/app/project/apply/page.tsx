@@ -1,15 +1,77 @@
 "use client";
 import { useState } from "react";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import ProjectForm from "@/components/ProjectForm";
 import { projectFormSchema } from "@/types/schemas/application.schema";
 import { z } from "zod";
 import { SubmitHandler } from "react-hook-form";
+import Swal from "sweetalert2";
 
 type projectSchema = z.infer<typeof projectFormSchema>;
+let supabase = createSupabaseClient();
+const BUCKET_PITCH_NAME = "project-pitches";
+const BUCKET_LOGO_NAME = "project-logo";
+const BUCKET_PHOTOS_NAME = "project-additional-photos";
+
 export default function ApplyProject() {
   const onSubmit: SubmitHandler<projectSchema> = async (data) => {
     alert("มาแน้ววว");
     console.table(data);
+  };
+  const sendApplication = async (recvData: any) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const pitchType = typeof recvData["businessPitchDeck"];
+    if (pitchType === "object") {
+      if (user?.id) {
+        // const uploadSuccess = await uploadFile(
+        //   recvData["businessPitchDeck"],
+        //   user.id,
+        //   BUCKET_PITCH_NAME
+        // );
+
+        // if (!uploadSuccess) {
+        //   return;
+        // }
+
+        console.log("file upload successful");
+      } else {
+        console.error("user ID is undefined.");
+        return;
+      }
+    }
+
+    const { data, error } = await supabase
+      .from("business_application")
+      .insert([
+        {
+          user_id: user?.id,
+          business_name: recvData["companyName"],
+          business_type_id: recvData["industry"],
+          location: recvData["country"],
+          is_for_sale: recvData["isForSale"],
+          is_generating_revenue: recvData["isGenerating"],
+          is_in_us: recvData["isInUS"],
+          pitch_deck_url:
+            pitchType === "string" ? recvData["businessPitchDeck"] : "",
+          money_raised_to_date: recvData["totalRaised"],
+          community_size: recvData["communitySize"],
+        },
+      ])
+      .select();
+    // console.table(data);
+    Swal.fire({
+      icon: error == null ? "success" : "error",
+      title: error == null ? "success" : "Error: " + error.code,
+      text:
+        error == null ? "Your application has been submitted" : error.message,
+      confirmButtonColor: error == null ? "green" : "red",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/";
+      }
+    });
   };
   return (
     <div>

@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { getCurrentUserID } from "@/app/api/userApi";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
-const BUCKET_NAME = "business-pitches";
+const BUCKET_PITCH_NAME = "business-pitches";
 let supabase = createSupabaseClient();
 
 async function uploadFile(file: File, userID: string, bucketName: string) {
@@ -83,7 +83,7 @@ export default function ApplyBusiness() {
         const uploadSuccess = await uploadFile(
           recvData["businessPitchDeck"],
           user.id,
-          BUCKET_NAME
+          BUCKET_PITCH_NAME
         );
 
         if (!uploadSuccess) {
@@ -137,6 +137,9 @@ export default function ApplyBusiness() {
       .select("*")
       .eq("user_id", userID);
     console.table(business);
+    if (error) {
+      console.error(error);
+    }
     if (business) {
       return true;
     }
