@@ -10,9 +10,63 @@ import { getCurrentUserID } from "@/app/api/userApi";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_NAME = "project-pitches";
+let supabase = createSupabaseClient();
+
+async function uploadFile(file: File, userID: string, bucketName: string) {
+  const folderPath = `${userID}/`;
+  const filePath = `${folderPath}${file.name}`;
+  let errorMessages: string[] = [];
+
+  // check if the folder exists
+  const { data: folderData, error: folderError } = await supabase.storage
+    .from(bucketName)
+    .list(folderPath);
+
+  if (folderError) {
+    errorMessages.push(`Error checking for folder: ${folderError.message}`);
+  }
+
+  // if the folder exists, clear the folder
+  if (folderData && folderData.length > 0) {
+    // console.log("Folder exists. Clearing contents...");
+
+    for (const fileItem of folderData) {
+      const { error: removeError } = await supabase.storage
+        .from(bucketName)
+        .remove([`${folderPath}${fileItem.name}`]);
+
+      if (removeError) {
+        errorMessages.push(
+          `Error removing file (${fileItem.name}): ${removeError.message}`
+        );
+      }
+    }
+  }
+
+  // upload the new file to the folder (if no folderError)
+  if (errorMessages.length === 0) {
+    const { error: uploadError } = await supabase.storage
+      .from(bucketName)
+      .upload(filePath, file);
+
+    if (uploadError) {
+      errorMessages.push(`Error uploading file: ${uploadError.message}`);
+    }
+  }
+  if (errorMessages.length > 0) {
+    Swal.fire({
+      icon: "error",
+      title: "Errors occurred",
+      html: errorMessages.join("<br>"),
+      confirmButtonColor: "red",
+    });
+    return false;
+  }
+  return true;
+}
+
 export default function ApplyBusiness() {
   const [applyProject, setApplyProject] = useState(false);
-  let supabase = createSupabaseClient();
   const alertShownRef = useRef(false);
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
@@ -77,58 +131,6 @@ export default function ApplyBusiness() {
     });
   };
 
-  async function uploadFile(file: File, userID: string, bucketName: string) {
-    const folderPath = `${userID}/`;
-    const filePath = `${folderPath}${file.name}`;
-    let errorMessages: string[] = [];
-
-    // check if the folder exists
-    const { data: folderData, error: folderError } = await supabase.storage
-      .from(bucketName)
-      .list(folderPath);
-
-    if (folderError) {
-      errorMessages.push(`Error checking for folder: ${folderError.message}`);
-    }
-
-    // if the folder exists, clear the folder
-    if (folderData && folderData.length > 0) {
-      console.log("Folder exists. Clearing contents...");
-
-      for (const fileItem of folderData) {
-        const { error: removeError } = await supabase.storage
-          .from(bucketName)
-          .remove([`${folderPath}${fileItem.name}`]);
-
-        if (removeError) {
-          errorMessages.push(
-            `Error removing file (${fileItem.name}): ${removeError.message}`
-          );
-        }
-      }
-    }
-
-    // upload the new file to the folder (if no folderError)
-    if (errorMessages.length === 0) {
-      const { error: uploadError } = await supabase.storage
-        .from(bucketName)
-        .upload(filePath, file);
-
-      if (uploadError) {
-        errorMessages.push(`Error uploading file: ${uploadError.message}`);
-      }
-    }
-    if (errorMessages.length > 0) {
-      Swal.fire({
-        icon: "error",
-        title: "Errors occurred",
-        html: errorMessages.join("<br>"),
-        confirmButtonColor: "red",
-      });
-      return false;
-    }
-    return true;
-  }
   const hasUserApplied = async (userID: string) => {
     let { data: business, error } = await supabase
       .from("business")
