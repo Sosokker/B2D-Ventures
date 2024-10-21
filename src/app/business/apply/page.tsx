@@ -11,6 +11,7 @@ type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_NAME = "project-pitches";
 export default function ApplyBusiness() {
   const [applyProject, setApplyProject] = useState(false);
+  let supabase = createSupabaseClient();
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
     const transformedData = await transformChoice(data);
@@ -23,9 +24,20 @@ export default function ApplyBusiness() {
     const pitchType = typeof recvData["businessPitchDeck"];
     if (pitchType === "object") {
       if (user?.id) {
-        uploadFile(recvData["businessPitchDeck"], user.id, BUCKET_NAME);
+        const uploadSuccess = await uploadFile(
+          recvData["businessPitchDeck"],
+          user.id,
+          BUCKET_NAME
+        );
+
+        if (!uploadSuccess) {
+          return;
+        }
+
+        console.log("file upload successful");
       } else {
-        console.error("User ID is undefined. Cannot upload file.");
+        console.error("user ID is undefined.");
+        return;
       }
     }
 
@@ -62,9 +74,11 @@ export default function ApplyBusiness() {
       }
     });
   };
+
   async function uploadFile(file: File, userID: string, bucketName: string) {
     const folderPath = `${userID}/`;
     const filePath = `${folderPath}${file.name}`;
+    let errorMessages: string[] = [];
 
     // check if the folder exists
     const { data: folderData, error: folderError } = await supabase.storage
@@ -72,8 +86,7 @@ export default function ApplyBusiness() {
       .list(folderPath);
 
     if (folderError) {
-      console.error("Error checking for folder:", folderError.message);
-      return;
+      errorMessages.push(`Error checking for folder: ${folderError.message}`);
     }
 
     // if the folder exists, clear the folder
@@ -86,29 +99,35 @@ export default function ApplyBusiness() {
           .remove([`${folderPath}${fileItem.name}`]);
 
         if (removeError) {
-          console.error(
-            `Error removing file (${fileItem.name}):`,
-            removeError.message
+          errorMessages.push(
+            `Error removing file (${fileItem.name}): ${removeError.message}`
           );
-          return;
         }
       }
     }
 
-    // upload new file to the folder
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from(bucketName)
-      .upload(filePath, file);
+    // upload the new file to the folder (if no folderError)
+    if (errorMessages.length === 0) {
+      const { error: uploadError } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, file);
 
-    if (uploadError) {
-      console.error("Error uploading file:", uploadError.message);
-      return;
+      if (uploadError) {
+        errorMessages.push(`Error uploading file: ${uploadError.message}`);
+      }
     }
-
-    console.log("File uploaded successfully:", uploadData);
+    if (errorMessages.length > 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Errors occurred",
+        html: errorMessages.join("<br>"),
+        confirmButtonColor: "red",
+      });
+      return false;
+    }
+    return true;
   }
 
-  let supabase = createSupabaseClient();
   const transformChoice = (data: any) => {
     // convert any yes and no to true or false
     const transformedData = Object.entries(data).reduce(
