@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Deal, getDealList, convertToGraphData, getRecentDealData } from "../api/dealApi";
-
-
-type RecentDealData = { username: string; avatar_url: string }[]
+import { RecentDealData } from "@/components/recent-funds";
 
 // custom hook for deal list
 export function useDealList() {
@@ -37,7 +35,7 @@ export function useGraphData() {
 }
 
 export function useRecentDealData() {
-  const [recentDealData, setRecentDealData] = useState<RecentDealData>();
+  const [recentDealData, setRecentDealData] = useState<RecentDealData[]>();
 
   const fetchRecentDealData = async () => {
     setRecentDealData(await getRecentDealData());

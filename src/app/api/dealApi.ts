@@ -7,20 +7,14 @@ export type Deal = {
   investor_id: string;
 };
 
-// Sort the dealList by created_time in descending order
-export function byCreatedTimeDesc(a: Deal, b: Deal) {
-  return new Date(b.created_time).getTime() - new Date(a.created_time).getTime();
-}
-
 export async function getDealList() {
   const supabase = createSupabaseClient();
-  const { data: dealData, error } = await supabase
+  // get id of investor who invests in the business
+  const { data: dealData, error: dealError } = await supabase
     .from('business')
     .select(`
       project (
         investment_deal (
-          deal_amount,
-          created_time,
           investor_id
         )
       )
@@ -28,9 +22,9 @@ export async function getDealList() {
     .eq('user_id', await getCurrentUserID())
     .single();
 
-  if (error) {
-    alert(JSON.stringify(error));
-    console.error('Error fetching deal list:', error);
+  if (dealError) {
+    alert(JSON.stringify(dealError));
+    console.error('Error fetching deal list:', dealError);
     return; // Exit on error
   }
 
@@ -39,48 +33,71 @@ export async function getDealList() {
     return; // Exit if there's no data
   }
 
-  const flattenedDeals = dealData.project.flatMap((proj) =>
-    proj.investment_deal.map((deal) => ({
-      deal_amount: deal.deal_amount,
-      created_time: deal.created_time,
-      investor_id: deal.investor_id,
-    }))
-  )
+  const investorIdList = dealData.project[0].investment_deal.map(deal => deal.investor_id);
 
-  // Check for empty dealList
-  if (!flattenedDeals.length) {
-    alert("No deal list available");
-    return; // Exit if there's no data
+  // get investment_deal data then sort by created_time
+  const { data: sortedDealData, error: sortedDealDataError } = await supabase
+    .from("investment_deal")
+    .select(`
+      deal_amount,
+      created_time,
+      investor_id
+    `)
+    .in('investor_id', investorIdList)
+    .order('created_time', { ascending: false })
+
+  if (sortedDealDataError) {
+    alert(JSON.stringify(sortedDealDataError));
+    console.error('Error sorting deal list:', sortedDealDataError);
+    return; // Exit on error
   }
-  return flattenedDeals.sort(byCreatedTimeDesc);
+
+  return sortedDealData;
 };
 
+// #TODO fix query to be non unique
 export async function getRecentDealData() {
   const supabase = createSupabaseClient();
-  let dealList = await getDealList();
+  const dealList = await getDealList();
 
   if (!dealList) {
-    // #TODO div no deals available?
+    // #TODO div error
+    console.error("No deal available");
     return;
   }
-  
-  dealList = dealList.slice(0, 5)
 
-  const investorIdList: string[] = dealList.map(deal => deal.investor_id);
-  const { data: userData, error } = await supabase
+  // get 5 most recent investor
+  const recentDealList = dealList.slice(0, 5);
+  const recentInvestorIdList = recentDealList.map(deal => deal.investor_id);
+
+  const { data: recentUserData, error: recentUserError } = await supabase
     .from("profiles")
-    .select("username, avatar_url")   // #TODO add email
-    .in("id", investorIdList); // Filter by investor_id
+    .select(`
+      username,
+      avatar_url
+    `)
+    .in('id', recentInvestorIdList);
 
-  if (error) {
-    // Handle the error and return a meaningful message
-    console.error("Error fetching usernames and avatars:", error);
+  if (!recentUserData) {
+    alert("No recent users available");
+    return;
   }
 
-  alert(JSON.stringify(userData));
-  return userData || [];
+  if (recentUserError) {
+    // Handle the error and return a meaningful message
+    console.error("Error fetching profiles:", recentUserError);
+    return;
+    // #TODO div error
+  }
+
+  // combine two arrays
+  const recentDealData = recentDealList.map((item, index) => {
+    return { ...item, ...recentUserData[index] };
+  });
+  return recentDealData;
 }
 
+// #TODO refactor using supabase query instead of manual
 // #TODO move to util
 export function convertToGraphData(deals: Deal[]): Record<string, number> {
   // group by year & month

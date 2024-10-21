@@ -18,18 +18,19 @@ export default function Dashboard() {
   const [graphType, setGraphType] = useState("line");
   const graphData = useGraphData();
   const dealList = useDealList();
-  const recentDealData = useRecentDealData();
+  // #TODO dependency injection refactor + define default value inside function (and not here)
+  const recentDealData = useRecentDealData() || [];
   const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
 
   return (
     <>
-      {dealList?.map((deal, index) => (
+      {/* {dealList?.map((deal, index) => (
         <div key={index} className="deal-item">
           <p>Deal Amount: {deal.deal_amount}</p>
           <p>Created Time: {new Date(deal.created_time).toUTCString()}</p>
           <p>Investor ID: {deal.investor_id}</p>
         </div>
-      ))}
+      ))} */}
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
@@ -199,7 +200,7 @@ export default function Dashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentFunds recentDealData={recentDealData!}>
+                    <RecentFunds recentDealData={recentDealData}>
                     </RecentFunds>
                   </CardContent>
                 </Card>
