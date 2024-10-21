@@ -7,14 +7,17 @@ export type Deal = {
   investor_id: string;
 };
 
+// Sort the dealList by created_time in descending order
+export function byCreatedTimeDesc(a: Deal, b: Deal) {
+  return new Date(b.created_time).getTime() - new Date(a.created_time).getTime();
+}
+
 export async function getDealList() {
   const supabase = createSupabaseClient();
   const { data: dealData, error } = await supabase
     .from('business')
     .select(`
-      id,
       project (
-        id,
         investment_deal (
           deal_amount,
           created_time,
@@ -25,7 +28,6 @@ export async function getDealList() {
     .eq('user_id', await getCurrentUserID())
     .single();
 
-  // Handle errors and no data cases
   if (error) {
     alert(JSON.stringify(error));
     console.error('Error fetching deal list:', error);
@@ -37,22 +39,51 @@ export async function getDealList() {
     return; // Exit if there's no data
   }
 
-  const dealList = dealData.project[0].investment_deal;
+  const flattenedDeals = dealData.project.flatMap((proj) =>
+    proj.investment_deal.map((deal) => ({
+      deal_amount: deal.deal_amount,
+      created_time: deal.created_time,
+      investor_id: deal.investor_id,
+    }))
+  )
 
   // Check for empty dealList
-  if (!dealList.length) {
+  if (!flattenedDeals.length) {
     alert("No deal list available");
     return; // Exit if there's no data
   }
-
-  // Sort the dealList by created_time in descending order
-  const byCreatedTimeDesc = (a: Deal, b: Deal) =>
-    new Date(b.created_time).getTime() - new Date(a.created_time).getTime();
-  return dealList.sort(byCreatedTimeDesc);
+  return flattenedDeals.sort(byCreatedTimeDesc);
 };
+
+export async function getRecentDealData() {
+  const supabase = createSupabaseClient();
+  let dealList = await getDealList();
+
+  if (!dealList) {
+    // #TODO div no deals available?
+    return;
+  }
+  
+  dealList = dealList.slice(0, 5)
+
+  const investorIdList: string[] = dealList.map(deal => deal.investor_id);
+  const { data: userData, error } = await supabase
+    .from("profiles")
+    .select("username, avatar_url")   // #TODO add email
+    .in("id", investorIdList); // Filter by investor_id
+
+  if (error) {
+    // Handle the error and return a meaningful message
+    console.error("Error fetching usernames and avatars:", error);
+  }
+
+  alert(JSON.stringify(userData));
+  return userData || [];
+}
 
 // #TODO move to util
 export function convertToGraphData(deals: Deal[]): Record<string, number> {
+  // group by year & month
   let graphData = deals.reduce((acc, deal) => {
     const monthYear = new Date(deal.created_time).toISOString().slice(0, 7); // E.g., '2024-10'
     acc[monthYear] = (acc[monthYear] || 0) + deal.deal_amount; // Sum the deal_amount

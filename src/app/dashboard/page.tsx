@@ -12,12 +12,13 @@ import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
 import { useState } from "react";
 
-import { useDealList, useGraphData } from "./hook";
+import { useDealList, useGraphData, useRecentDealData } from "./hook";
 
 export default function Dashboard() {
   const [graphType, setGraphType] = useState("line");
   const graphData = useGraphData();
   const dealList = useDealList();
+  const recentDealData = useRecentDealData();
   const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
 
   return (
@@ -198,7 +199,7 @@ export default function Dashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentFunds>
+                    <RecentFunds recentDealData={recentDealData!}>
                     </RecentFunds>
                   </CardContent>
                 </Card>
