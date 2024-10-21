@@ -13,7 +13,7 @@ export default function ApplyProject() {
   };
   return (
     <div>
-      <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-100 dark:bg-gray-800 p-5">
+      <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-2s00 dark:bg-gray-800 p-5">
         <h1 className="text-2xl md:text-5xl font-medium md:font-bold justify-self-center md:mt-8">
           Apply to raise on B2DVentures
         </h1>
@@ -28,7 +28,7 @@ export default function ApplyProject() {
           </p>
         </div>
       </div>
-      <div className="grid auto-rows-max bg-zinc-100 dark:bg-zinc-900 pt-12 pb-12">
+      <div className="grid auto-rows-max bg-zinc-100 dark:bg-zinc-900 pt-12 -mb-6">
         <ProjectForm onSubmit={onSubmit} />
       </div>
     </div>
