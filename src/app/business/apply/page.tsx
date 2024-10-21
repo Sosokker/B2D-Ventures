@@ -21,7 +21,7 @@ export default function ApplyBusiness() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    
+
     const { data, error } = await supabase
       .from("business_application")
       .insert([
