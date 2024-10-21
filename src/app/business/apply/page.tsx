@@ -1,17 +1,19 @@
 "use client";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import BusinessForm from "@/components/BusinessForm";
 import { businessFormSchema } from "@/types/schemas/application.schema";
 import Swal from "sweetalert2";
+import { getCurrentUserID } from "@/app/api/userApi";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_NAME = "project-pitches";
 export default function ApplyBusiness() {
   const [applyProject, setApplyProject] = useState(false);
   let supabase = createSupabaseClient();
+  const alertShownRef = useRef(false);
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
     const transformedData = await transformChoice(data);
@@ -127,7 +129,17 @@ export default function ApplyBusiness() {
     }
     return true;
   }
-
+  const hasUserApplied = async (userID: string) => {
+    let { data: business, error } = await supabase
+      .from("business")
+      .select("*")
+      .eq("user_id", userID);
+    console.table(business);
+    if (business) {
+      return true;
+    }
+    return false;
+  };
   const transformChoice = (data: any) => {
     // convert any yes and no to true or false
     const transformedData = Object.entries(data).reduce(
@@ -150,9 +162,37 @@ export default function ApplyBusiness() {
     );
     return transformedData;
   };
-  // useEffect(() => {
-  //   uploadFile();
-  // }, []);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userID = await getCurrentUserID();
+        if (userID) {
+          const hasApplied = await hasUserApplied(userID);
+          if (hasApplied && !alertShownRef.current) {
+            alertShownRef.current = true;
+            Swal.fire({
+              icon: "info",
+              title: "You Already Have an Account",
+              text: "You have already submitted your business application.",
+              confirmButtonText: "OK",
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = "/";
+              }
+            });
+          }
+        } else {
+          console.error("User ID is undefined.");
+        }
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div>
