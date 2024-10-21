@@ -6,7 +6,6 @@ import { z } from "zod";
 import BusinessForm from "@/components/BusinessForm";
 import { businessFormSchema } from "@/types/schemas/application.schema";
 import Swal from "sweetalert2";
-import { getCurrentUserID } from "@/app/api/userApi";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 export default function ApplyBusiness() {
@@ -21,7 +20,7 @@ export default function ApplyBusiness() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    
+
     const { data, error } = await supabase
       .from("business_application")
       .insert([
@@ -39,7 +38,7 @@ export default function ApplyBusiness() {
         },
       ])
       .select();
-    console.table(data);
+    // console.table(data);
     Swal.fire({
       icon: error == null ? "success" : "error",
       title: error == null ? "success" : "Error: " + error.code,
@@ -54,6 +53,19 @@ export default function ApplyBusiness() {
       }
     });
   };
+  async function uploadFile(file: File) {
+    const { data, error } = await supabase.storage.listBuckets();
+    console.table(data);
+    // if (error) {
+    //   Swal.fire({
+    //     icon: error == null ? "success" : "error",
+    //     title: error == null ? "success" : "Error: " + error.cause,
+    //     text:
+    //       error == null ? "Your application has been submitted" : error.message,
+    //     confirmButtonColor: error == null ? "green" : "red",
+    //   });
+    // }
+  }
 
   let supabase = createSupabaseClient();
   const transformChoice = (data: any) => {
