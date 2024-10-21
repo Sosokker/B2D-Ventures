@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { getCurrentUserID } from "@/app/api/userApi";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
-const BUCKET_NAME = "project-pitches";
+const BUCKET_NAME = "business-pitches";
 let supabase = createSupabaseClient();
 
 async function uploadFile(file: File, userID: string, bucketName: string) {
