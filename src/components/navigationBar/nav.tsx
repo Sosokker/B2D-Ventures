@@ -73,7 +73,7 @@ export function NavigationBar() {
               href="/"
               aria-label="Brand">
               <span className="inline-flex items-center gap-x-2 text-xl font-semibold dark:text-white">
-                <Image src="./logo.svg" alt="logo" width={50} height={50} />
+                <Image src="/logo.svg" alt="logo" width={50} height={50} />
                 B2DVentures
               </span>
             </Link>
