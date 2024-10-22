@@ -35,6 +35,7 @@ export default function ApplyBusiness() {
           recvData["businessPitchDeck"],
           user.id,
           BUCKET_PITCH_NAME,
+          // file structure: userId/fileName
           `${user?.id}/${recvData["businessPitchDeck"].name}`
         );
 

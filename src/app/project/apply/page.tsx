@@ -17,37 +17,20 @@ export default function ApplyProject() {
   const onSubmit: SubmitHandler<projectSchema> = async (data) => {
     alert("มาแน้ววว");
     console.table(data);
+    console.log(typeof data["projectPhotos"], data["projectPhotos"]);
   };
   const sendApplication = async (recvData: any) => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const pitchType = typeof recvData["businessPitchDeck"];
-    if (pitchType === "object") {
-      if (user?.id) {
-        // const uploadSuccess = await uploadFile(
-        //   recvData["businessPitchDeck"],
-        //   user.id,
-        //   BUCKET_PITCH_NAME
-        // );
-
-        // if (!uploadSuccess) {
-        //   return;
-        // }
-
-        console.log("file upload successful");
-      } else {
-        console.error("user ID is undefined.");
-        return;
-      }
-    }
+    const pitchType = typeof recvData["projectPitchDeck"];
 
     const { data, error } = await supabase
       .from("business_application")
       .insert([
         {
           user_id: user?.id,
-          business_name: recvData["companyName"],
+          business_name: recvData["projectName"],
           business_type_id: recvData["industry"],
           location: recvData["country"],
           is_for_sale: recvData["isForSale"],
@@ -60,6 +43,24 @@ export default function ApplyProject() {
         },
       ])
       .select();
+          if (pitchType === "object") {
+            if (user?.id) {
+              // const uploadSuccess = await uploadFile(
+              //   recvData["businessPitchDeck"],
+              //   user.id,
+              //   BUCKET_PITCH_NAME
+              // );
+
+              // if (!uploadSuccess) {
+              //   return;
+              // }
+
+              console.log("file upload successful");
+            } else {
+              console.error("user ID is undefined.");
+              return;
+            }
+          }
     // console.table(data);
     Swal.fire({
       icon: error == null ? "success" : "error",
