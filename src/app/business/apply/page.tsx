@@ -145,7 +145,7 @@ export default function ApplyBusiness() {
       }
     };
 
-    // fetchUserData();
+    fetchUserData();
   }, []);
 
   return (
