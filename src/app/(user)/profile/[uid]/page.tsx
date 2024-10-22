@@ -5,6 +5,7 @@ import { getUserProfile } from "@/lib/data/userQuery";
 import { Tables } from "@/types/database.types";
 import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
+import Link from "next/link";
 
 interface Profile extends Tables<"Profiles"> {}
 
@@ -33,10 +34,10 @@ export default async function ProfilePage({ params }: { params: { uid: string } 
   return (
     <div className="container max-w-screen-xl px-4 py-8">
       <div className="bg-card border-2 border-border shadow-xl rounded-lg overflow-hidden">
-        <div className="bg-cover bg-center h-64 p-4" style={{ backgroundImage: "url(./banner.jpg)" }}>
+        <div className="bg-cover bg-center h-64 p-4" style={{ backgroundImage: "url(/banner.jpg)" }}>
           <div className="flex justify-end">
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Edit Profile
+              <Link href={`/profile/${uid}/edit`}>Edit Profile</Link>
             </button>
           </div>
         </div>
