@@ -8,6 +8,7 @@ import { businessFormSchema } from "@/types/schemas/application.schema";
 import Swal from "sweetalert2";
 import { getCurrentUserID } from "@/app/api/userApi";
 import { uploadFile } from "@/app/api/generalApi";
+import { Loader } from "@/components/loading/loader";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_PITCH_NAME = "business-pitches";
@@ -16,6 +17,7 @@ let supabase = createSupabaseClient();
 export default function ApplyBusiness() {
   const [applyProject, setApplyProject] = useState(false);
   const alertShownRef = useRef(false);
+  const [success, setSucess] = useState(false);
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
     const transformedData = await transformChoice(data);
@@ -119,9 +121,11 @@ export default function ApplyBusiness() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        setSucess(false);
         const userID = await getCurrentUserID();
         if (userID) {
           const hasApplied = await hasUserApplied(userID);
+          setSucess(true);
           if (hasApplied && !alertShownRef.current) {
             alertShownRef.current = true;
             Swal.fire({
@@ -150,6 +154,7 @@ export default function ApplyBusiness() {
 
   return (
     <div>
+      <Loader isSuccess={success} />
       <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-100 dark:bg-gray-800 p-5">
         <h1 className="text-2xl md:text-5xl font-medium md:font-bold justify-self-center md:mt-8">
           Apply to raise on B2DVentures
