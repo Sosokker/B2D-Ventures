@@ -151,7 +151,7 @@ const businessFormSchema = z.object({
       .refine((file) => file.size < MAX_FILE_SIZE, {
         message: "File can't be bigger than 5MB.",
       })
-      .refine((file) => file.name.endsWith(".md"), {
+      .refine((file) => file.name.toLowerCase().endsWith(".md"), {
         message: "File must be a markdown file (.md).",
       }),
   ]),

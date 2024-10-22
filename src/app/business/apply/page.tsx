@@ -7,63 +7,11 @@ import BusinessForm from "@/components/BusinessForm";
 import { businessFormSchema } from "@/types/schemas/application.schema";
 import Swal from "sweetalert2";
 import { getCurrentUserID } from "@/app/api/userApi";
+import { uploadFile } from "@/app/api/generalApi";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_PITCH_NAME = "business-pitches";
 let supabase = createSupabaseClient();
-
-async function uploadFile(file: File, userID: string, bucketName: string) {
-  const folderPath = `${userID}/`;
-  const filePath = `${folderPath}${file.name}`;
-  let errorMessages: string[] = [];
-
-  // check if the folder exists
-  const { data: folderData, error: folderError } = await supabase.storage
-    .from(bucketName)
-    .list(folderPath);
-
-  if (folderError) {
-    errorMessages.push(`Error checking for folder: ${folderError.message}`);
-  }
-
-  // if the folder exists, clear the folder
-  if (folderData && folderData.length > 0) {
-    // console.log("Folder exists. Clearing contents...");
-
-    for (const fileItem of folderData) {
-      const { error: removeError } = await supabase.storage
-        .from(bucketName)
-        .remove([`${folderPath}${fileItem.name}`]);
-
-      if (removeError) {
-        errorMessages.push(
-          `Error removing file (${fileItem.name}): ${removeError.message}`
-        );
-      }
-    }
-  }
-
-  // upload the new file to the folder (if no folderError)
-  if (errorMessages.length === 0) {
-    const { error: uploadError } = await supabase.storage
-      .from(bucketName)
-      .upload(filePath, file);
-
-    if (uploadError) {
-      errorMessages.push(`Error uploading file: ${uploadError.message}`);
-    }
-  }
-  if (errorMessages.length > 0) {
-    Swal.fire({
-      icon: "error",
-      title: "Errors occurred",
-      html: errorMessages.join("<br>"),
-      confirmButtonColor: "red",
-    });
-    return false;
-  }
-  return true;
-}
 
 export default function ApplyBusiness() {
   const [applyProject, setApplyProject] = useState(false);
@@ -83,7 +31,8 @@ export default function ApplyBusiness() {
         const uploadSuccess = await uploadFile(
           recvData["businessPitchDeck"],
           user.id,
-          BUCKET_PITCH_NAME
+          BUCKET_PITCH_NAME,
+          `${user?.id}/${recvData["businessPitchDeck"].name}`
         );
 
         if (!uploadSuccess) {
@@ -196,7 +145,7 @@ export default function ApplyBusiness() {
       }
     };
 
-    fetchUserData();
+    // fetchUserData();
   }, []);
 
   return (
