@@ -24,6 +24,7 @@ export default function ApplyBusiness() {
     await sendApplication(transformedData);
   };
   const sendApplication = async (recvData: any) => {
+    setSucess(false);
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -66,6 +67,7 @@ export default function ApplyBusiness() {
         },
       ])
       .select();
+    setSucess(true);
     // console.table(data);
     Swal.fire({
       icon: error == null ? "success" : "error",
@@ -141,6 +143,7 @@ export default function ApplyBusiness() {
               }
             });
           }
+          setSucess(false);
         } else {
           console.error("User ID is undefined.");
         }
