@@ -16,6 +16,7 @@ const BUCKET_PHOTOS_NAME = "project-additional-photos";
 export default function ApplyProject() {
   const onSubmit: SubmitHandler<projectSchema> = async (data) => {
     alert("มาแน้ววว");
+    
     console.table(data);
     console.log(typeof data["projectPhotos"], data["projectPhotos"]);
   };
@@ -26,20 +27,16 @@ export default function ApplyProject() {
     const pitchType = typeof recvData["projectPitchDeck"];
 
     const { data, error } = await supabase
-      .from("business_application")
+      .from("project_application")
       .insert([
         {
           user_id: user?.id,
-          business_name: recvData["projectName"],
-          business_type_id: recvData["industry"],
-          location: recvData["country"],
-          is_for_sale: recvData["isForSale"],
-          is_generating_revenue: recvData["isGenerating"],
-          is_in_us: recvData["isInUS"],
           pitch_deck_url:
             pitchType === "string" ? recvData["businessPitchDeck"] : "",
-          money_raised_to_date: recvData["totalRaised"],
-          community_size: recvData["communitySize"],
+          target_investment: recvData["targetInvest"],
+          deadline: recvData["deadline"],
+          project_name: recvData["projectName"],
+          
         },
       ])
       .select();

@@ -55,7 +55,9 @@ const ProjectForm = ({
   const [projectPitchFile, setProjectPitchFile] = useState("");
   const [tag, setTag] = useState<{ id: number; value: string }[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<
+    { id: number; value: string }[]
+  >([]);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -165,7 +167,7 @@ const ProjectForm = ({
                     fieldName="projectType"
                     choices={projectType}
                     handleFunction={(selectedValues: any) => {
-                      field.onChange(selectedValues.name);
+                      field.onChange(selectedValues.id);
                     }}
                     description={
                       <>Please specify the primary purpose of the funds</>
@@ -492,7 +494,7 @@ const ProjectForm = ({
                             className="w-96 justify-between overflow-hidden text-ellipsis whitespace-nowrap"
                           >
                             {selectedTag.length > 0
-                              ? selectedTag.join(", ")
+                              ? selectedTag.map((t) => t.value).join(", ")
                               : "Select tags..."}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -505,19 +507,19 @@ const ProjectForm = ({
                               <CommandGroup>
                                 {tag.map((tag) => (
                                   <CommandItem
-                                    key={tag.value}
+                                    key={tag.id}
                                     value={tag.value}
-                                    onSelect={(currentValue) => {
+                                    onSelect={() => {
                                       setSelectedTag((prev) => {
-                                        const updatedTags = prev.includes(
-                                          currentValue
-                                        )
-                                          ? prev.filter(
-                                              (item) => item !== currentValue
-                                            )
-                                          : [...prev, currentValue];
-                                        field.onChange(updatedTags);
-
+                                        const exists = prev.find(
+                                          (t) => t.id === tag.id
+                                        );
+                                        const updatedTags = exists
+                                          ? prev.filter((t) => t.id !== tag.id)
+                                          : [...prev, tag];
+                                        field.onChange(
+                                          updatedTags.map((t) => t.id)
+                                        );
                                         return updatedTags;
                                       });
                                       setOpen(false);
@@ -526,7 +528,7 @@ const ProjectForm = ({
                                     <Check
                                       className={cn(
                                         "h-4",
-                                        selectedTag.includes(tag.value)
+                                        selectedTag.some((t) => t.id === tag.id)
                                           ? "opacity-100"
                                           : "opacity-0"
                                       )}
@@ -552,23 +554,21 @@ const ProjectForm = ({
                 <div className="flex flex-wrap space-x-3">
                   {selectedTag.map((tag) => (
                     <div
-                      key={tag}
+                      key={tag.id}
                       className="flex items-center space-x-1 p-1 rounded mt-2 outline outline-offset-2 outline-1"
                     >
-                      <span>{tag}</span>
+                      <span>{tag.value}</span>
                       <button
-                        onClick={() =>
+                        onClick={() => {
                           setSelectedTag((prev) => {
                             const updatedTags = prev.filter(
-                              (item) => item !== tag
+                              (t) => t.id !== tag.id
                             );
-                            field.onChange(updatedTags);
-
+                            field.onChange(updatedTags.map((t) => t.id));
                             return updatedTags;
-                          })
-                        }
+                          });
+                        }}
                       >
-                        {/* delete button */}
                         <X className="h-4 w-4" />
                       </button>
                     </div>

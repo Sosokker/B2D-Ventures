@@ -21,7 +21,7 @@ const projectFormSchema = z.object({
   projectName: z.string().min(5, {
     message: "Project name must be at least 5 characters.",
   }),
-  projectType: z.string({
+  projectType: z.number({
     required_error: "Please select one of the option",
   }),
   shortDescription: z
@@ -91,7 +91,7 @@ const projectFormSchema = z.object({
       message: "Deadline must be in the future.",
     }),
   tag: z
-    .array(z.string())
+    .array(z.number())
     .min(1, "Please provide at least one tag.")
     .max(5, "You can provide up to 5 tags."),
 });

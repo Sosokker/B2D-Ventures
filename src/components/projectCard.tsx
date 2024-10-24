@@ -25,7 +25,7 @@ export function ProjectCard(props: ProjectCardProps) {
   return (
     <div
       className={cn(
-        "flex flex-col group border-[1px] border-border relative hover:shadow-md rounded-xl h-[450px]",
+        "flex flex-col group border-[1px] border-border relative hover:shadow-md rounded-xl h-[450px] ",
         props.className
       )}>
       <div className="flex flex-col h-full">
@@ -58,7 +58,7 @@ export function ProjectCard(props: ProjectCardProps) {
 
           {/* Info 1 */}
           <div>
-            <div className="transition-transform duration-500 transform opacity-100 group-hover:opacity-0 p-4">
+            <div className="transition-transform duration-500 transform opacity-100 group-hover:opacity-0 p-4 ">
               <div className="flex items-center text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <CalendarDaysIcon width={20} />
@@ -79,7 +79,7 @@ export function ProjectCard(props: ProjectCardProps) {
           </div>
 
           {/* Info 2 */}
-          <div className="hidden group-hover:flex group-hover:absolute group-hover:bottom-4 p-4">
+          <div className="hidden group-hover:flex group-hover:absolute group-hover:bottom-4 p-4 ">
             {/* Info 2 (Visible on hover) */}
             <div className="transition-transform duration-500 transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
               <hr className="-ml-4 mb-2" />
