@@ -33,7 +33,6 @@ export default function ApplyBusiness() {
       if (user?.id) {
         const uploadSuccess = await uploadFile(
           recvData["businessPitchDeck"],
-          user.id,
           BUCKET_PITCH_NAME,
           // file structure: userId/fileName
           `${user?.id}/${recvData["businessPitchDeck"].name}`

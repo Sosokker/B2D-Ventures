@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import ProjectForm from "@/components/ProjectForm";
 import { projectFormSchema } from "@/types/schemas/application.schema";
@@ -10,27 +9,22 @@ import { uploadFile } from "@/app/api/generalApi";
 
 type projectSchema = z.infer<typeof projectFormSchema>;
 let supabase = createSupabaseClient();
-const BUCKET_PITCH_APPLICATION_NAME = "project-pitches";
+const BUCKET_PITCH_APPLICATION_NAME = "project-application";
 
 export default function ApplyProject() {
   const onSubmit: SubmitHandler<projectSchema> = async (data) => {
     alert("มาแน้ววว");
     await sendApplication(data);
-    // console.table(data);
+    console.table(data);
     // console.log(typeof data["projectPhotos"], data["projectPhotos"]);
   };
-  const sendApplication = async (recvData: any) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    let projectId = null;
+  const saveApplicationData = async (recvData: any, userId: string) => {
     const pitchType = typeof recvData["projectPitchDeck"];
-    // save the general application data to project_application table
-    const { data: project_application, error } = await supabase
+    const { data: projectData, error: projectError } = await supabase
       .from("project_application")
       .insert([
         {
-          user_id: user?.id,
+          user_id: userId,
           pitch_deck_url:
             pitchType === "string" ? recvData["projectPitchDeck"] : "",
           target_investment: recvData["targetInvest"],
@@ -42,41 +36,134 @@ export default function ApplyProject() {
         },
       ])
       .select();
-    if (project_application) {
-      projectId = project_application[0].id;
+
+    return { projectId: projectData?.[0]?.id, error: projectError };
+  };
+  const saveTags = async (tags: string[], projectId: string) => {
+    const tagPromises = tags.map(async (tag) => {
+      const { data, error } = await supabase
+        .from("project_application_tag")
+        .insert([{ tag_id: tag, project_id: projectId }])
+        .select();
+
+      return { data, error };
+    });
+
+    const results = await Promise.all(tagPromises);
+    const errors = results
+      .filter((result) => result.error)
+      .map((result) => result.error);
+
+    return { errors };
+  };
+
+  const uploadPitchFile = async (
+    file: File,
+    userId: string,
+    projectId: string
+  ) => {
+    if (!file || !userId) {
+      console.error("Pitch file or user ID is undefined.");
+      return false;
     }
-    // upload pitch file
-    if (pitchType === "object") {
-      if (user?.id) {
-        const uploadSuccess = await uploadFile(
-          recvData["businessPitchDeck"],
-          user.id,
-          BUCKET_PITCH_APPLICATION_NAME,
-          `${user?.id}/${projectId}/pitches/${recvData["projectPitchDeck"].name}`
-        );
 
-        if (!uploadSuccess) {
-          return;
-        }
+    return await uploadFile(
+      file,
+      "BUCKET_PITCH_APPLICATION_NAME",
+      `${userId}/${projectId}/pitches/${file.name}`
+    );
+  };
 
-        console.log("file upload successful");
-      } else {
-        console.error("user ID is undefined.");
-        return;
+  const uploadLogoAndPhotos = async (
+    logoFile: File,
+    photos: File[],
+    userId: string,
+    projectId: string
+  ) => {
+    if (logoFile) {
+      const uploadLogoSuccess = await uploadFile(
+        logoFile,
+        "BUCKET_PITCH_APPLICATION_NAME",
+        `${userId}/${projectId}/logo/${logoFile.name}`
+      );
+
+      if (!uploadLogoSuccess) {
+        console.error("Error uploading logo.");
+        return false;
       }
     }
-    // console.table(data);
+
+    const uploadPhotoPromises = photos.map((image) =>
+      uploadFile(
+        image,
+        "BUCKET_PITCH_APPLICATION_NAME",
+        `${userId}/${projectId}/photos/${image.name}`
+      )
+    );
+
+    const photoResults = await Promise.all(uploadPhotoPromises);
+    return photoResults.every(Boolean); // Checks if all photos uploaded successfully
+  };
+
+  const displayAlert = (error: any) => {
     Swal.fire({
       icon: error == null ? "success" : "error",
-      title: error == null ? "success" : "Error: " + error.code,
+      title: error == null ? "Success" : `Error: ${error.code}`,
       text:
         error == null ? "Your application has been submitted" : error.message,
       confirmButtonColor: error == null ? "green" : "red",
     }).then((result) => {
       if (result.isConfirmed) {
-        // window.location.href = "/";
+        window.location.href = "/";
       }
     });
+  };
+
+  const sendApplication = async (recvData: any) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user?.id) {
+      console.error("User ID is undefined.");
+      return;
+    }
+
+    // save application data
+    const { projectId, error } = await saveApplicationData(recvData, user.id);
+
+    if (error) {
+      displayAlert(error);
+      return;
+    }
+
+    //  upload pitch file if it’s a file
+    if (typeof recvData["projectPitchDeck"] === "object") {
+      const uploadPitchSuccess = await uploadPitchFile(
+        recvData["projectPitchDeck"],
+        user.id,
+        projectId
+      );
+
+      if (!uploadPitchSuccess) {
+        console.error("Error uploading pitch file.");
+      } else {
+        console.log("Pitch file uploaded successfully.");
+      }
+    }
+
+    // upload logo and photos
+    const uploadMediaSuccess = await uploadLogoAndPhotos(
+      recvData["projectLogo"],
+      recvData["projectPhotos"],
+      user.id,
+      projectId
+    );
+
+    if (!uploadMediaSuccess) {
+      console.error("Error uploading media files.");
+    }
+    displayAlert(error);
   };
   return (
     <div>
