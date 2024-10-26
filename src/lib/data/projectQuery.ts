@@ -2,7 +2,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 
 async function getTopProjects(
   client: SupabaseClient,
-  numberOfRecords: number = 4,
+  numberOfRecords: number = 4
 ) {
   try {
     const { data, error } = await client
@@ -21,7 +21,7 @@ async function getTopProjects(
               target_investment,
               investment_deadline
             ),
-            item_tag (
+            project_tag (
               tag (
                 id,
                 value
@@ -30,7 +30,7 @@ async function getTopProjects(
             business (
               location
             )
-          `,
+          `
       )
       .order("published_time", { ascending: false })
       .limit(numberOfRecords);
@@ -48,8 +48,10 @@ async function getTopProjects(
 }
 
 function getProjectDataQuery(client: SupabaseClient, projectId: number) {
-  return client.from("project").select(
-    `
+  return client
+    .from("project")
+    .select(
+      `
       project_name,
       project_short_description,
       project_description,
@@ -65,13 +67,17 @@ function getProjectDataQuery(client: SupabaseClient, projectId: number) {
           tag_name:value
         )
       )
-    `,
-  ).eq("id", projectId).single();
+    `
+    )
+    .eq("id", projectId)
+    .single();
 }
 
 async function getProjectData(client: SupabaseClient, projectId: number) {
-  const query = client.from("project").select(
-    `
+  const query = client
+    .from("project")
+    .select(
+      `
       project_name,
       project_short_description,
       project_description,
@@ -87,8 +93,10 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
           tag_name:value
         )
       )
-    `,
-  ).eq("id", projectId).single();
+    `
+    )
+    .eq("id", projectId)
+    .single();
 
   const { data, error } = await query;
   return { data, error };
@@ -118,13 +126,15 @@ function searchProjectsQuery(
     sortByTimeFilter,
     page = 1,
     pageSize = 4,
-  }: FilterProjectQueryParams,
+  }: FilterProjectQueryParams
 ) {
   const start = (page - 1) * pageSize;
   const end = start + pageSize - 1;
 
-  let query = client.from("project").select(
-    `
+  let query = client
+    .from("project")
+    .select(
+      `
     project_id:id,
     project_name,
     published_time,
@@ -150,8 +160,10 @@ function searchProjectsQuery(
       ),
       business_location:location
     )
-    `,
-  ).order("published_time", { ascending: false }).range(start, end);
+    `
+    )
+    .order("published_time", { ascending: false })
+    .range(start, end);
 
   if (sortByTimeFilter === "all") {
     sortByTimeFilter = undefined;
