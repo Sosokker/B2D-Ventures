@@ -189,16 +189,23 @@ export default function ApplyProject() {
     const folderPath = photos[0].data.path;
     const lastSlashIndex = folderPath.lastIndexOf("/");
     const photosPath = folderPath.substring(0, lastSlashIndex);
-    const logoURL = getPublicURL(
+
+    // Log for debugging
+    console.log("Bucket Name:", BUCKET_PITCH_APPLICATION_NAME);
+    console.log("Logo Path:", logo.data.path);
+    console.log("Photos Path:", photosPath);
+
+    const logoURL = await getPublicURL(
       logo.data.path,
       BUCKET_PITCH_APPLICATION_NAME
-    )?.publicUrl;
-    const photosURL = getPublicURL(
+    );
+    const photosURL = await getPublicURL(
       photosPath,
       BUCKET_PITCH_APPLICATION_NAME
-    )?.publicUrl;
-
-    updateImageURL(logoURL, "project_logo", projectId);
+    );
+    // console.log(logoURL.publicUrl, projectId, logo.data.path);
+    console.log(photosURL, projectId, logo.data.path);
+    updateImageURL(logoURL.publicUrl, "project_logo", projectId);
     // console.log(logoURL, photosUrl);
     displayAlert(error);
   };
@@ -214,8 +221,8 @@ export default function ApplyProject() {
       .select();
     console.table(data);
   };
-  const getPublicURL = (path: string, bucketName: string) => {
-    const { data } = supabase.storage.from(bucketName).getPublicUrl(path);
+  const getPublicURL = async (path: string, bucketName: string) => {
+    const { data } = await supabase.storage.from(bucketName).getPublicUrl(path);
     // console.table(data);
     return data;
   };
