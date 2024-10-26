@@ -1,48 +1,91 @@
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import Swal from "sweetalert2";
 
+const supabase = createSupabaseClient();
+
+async function checkFolderExists(bucketName: string, filePath: string) {
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .list(filePath);
+
+  if (error) {
+    console.error(`Error checking for folder: ${error.message}`);
+  }
+  return { folderData: data, folderError: error };
+}
+
+async function clearFolder(
+  bucketName: string,
+  folderData: any[],
+  filePath: string
+) {
+  const errors: string[] = [];
+
+  for (const fileItem of folderData) {
+    const { error } = await supabase.storage
+      .from(bucketName)
+      .remove([`${filePath}/${fileItem.name}`]);
+
+    if (error) {
+      errors.push(`Error removing file (${fileItem.name}): ${error.message}`);
+    }
+  }
+
+  return errors;
+}
+
+async function uploadToFolder(
+  bucketName: string,
+  filePath: string,
+  file: File
+) {
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, file, { upsert: true });
+
+  if (error) {
+    console.error(`Error uploading file: ${error.message}`);
+  }
+  return { uploadData: data, uploadError: error };
+}
+
 export async function uploadFile(
   file: File,
   bucketName: string,
   filePath: string
 ) {
-  const supabase = createSupabaseClient();
-  let errorMessages: string[] = [];
+  const errorMessages: string[] = [];
 
   // check if the folder exists
-  const { data: folderData, error: folderError } = await supabase.storage
-    .from(bucketName)
-    .list(filePath);
-
+  const { folderData, folderError } = await checkFolderExists(
+    bucketName,
+    filePath
+  );
   if (folderError) {
     errorMessages.push(`Error checking for folder: ${folderError.message}`);
   }
 
-  // if the folder exists, clear the folder
+  // clear the folder if it exists
   if (folderData && folderData.length > 0) {
-    for (const fileItem of folderData) {
-      const { error: removeError } = await supabase.storage
-        .from(bucketName)
-        .remove([`${filePath}/${fileItem.name}`]);
-
-      if (removeError) {
-        errorMessages.push(
-          `Error removing file (${fileItem.name}): ${removeError.message}`
-        );
-      }
-    }
+    const clearErrors = await clearFolder(bucketName, folderData, filePath);
+    errorMessages.push(...clearErrors);
   }
 
-  // upload the new file to the folder (if no folderError)
+  // upload the new file if there were no previous errors
+  let uploadData = null;
   if (errorMessages.length === 0) {
-    const { error: uploadError } = await supabase.storage
-      .from(bucketName)
-      .upload(filePath, file);
+    const { uploadData: data, uploadError } = await uploadToFolder(
+      bucketName,
+      filePath,
+      file
+    );
+    uploadData = data;
 
     if (uploadError) {
       errorMessages.push(`Error uploading file: ${uploadError.message}`);
     }
   }
+
   if (errorMessages.length > 0) {
     Swal.fire({
       icon: "error",
@@ -50,7 +93,8 @@ export async function uploadFile(
       html: errorMessages.join("<br>"),
       confirmButtonColor: "red",
     });
-    return false;
+    return { success: false, errors: errorMessages, data: null };
   }
-  return true;
+
+  return { success: true, errors: null, data: uploadData };
 }

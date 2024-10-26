@@ -15,7 +15,7 @@ export default function ApplyProject() {
   const onSubmit: SubmitHandler<projectSchema> = async (data) => {
     alert("มาแน้ววว");
     await sendApplication(data);
-    console.table(data);
+    // console.table(data);
     // console.log(typeof data["projectPhotos"], data["projectPhotos"]);
   };
   const saveApplicationData = async (recvData: any, userId: string) => {
@@ -41,15 +41,19 @@ export default function ApplyProject() {
   };
   const saveTags = async (tags: string[], projectId: string) => {
     const tagPromises = tags.map(async (tag) => {
-      const { data, error } = await supabase
+      const response = await supabase
         .from("project_application_tag")
-        .insert([{ tag_id: tag, project_id: projectId }])
+        .insert([{ tag_id: tag, item_id: projectId }])
         .select();
 
-      return { data, error };
+      // console.log("Insert response for tag:", tag, response);
+
+      return response;
     });
 
     const results = await Promise.all(tagPromises);
+
+    // Collect errors
     const errors = results
       .filter((result) => result.error)
       .map((result) => result.error);
@@ -69,7 +73,7 @@ export default function ApplyProject() {
 
     return await uploadFile(
       file,
-      "BUCKET_PITCH_APPLICATION_NAME",
+      BUCKET_PITCH_APPLICATION_NAME,
       `${userId}/${projectId}/pitches/${file.name}`
     );
   };
@@ -80,29 +84,44 @@ export default function ApplyProject() {
     userId: string,
     projectId: string
   ) => {
+    const uploadResults: { logo?: any; photos: any[] } = { photos: [] };
+
+    // upload logo
     if (logoFile) {
-      const uploadLogoSuccess = await uploadFile(
+      const logoResult = await uploadFile(
         logoFile,
-        "BUCKET_PITCH_APPLICATION_NAME",
+        BUCKET_PITCH_APPLICATION_NAME,
         `${userId}/${projectId}/logo/${logoFile.name}`
       );
 
-      if (!uploadLogoSuccess) {
-        console.error("Error uploading logo.");
-        return false;
+      if (!logoResult.success) {
+        console.error("Error uploading logo:", logoResult.errors);
+        return { success: false, logo: logoResult, photos: [] };
       }
+
+      uploadResults.logo = logoResult;
     }
 
+    // upload each photo
     const uploadPhotoPromises = photos.map((image) =>
       uploadFile(
         image,
-        "BUCKET_PITCH_APPLICATION_NAME",
+        BUCKET_PITCH_APPLICATION_NAME,
         `${userId}/${projectId}/photos/${image.name}`
       )
     );
 
     const photoResults = await Promise.all(uploadPhotoPromises);
-    return photoResults.every(Boolean); // Checks if all photos uploaded successfully
+    uploadResults.photos = photoResults;
+
+    // check if all uploads were successful
+    const allUploadsSuccessful = photoResults.every((result) => result.success);
+
+    return {
+      success: allUploadsSuccessful,
+      logo: uploadResults.logo,
+      photos: uploadResults.photos,
+    };
   };
 
   const displayAlert = (error: any) => {
@@ -114,7 +133,7 @@ export default function ApplyProject() {
       confirmButtonColor: error == null ? "green" : "red",
     }).then((result) => {
       if (result.isConfirmed) {
-        window.location.href = "/";
+        // window.location.href = "/";
       }
     });
   };
@@ -136,6 +155,11 @@ export default function ApplyProject() {
       displayAlert(error);
       return;
     }
+    const tagError = saveTags(recvData["tag"], projectId);
+    // if (tagError) {
+    //   displayAlert(tagError);
+    //   return;
+    // }
 
     //  upload pitch file if it’s a file
     if (typeof recvData["projectPitchDeck"] === "object") {
@@ -153,17 +177,47 @@ export default function ApplyProject() {
     }
 
     // upload logo and photos
-    const uploadMediaSuccess = await uploadLogoAndPhotos(
+    const { success, logo, photos } = await uploadLogoAndPhotos(
       recvData["projectLogo"],
       recvData["projectPhotos"],
       user.id,
       projectId
     );
-
-    if (!uploadMediaSuccess) {
+    if (!success) {
       console.error("Error uploading media files.");
     }
+    const folderPath = photos[0].data.path;
+    const lastSlashIndex = folderPath.lastIndexOf("/");
+    const photosPath = folderPath.substring(0, lastSlashIndex);
+    const logoURL = getPublicURL(
+      logo.data.path,
+      BUCKET_PITCH_APPLICATION_NAME
+    )?.publicUrl;
+    const photosURL = getPublicURL(
+      photosPath,
+      BUCKET_PITCH_APPLICATION_NAME
+    )?.publicUrl;
+
+    updateImageURL(logoURL, "project_logo", projectId);
+    // console.log(logoURL, photosUrl);
     displayAlert(error);
+  };
+  const updateImageURL = async (
+    url: string,
+    columnName: string,
+    projectId: number
+  ) => {
+    const { data, error } = await supabase
+      .from("project_application")
+      .update({ [columnName]: url })
+      .eq("id", projectId)
+      .select();
+    console.table(data);
+  };
+  const getPublicURL = (path: string, bucketName: string) => {
+    const { data } = supabase.storage.from(bucketName).getPublicUrl(path);
+    // console.table(data);
+    return data;
   };
   return (
     <div>
