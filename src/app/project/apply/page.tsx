@@ -6,12 +6,16 @@ import { z } from "zod";
 import { SubmitHandler } from "react-hook-form";
 import Swal from "sweetalert2";
 import { uploadFile } from "@/app/api/generalApi";
+import { Loader } from "@/components/loading/loader";
+import { useState } from "react";
+import { errors } from "@playwright/test";
 
 type projectSchema = z.infer<typeof projectFormSchema>;
 let supabase = createSupabaseClient();
 const BUCKET_PITCH_APPLICATION_NAME = "project-application";
 
 export default function ApplyProject() {
+  const [isSuccess, setIsSuccess] = useState(true);
   const onSubmit: SubmitHandler<projectSchema> = async (data) => {
     alert("มาแน้ววว");
     await sendApplication(data);
@@ -139,6 +143,7 @@ export default function ApplyProject() {
   };
 
   const sendApplication = async (recvData: any) => {
+    setIsSuccess(false);
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -155,7 +160,7 @@ export default function ApplyProject() {
       displayAlert(error);
       return;
     }
-    const tagError = saveTags(recvData["tag"], projectId);
+    const tagError = await saveTags(recvData["tag"], projectId);
     // if (tagError) {
     //   displayAlert(tagError);
     //   return;
@@ -186,48 +191,74 @@ export default function ApplyProject() {
     if (!success) {
       console.error("Error uploading media files.");
     }
-    const folderPath = photos[0].data.path;
-    const lastSlashIndex = folderPath.lastIndexOf("/");
-    const photosPath = folderPath.substring(0, lastSlashIndex);
 
-    // Log for debugging
-    console.log("Bucket Name:", BUCKET_PITCH_APPLICATION_NAME);
-    console.log("Logo Path:", logo.data.path);
-    console.log("Photos Path:", photosPath);
+    // console.log("Bucket Name:", BUCKET_PITCH_APPLICATION_NAME);
+    // console.log("Logo Path:", logo.data.path);
+    // console.table(photos);
 
-    const logoURL = await getPublicURL(
+    const logoURL = await getPrivateURL(
       logo.data.path,
       BUCKET_PITCH_APPLICATION_NAME
     );
-    const photosURL = await getPublicURL(
-      photosPath,
-      BUCKET_PITCH_APPLICATION_NAME
+    let photoURLsArray: string[] = [];
+    const photoURLPromises = photos.map(
+      async (item: {
+        success: boolean;
+        errors: typeof errors;
+        data: { path: string };
+      }) => {
+        const photoURL = await getPrivateURL(
+          item.data.path,
+          BUCKET_PITCH_APPLICATION_NAME
+        );
+        if (photoURL?.signedUrl) {
+          photoURLsArray.push(photoURL.signedUrl);
+        } else {
+          console.error("Signed URL for photo is undefined.");
+        }
+      }
     );
+
+    await Promise.all(photoURLPromises);
     // console.log(logoURL.publicUrl, projectId, logo.data.path);
-    console.log(photosURL, projectId, logo.data.path);
-    updateImageURL(logoURL.publicUrl, "project_logo", projectId);
+    // console.log(logoURL?.signedUrl, projectId);
+    // console.log(photoURLsArray[0], photoURLsArray[1]);
+    if (logoURL?.signedUrl) {
+      await updateImageURL(logoURL.signedUrl, "project_logo", projectId);
+    } else {
+      console.error("Signed URL for logo is undefined.");
+    }
+    await updateImageURL(photoURLsArray, "project_photos", projectId);
     // console.log(logoURL, photosUrl);
+    setIsSuccess(true);
     displayAlert(error);
   };
   const updateImageURL = async (
-    url: string,
+    url: string | string[],
     columnName: string,
     projectId: number
   ) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("project_application")
       .update({ [columnName]: url })
-      .eq("id", projectId)
-      .select();
-    console.table(data);
+      .eq("id", projectId);
+    // console.log(
+    //   `Updating ${columnName} with URL: ${url} for project ID: ${projectId}`
+    // );
+    if (error) {
+      console.error(error);
+    }
   };
-  const getPublicURL = async (path: string, bucketName: string) => {
-    const { data } = await supabase.storage.from(bucketName).getPublicUrl(path);
+  const getPrivateURL = async (path: string, bucketName: string) => {
+    const { data } = await supabase.storage
+      .from(bucketName)
+      .createSignedUrl(path, 9999999999999999999999999999);
     // console.table(data);
     return data;
   };
   return (
     <div>
+      <Loader isSuccess={isSuccess} />
       <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-2s00 dark:bg-gray-800 p-5">
         <h1 className="text-2xl md:text-5xl font-medium md:font-bold justify-self-center md:mt-8">
           Apply to raise on B2DVentures
