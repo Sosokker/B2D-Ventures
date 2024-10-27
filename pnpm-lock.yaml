@@ -10,9 +10,6 @@ dependencies:
   "@radix-ui/react-avatar":
     specifier: ^1.1.0
     version: 1.1.0(@types/react-dom@18.3.0)(@types/react@18.3.4)(react-dom@18.3.1)(react@18.3.1)
-  "@radix-ui/react-checkbox":
-    specifier: ^1.1.2
-    version: 1.1.2(@types/react-dom@18.3.0)(@types/react@18.3.4)(react-dom@18.3.1)(react@18.3.1)
   "@radix-ui/react-dialog":
     specifier: ^1.1.2
     version: 1.1.2(@types/react-dom@18.3.0)(@types/react@18.3.4)(react-dom@18.3.1)(react@18.3.1)
@@ -132,7 +129,7 @@ dependencies:
     version: 17.2.0
   sweetalert2:
     specifier: ^11.14.3
-    version: 11.14.4
+    version: 11.14.3
   tailwind-merge:
     specifier: ^2.5.2
     version: 2.5.2
@@ -778,34 +775,6 @@ packages:
       "@radix-ui/react-primitive": 2.0.0(@types/react-dom@18.3.0)(@types/react@18.3.4)(react-dom@18.3.1)(react@18.3.1)
       "@radix-ui/react-use-callback-ref": 1.1.0(@types/react@18.3.4)(react@18.3.1)
       "@radix-ui/react-use-layout-effect": 1.1.0(@types/react@18.3.4)(react@18.3.1)
-      "@types/react": 18.3.4
-      "@types/react-dom": 18.3.0
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-    dev: false
-
-  /@radix-ui/react-checkbox@1.1.2(@types/react-dom@18.3.0)(@types/react@18.3.4)(react-dom@18.3.1)(react@18.3.1):
-    resolution:
-      { integrity: sha512-/i0fl686zaJbDQLNKrkCbMyDm6FQMt4jg323k7HuqitoANm9sE23Ql8yOK3Wusk34HSLKDChhMux05FnP6KUkw== }
-    peerDependencies:
-      "@types/react": "*"
-      "@types/react-dom": "*"
-      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-    peerDependenciesMeta:
-      "@types/react":
-        optional: true
-      "@types/react-dom":
-        optional: true
-    dependencies:
-      "@radix-ui/primitive": 1.1.0
-      "@radix-ui/react-compose-refs": 1.1.0(@types/react@18.3.4)(react@18.3.1)
-      "@radix-ui/react-context": 1.1.1(@types/react@18.3.4)(react@18.3.1)
-      "@radix-ui/react-presence": 1.1.1(@types/react-dom@18.3.0)(@types/react@18.3.4)(react-dom@18.3.1)(react@18.3.1)
-      "@radix-ui/react-primitive": 2.0.0(@types/react-dom@18.3.0)(@types/react@18.3.4)(react-dom@18.3.1)(react@18.3.1)
-      "@radix-ui/react-use-controllable-state": 1.1.0(@types/react@18.3.4)(react@18.3.1)
-      "@radix-ui/react-use-previous": 1.1.0(@types/react@18.3.4)(react@18.3.1)
-      "@radix-ui/react-use-size": 1.1.0(@types/react@18.3.4)(react@18.3.1)
       "@types/react": 18.3.4
       "@types/react-dom": 18.3.0
       react: 18.3.1
@@ -2402,6 +2371,28 @@ packages:
       { integrity: sha512-EhwApuTmMBmXuFOikhQLIBUn6uFg81SwLMOAUgodJF14SOBOCMdU04gDoYi0WOJJHD144TL32z4yDqCW3dnkQg== }
     dependencies:
       "@types/react": 18.3.4
+
+  /@types/react-fade-in@2.0.2(react@18.3.1):
+    resolution:
+      { integrity: sha512-JdyLYFtyvqDP7mqnKaAyuYD+VMtzAHbUf3kumNQV5QALxjBGmb95HXD0uug1bGol053dtV5yO3NNpGHOMj413g== }
+    deprecated: This is a stub types definition. react-fade-in provides its own type definitions, so you do not need this installed.
+    dependencies:
+      react-fade-in: 2.0.1(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+    dev: true
+
+  /@types/react-lottie@1.2.10:
+    resolution:
+      { integrity: sha512-rCd1p3US4ELKJlqwVnP0h5b24zt5p9OCvKUoNpYExLqwbFZMWEiJ6EGLMmH7nmq5V7KomBIbWO2X/XRFsL0vCA== }
+    dependencies:
+      "@types/react": 18.3.4
+    dev: true
+
+  /@types/react-select-country-list@2.2.3:
+    resolution:
+      { integrity: sha512-nffcYOwuun+5B0EWqubK+amHpPdK9Xj20xkLYNqYrzmESd8FnpLwHsS79ClLAWA9y+icVA8gWPkbwBp1gpjSwA== }
+    dev: true
 
   /@types/react@18.3.4:
     resolution:
@@ -6821,6 +6812,11 @@ packages:
     resolution:
       { integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w== }
     engines: { node: ">= 0.4" }
+
+  /sweetalert2@11.14.3:
+    resolution:
+      { integrity: sha512-6NuBHWJCv2gtw4y8PUXLB41hty+V6U2mKZMAvydL1IRPcORR0yuyq3cjFD/+ByrCk3muEFggbZX/x6HwmbVfbA== }
+    dev: false
 
   /tailwind-merge@2.5.2:
     resolution:
