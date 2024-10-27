@@ -11,7 +11,7 @@ import { uploadFile } from "@/app/api/generalApi";
 import { Loader } from "@/components/loading/loader";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
-const BUCKET_PITCH_NAME = "business-pitches";
+const BUCKET_PITCH_NAME = "business-application";
 let supabase = createSupabaseClient();
 
 export default function ApplyBusiness() {
@@ -35,7 +35,7 @@ export default function ApplyBusiness() {
           recvData["businessPitchDeck"],
           BUCKET_PITCH_NAME,
           // file structure: userId/fileName
-          `${user?.id}/${recvData["businessPitchDeck"].name}`
+          `${user?.id}/pitch-file/pitch.md`
         );
 
         if (!uploadSuccess) {
@@ -79,7 +79,7 @@ export default function ApplyBusiness() {
       if (result.isConfirmed && applyProject) {
         window.location.href = "/project/apply";
       } else {
-        window.location.href = "/";
+        // window.location.href = "/";
       }
     });
   };
@@ -151,8 +151,8 @@ export default function ApplyBusiness() {
         console.error("Error fetching user ID:", error);
       }
     };
-
-    fetchUserData();
+    setSucess(true);
+    // fetchUserData();
   }, []);
 
   return (
