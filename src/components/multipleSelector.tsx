@@ -8,19 +8,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 
-interface MultipleOptionSelector {
+interface MultipleOptionSelectorProps {
   header: ReactElement;
   fieldName: string;
-  choices: string[];
-  handleFunction: Function;
+  choices: { id: number; name: string }[];
+  handleFunction: Function | null;
   description: ReactElement;
   placeholder: string;
   selectLabel: string;
 }
 
-export function MultipleOptionSelector(props: MultipleOptionSelector) {
+export function MultipleOptionSelector(props: MultipleOptionSelectorProps) {
+  const [value, setValue] = useState("");
   return (
     <div className="mt-10 space-y-5">
       <Label htmlFor={props.fieldName} className="font-bold text-lg mt-10">
@@ -28,9 +29,15 @@ export function MultipleOptionSelector(props: MultipleOptionSelector) {
       </Label>
       <div className="flex space-x-5">
         <Select
-          onValueChange={(value) => {
-            props.handleFunction(props.fieldName, value);
-            // console.log(value, props.fieldName);
+          value={value}
+          onValueChange={(id) => {
+            setValue(id);
+            const selectedChoice = props.choices.find(
+              (choice) => choice.id.toString() === id
+            ); 
+            if (selectedChoice && props.handleFunction) {
+              props.handleFunction(selectedChoice);
+            }
           }}
         >
           <SelectTrigger className="w-96">
@@ -40,8 +47,8 @@ export function MultipleOptionSelector(props: MultipleOptionSelector) {
             <SelectGroup>
               <SelectLabel>{props.selectLabel}</SelectLabel>
               {props.choices.map((i) => (
-                <SelectItem key={i} value={i}>
-                  {i}
+                <SelectItem key={i.id} value={i.id.toString()}>
+                  {i.name}
                 </SelectItem>
               ))}
             </SelectGroup>

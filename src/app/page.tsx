@@ -1,39 +1,63 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ProjectCard } from "@/components/projectCard";
 import { getTopProjects } from "@/lib/data/projectQuery";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { Suspense } from "react";
+import { FC } from "react";
 
-const TopProjects = async () => {
-  const supabase = createSupabaseClient();
-  const { data: topProjectsData, error: topProjectsError } = await getTopProjects(supabase);
+interface Project {
+  id: number;
+  project_name: string;
+  project_short_description: string;
+  card_image_url: string;
+  published_time: string;
+  business: { location: string }[];
+  project_tag: { tag: { id: number; value: string }[] }[];
+  project_investment_detail: {
+    min_investment: number;
+    total_investment: number;
+  }[];
+}
 
-  if (topProjectsError) {
-    return <div>Error loading top projects: {topProjectsError}</div>;
-  }
+interface TopProjectsProps {
+  projects: Project[];
+}
 
-  if (!topProjectsData || topProjectsData.length === 0) {
+const TopProjects: FC<TopProjectsProps> = ({ projects }) => {
+  if (!projects || projects.length === 0) {
     return <div>No top projects available.</div>;
   }
-
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {topProjectsData.map((project) => (
+      {projects.map((project) => (
         <Link href={`/deals/${project.id}`} key={project.id}>
           <ProjectCard
             name={project.project_name}
             description={project.project_short_description}
             imageUri={project.card_image_url}
             joinDate={new Date(project.published_time).toLocaleDateString()}
-            location={project.business.location}
-            tags={project.item_tag.map((item) => item.tag.value)}
-            minInvestment={project.project_investment_detail[0]?.min_investment || 0}
+            location={project.business[0]?.location || ""}
+            tags={project.project_tag.flatMap(
+              (item: { tag: { id: number; value: string }[] }) =>
+                Array.isArray(item.tag) ? item.tag.map((tag) => tag.value) : []
+            )}
+            minInvestment={
+              project.project_investment_detail[0]?.min_investment || 0
+            }
             totalInvestor={0}
-            totalRaised={project.project_investment_detail[0]?.total_investment || 0}
+            totalRaised={
+              project.project_investment_detail[0]?.total_investment || 0
+            }
           />
         </Link>
       ))}
@@ -44,12 +68,18 @@ const TopProjects = async () => {
 const ProjectsLoader = () => (
   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
     {[...Array(4)].map((_, index) => (
-      <div key={index} className="h-64 bg-gray-200 animate-pulse rounded-lg"></div>
+      <div
+        key={index}
+        className="h-64 bg-gray-200 animate-pulse rounded-lg"
+      ></div>
     ))}
   </div>
 );
-
 export default async function Home() {
+  const supabase = createSupabaseClient();
+  const { data: topProjectsData, error: topProjectsError } =
+    await getTopProjects(supabase);
+
   return (
     <main>
       <div className="relative mx-auto">
@@ -57,9 +87,14 @@ export default async function Home() {
         <div className="flex flex-row bg-slate-100 dark:bg-gray-800">
           <div className="container max-w-screen-xl flex flex-col">
             <span className="mx-20 px-10 py-10">
-              <p className="text-4xl font-bold">Explore the world of ventures</p>
+              <p className="text-4xl font-bold">
+                Explore the world of ventures
+              </p>
               <span className="text-lg">
-                <p>Unlock opportunities and connect with a community of passionate</p>
+                <p>
+                  Unlock opportunities and connect with a community of
+                  passionate
+                </p>
                 <p>investors and innovators.</p>
                 <p>Together, we turn ideas into impact.</p>
               </span>
@@ -107,11 +142,23 @@ export default async function Home() {
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-                <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100" />
+                <Image
+                  src={"/github.svg"}
+                  width={20}
+                  height={20}
+                  alt="github"
+                  className="scale-75 md:scale-100"
+                />
                 Github
               </Button>
               <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-                <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100" />
+                <Image
+                  src={"/github.svg"}
+                  width={20}
+                  height={20}
+                  alt="github"
+                  className="scale-75 md:scale-100"
+                />
                 Github
               </Button>
             </CardContent>
@@ -123,10 +170,12 @@ export default async function Home() {
         <div className="flex flex-col px-10">
           <span className="pb-5">
             <p className="text-xl md:text-2xl font-bold">Hottest Deals</p>
-            <p className="text-md md:text-lg">The deals attracting the most interest right now</p>
+            <p className="text-md md:text-lg">
+              The deals attracting the most interest right now
+            </p>
           </span>
           <Suspense fallback={<ProjectsLoader />}>
-            <TopProjects />
+            <TopProjects projects={topProjectsData || []} />
           </Suspense>
           <div className="self-center py-5 scale-75 md:scale-100">
             <Button>

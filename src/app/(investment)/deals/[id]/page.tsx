@@ -125,7 +125,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                     <CardDescription></CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="prose prose-sm max-w-none">
+                    <div className="prose prose-sm max-w-none ">
                       <ReactMarkdown>{projectData?.project_description || "No pitch available."}</ReactMarkdown>
                     </div>
                   </CardContent>

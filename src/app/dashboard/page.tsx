@@ -12,10 +12,22 @@ import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
 import { useState } from "react";
 
+import { useDealList } from "./hook";
+
 export default function Dashboard() {
   const [graphType, setGraphType] = useState("line");
+  const dealList = useDealList();
+  const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
+
   return (
     <>
+      {dealList?.map((deal, index) => (
+        <div key={index} className="deal-item">
+          <p>Deal Amount: {deal.deal_amount}</p>
+          <p>Created Time: {new Date(deal.created_time).toUTCString()}</p>
+          <p>Investor ID: {deal.investor_id}</p>
+        </div>
+      ))}
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
@@ -35,7 +47,7 @@ export default function Dashboard() {
       <div className="hidden flex-col md:flex">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+            <h2 className="text-3xl font-bold tracking-tight">Business Dashboard</h2>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
@@ -63,10 +75,10 @@ export default function Dashboard() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$45,231.89</div>
-                    <p className="text-xs text-muted-foreground">
+                    <div className="text-2xl font-bold">${totalDealAmount}</div>
+                    {/* <p className="text-xs text-muted-foreground">
                       +20.1% from last month
-                    </p>
+                    </p> */}
                   </CardContent>
                 </Card>
                 <Card>
@@ -90,9 +102,9 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">+2350</div>
-                    <p className="text-xs text-muted-foreground">
+                    {/* <p className="text-xs text-muted-foreground">
                       +180.1% from last month
-                    </p>
+                    </p> */}
                   </CardContent>
                 </Card>
                 <Card>
@@ -117,9 +129,9 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">+12,234</div>
-                    <p className="text-xs text-muted-foreground">
+                    {/* <p className="text-xs text-muted-foreground">
                       +19% from last month
-                    </p>
+                    </p> */}
                   </CardContent>
                 </Card>
                 {/* <Card>
@@ -181,11 +193,12 @@ export default function Dashboard() {
                   <CardHeader>
                     <CardTitle>Recent Funds</CardTitle>
                     <CardDescription>
-                      You made 265 sales this month.
+                      You made {dealList?.length || 0} sales this month.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentFunds />
+                    <RecentFunds>
+                    </RecentFunds>
                   </CardContent>
                 </Card>
               </div>
