@@ -51,8 +51,8 @@ export function NavigationBar() {
   const projectComponents = [
     {
       title: "Projects",
-      href: "/landing",
-      description: "Raise on B2DVentures",
+      href: "/project/apply",
+      description: "Start your new project on B2DVentures",
     },
   ];
 

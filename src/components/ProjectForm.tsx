@@ -17,6 +17,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { Textarea } from "./ui/textarea";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { ChevronsUpDown, Check, X } from "lucide-react";
 
 type projectSchema = z.infer<typeof projectFormSchema>;
 type FieldType = ControllerRenderProps<any, "projectPhotos">;
@@ -38,6 +53,11 @@ const ProjectForm = ({
   const [projectPitch, setProjectPitch] = useState("text");
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [projectPitchFile, setProjectPitchFile] = useState("");
+  const [tag, setTag] = useState<{ id: number; value: string }[]>([]);
+  const [open, setOpen] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<
+    { id: number; value: string }[]
+  >([]);
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -83,8 +103,25 @@ const ProjectForm = ({
       }
     }
   };
+  const fetchTag = async () => {
+    let { data: tag, error } = await supabase.from("tag").select("id, value");
+
+    if (error) {
+      console.error(error);
+    } else {
+      if (tag) {
+        setTag(
+          tag.map((item) => ({
+            id: item.id,
+            value: item.value,
+          }))
+        );
+      }
+    }
+  };
   useEffect(() => {
     fetchProjectType();
+    fetchTag();
   }, []);
   return (
     <Form {...form}>
@@ -92,23 +129,14 @@ const ProjectForm = ({
         onSubmit={form.handleSubmit(onSubmit as SubmitHandler<projectSchema>)}
         className="space-y-8"
       >
-        <h1 className="text-3xl font-bold mt-10">
-          Begin Your First Fundraising Project
-        </h1>
-        <p className="mt-3 text-sm text-neutral-500">
-          Starting a fundraising project is mandatory for all businesses. This
-          step is crucial <br />
-          to begin your journey and unlock the necessary tools for raising
-          funds.
-        </p>
-        <div className="ml-96 mt-5 space-y-10">
+        <div className="ml-96 space-y-10">
           {/* project name */}
           <FormField
             control={form.control}
             name="projectName"
             render={({ field }: { field: any }) => (
               <FormItem>
-                <div className="mt-10 space-y-5">
+                <div className="space-y-5">
                   <FormLabel className="font-bold text-lg">
                     Project name
                   </FormLabel>
@@ -139,7 +167,7 @@ const ProjectForm = ({
                     fieldName="projectType"
                     choices={projectType}
                     handleFunction={(selectedValues: any) => {
-                      field.onChange(selectedValues.name);
+                      field.onChange(selectedValues.id);
                     }}
                     description={
                       <>Please specify the primary purpose of the funds</>
@@ -447,15 +475,117 @@ const ProjectForm = ({
               </FormItem>
             )}
           />
-          <center>
-            <Button
-              className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
-              type="submit"
-            >
-              Submit application
-            </Button>
-          </center>
+          {/* Tags */}
+          <FormField
+            control={form.control}
+            name="tag"
+            render={({ field }: { field: any }) => (
+              <FormItem>
+                <div className="mt-10 space-y-5">
+                  <FormLabel className="font-bold text-lg">Tags</FormLabel>
+                  <FormControl>
+                    <div className="flex space-x-5">
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={open}
+                            className="w-96 justify-between overflow-hidden text-ellipsis whitespace-nowrap"
+                          >
+                            {selectedTag.length > 0
+                              ? selectedTag.map((t) => t.value).join(", ")
+                              : "Select tags..."}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-96 p-0">
+                          <Command>
+                            <CommandInput placeholder="Search tags..." />
+                            <CommandList>
+                              <CommandEmpty>No tags found.</CommandEmpty>
+                              <CommandGroup>
+                                {tag.map((tag) => (
+                                  <CommandItem
+                                    key={tag.id}
+                                    value={tag.value}
+                                    onSelect={() => {
+                                      setSelectedTag((prev) => {
+                                        const exists = prev.find(
+                                          (t) => t.id === tag.id
+                                        );
+                                        const updatedTags = exists
+                                          ? prev.filter((t) => t.id !== tag.id)
+                                          : [...prev, tag];
+                                        field.onChange(
+                                          updatedTags.map((t) => t.id)
+                                        );
+                                        return updatedTags;
+                                      });
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "h-4",
+                                        selectedTag.some((t) => t.id === tag.id)
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {tag.value}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <span className="text-[12px] text-neutral-500 self-center">
+                        Add 1 to 5 tags that describe your project. Tags help{" "}
+                        <br />
+                        investors understand your focus.
+                      </span>
+                    </div>
+                  </FormControl>
+                </div>
+                <FormMessage />
+                {/* display selected tags */}
+                <div className="flex flex-wrap space-x-3">
+                  {selectedTag.map((tag) => (
+                    <div
+                      key={tag.id}
+                      className="flex items-center space-x-1 p-1 rounded mt-2 outline outline-offset-2 outline-1"
+                    >
+                      <span>{tag.value}</span>
+                      <button
+                        onClick={() => {
+                          setSelectedTag((prev) => {
+                            const updatedTags = prev.filter(
+                              (t) => t.id !== tag.id
+                            );
+                            field.onChange(updatedTags.map((t) => t.id));
+                            return updatedTags;
+                          });
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </FormItem>
+            )}
+          />
         </div>
+        <center>
+          <Button
+            className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5 "
+            type="submit"
+          >
+            Submit application
+          </Button>
+        </center>
       </form>
     </Form>
   );
