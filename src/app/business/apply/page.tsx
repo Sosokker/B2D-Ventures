@@ -79,7 +79,7 @@ export default function ApplyBusiness() {
       if (result.isConfirmed && applyProject) {
         window.location.href = "/project/apply";
       } else {
-        // window.location.href = "/";
+        window.location.href = "/";
       }
     });
   };
@@ -151,8 +151,8 @@ export default function ApplyBusiness() {
         console.error("Error fetching user ID:", error);
       }
     };
-    setSucess(true);
-    // fetchUserData();
+    // setSucess(true);
+    fetchUserData();
   }, []);
 
   return (
