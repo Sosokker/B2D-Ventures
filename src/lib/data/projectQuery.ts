@@ -1,9 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
-async function getTopProjects(
-  client: SupabaseClient,
-  numberOfRecords: number = 4
-) {
+async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 4) {
   try {
     const { data, error } = await client
       .from("project")
@@ -62,7 +59,7 @@ function getProjectDataQuery(client: SupabaseClient, projectId: number) {
         target_investment,
         investment_deadline
       ),
-      tags:item_tag!inner (
+      tags:project_tag!inner (
         ...tag!inner (
           tag_name:value
         )
@@ -88,7 +85,7 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
         target_investment,
         investment_deadline
       ),
-      tags:item_tag!inner (
+      tags:project_tag!inner (
         ...tag!inner (
           tag_name:value
         )
@@ -149,7 +146,7 @@ function searchProjectsQuery(
       target_investment,
       investment_deadline
     ),
-    tags:item_tag!inner (
+    tags:project_tag!inner (
       ...tag!inner (
         tag_name:value
       )
@@ -186,7 +183,7 @@ function searchProjectsQuery(
   }
 
   if (tagsFilter) {
-    query = query.in("item_tag.tag.value", tagsFilter);
+    query = query.in("project_tag.tag.value", tagsFilter);
   }
 
   if (projectStatus) {
@@ -200,9 +197,25 @@ function searchProjectsQuery(
   return query;
 }
 
-export {
-  getProjectData,
-  getProjectDataQuery,
-  getTopProjects,
-  searchProjectsQuery,
+const getProjectByBusinessId = (client: SupabaseClient, businessIds: string[]) => {
+  return client
+    .from("project")
+    .select(
+      `
+          id,
+          project_name,
+          business_id,
+          published_time,
+          card_image_url,
+          project_short_description,
+          ...project_investment_detail (
+              min_investment,
+              total_investment,
+              target_investment
+          )
+      `
+    )
+    .in("business_id", businessIds);
 };
+
+export { getProjectData, getProjectDataQuery, getTopProjects, searchProjectsQuery, getProjectByBusinessId };
