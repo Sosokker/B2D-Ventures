@@ -11,20 +11,22 @@ export async function getDealList() {
   const supabase = createSupabaseClient();
   // get id of investor who invests in the business
   const { data: dealData, error: dealError } = await supabase
-    .from('business')
-    .select(`
+    .from("business")
+    .select(
+      `
       project (
         investment_deal (
           investor_id
         )
       )
-    `)
-    .eq('user_id', await getCurrentUserID())
+    `
+    )
+    .eq("user_id", await getCurrentUserID())
     .single();
 
   if (dealError) {
     alert(JSON.stringify(dealError));
-    console.error('Error fetching deal list:', dealError);
+    console.error("Error fetching deal list:", dealError);
     return; // Exit on error
   }
 
@@ -33,27 +35,29 @@ export async function getDealList() {
     return; // Exit if there's no data
   }
 
-  const investorIdList = dealData.project[0].investment_deal.map(deal => deal.investor_id);
+  const investorIdList = dealData.project[0].investment_deal.map((deal) => deal.investor_id);
 
   // get investment_deal data then sort by created_time
   const { data: sortedDealData, error: sortedDealDataError } = await supabase
     .from("investment_deal")
-    .select(`
+    .select(
+      `
       deal_amount,
       created_time,
       investor_id
-    `)
-    .in('investor_id', investorIdList)
-    .order('created_time', { ascending: false })
+    `
+    )
+    .in("investor_id", investorIdList)
+    .order("created_time", { ascending: false });
 
   if (sortedDealDataError) {
     alert(JSON.stringify(sortedDealDataError));
-    console.error('Error sorting deal list:', sortedDealDataError);
+    console.error("Error sorting deal list:", sortedDealDataError);
     return; // Exit on error
   }
 
   return sortedDealData;
-};
+}
 
 // #TODO fix query to be non unique
 export async function getRecentDealData() {
@@ -68,15 +72,17 @@ export async function getRecentDealData() {
 
   // get 5 most recent investor
   const recentDealList = dealList.slice(0, 5);
-  const recentInvestorIdList = recentDealList.map(deal => deal.investor_id);
+  const recentInvestorIdList = recentDealList.map((deal) => deal.investor_id);
 
   const { data: recentUserData, error: recentUserError } = await supabase
     .from("profiles")
-    .select(`
+    .select(
+      `
       username,
       avatar_url
-    `)
-    .in('id', recentInvestorIdList);
+    `
+    )
+    .in("id", recentInvestorIdList);
 
   if (!recentUserData) {
     alert("No recent users available");
@@ -101,17 +107,22 @@ export async function getRecentDealData() {
 // #TODO move to util
 export function convertToGraphData(deals: Deal[]): Record<string, number> {
   // group by year & month
-  let graphData = deals.reduce((acc, deal) => {
-    const monthYear = new Date(deal.created_time).toISOString().slice(0, 7); // E.g., '2024-10'
-    acc[monthYear] = (acc[monthYear] || 0) + deal.deal_amount; // Sum the deal_amount
-    return acc;
-  }, {} as Record<string, number>); // Change type to Record<string, number>
+  let graphData = deals.reduce(
+    (acc, deal) => {
+      const monthYear = new Date(deal.created_time).toISOString().slice(0, 7); // E.g., '2024-10'
+      acc[monthYear] = (acc[monthYear] || 0) + deal.deal_amount; // Sum the deal_amount
+      return acc;
+    },
+    {} as Record<string, number>
+  ); // Change type to Record<string, number>
 
   // Sort keys in ascending order
   const sortedKeys = Object.keys(graphData).sort((a, b) => (a > b ? 1 : -1));
 
   // Create a sorted graph data object
   const sortedGraphData: Record<string, number> = {};
-  sortedKeys.forEach((key) => {sortedGraphData[key] = graphData[key]});
+  sortedKeys.forEach((key) => {
+    sortedGraphData[key] = graphData[key];
+  });
   return sortedGraphData;
 }
