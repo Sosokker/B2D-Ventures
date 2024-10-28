@@ -1,13 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ProjectCard } from "@/components/projectCard";
 import { getTopProjects } from "@/lib/data/projectQuery";
@@ -47,17 +41,12 @@ const TopProjects: FC<TopProjectsProps> = ({ projects }) => {
             imageUri={project.card_image_url}
             joinDate={new Date(project.published_time).toLocaleDateString()}
             location={project.business[0]?.location || ""}
-            tags={project.project_tag.flatMap(
-              (item: { tag: { id: number; value: string }[] }) =>
-                Array.isArray(item.tag) ? item.tag.map((tag) => tag.value) : []
+            tags={project.project_tag.flatMap((item: { tag: { id: number; value: string }[] }) =>
+              Array.isArray(item.tag) ? item.tag.map((tag) => tag.value) : []
             )}
-            minInvestment={
-              project.project_investment_detail[0]?.min_investment || 0
-            }
+            minInvestment={project.project_investment_detail[0]?.min_investment || 0}
             totalInvestor={0}
-            totalRaised={
-              project.project_investment_detail[0]?.total_investment || 0
-            }
+            totalRaised={project.project_investment_detail[0]?.total_investment || 0}
           />
         </Link>
       ))}
@@ -68,17 +57,13 @@ const TopProjects: FC<TopProjectsProps> = ({ projects }) => {
 const ProjectsLoader = () => (
   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
     {[...Array(4)].map((_, index) => (
-      <div
-        key={index}
-        className="h-64 bg-gray-200 animate-pulse rounded-lg"
-      ></div>
+      <div key={index} className="h-64 bg-gray-200 animate-pulse rounded-lg"></div>
     ))}
   </div>
 );
 export default async function Home() {
   const supabase = createSupabaseClient();
-  const { data: topProjectsData, error: topProjectsError } =
-    await getTopProjects(supabase);
+  const { data: topProjectsData, error: topProjectsError } = await getTopProjects(supabase);
 
   return (
     <main>
@@ -87,14 +72,9 @@ export default async function Home() {
         <div className="flex flex-row bg-slate-100 dark:bg-gray-800">
           <div className="container max-w-screen-xl flex flex-col">
             <span className="mx-20 px-10 py-10">
-              <p className="text-4xl font-bold">
-                Explore the world of ventures
-              </p>
+              <p className="text-4xl font-bold">Explore the world of ventures</p>
               <span className="text-lg">
-                <p>
-                  Unlock opportunities and connect with a community of
-                  passionate
-                </p>
+                <p>Unlock opportunities and connect with a community of passionate</p>
                 <p>investors and innovators.</p>
                 <p>Together, we turn ideas into impact.</p>
               </span>
@@ -142,23 +122,11 @@ export default async function Home() {
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-                <Image
-                  src={"/github.svg"}
-                  width={20}
-                  height={20}
-                  alt="github"
-                  className="scale-75 md:scale-100"
-                />
+                <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100" />
                 Github
               </Button>
               <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-                <Image
-                  src={"/github.svg"}
-                  width={20}
-                  height={20}
-                  alt="github"
-                  className="scale-75 md:scale-100"
-                />
+                <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100" />
                 Github
               </Button>
             </CardContent>
@@ -170,13 +138,15 @@ export default async function Home() {
         <div className="flex flex-col px-10">
           <span className="pb-5">
             <p className="text-xl md:text-2xl font-bold">Hottest Deals</p>
-            <p className="text-md md:text-lg">
-              The deals attracting the most interest right now
-            </p>
+            <p className="text-md md:text-lg">The deals attracting the most interest right now</p>
           </span>
-          <Suspense fallback={<ProjectsLoader />}>
-            <TopProjects projects={topProjectsData || []} />
-          </Suspense>
+          {topProjectsError ? (
+            <div className="text-red-500">Error fetching projects: {topProjectsError}</div>
+          ) : (
+            <Suspense fallback={<ProjectsLoader />}>
+              <TopProjects projects={topProjectsData || []} />
+            </Suspense>
+          )}
           <div className="self-center py-5 scale-75 md:scale-100">
             <Button>
               <Link href={"/deals"}>View all</Link>
