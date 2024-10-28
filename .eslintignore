@@ -1,1 +1,3 @@
-./src/app/(investment)/deals/[id]/followShareButton.tsx
+src/app/(investment)/deals/[id]/followShareButton.tsx
+src/components/ui/*
+src/types/database.types.ts
