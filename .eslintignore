@@ -1,3 +1,5 @@
 src/app/(investment)/deals/[id]/followShareButton.tsx
 src/components/ui/*
 src/types/database.types.ts
+src/components/BusinessForm.tsx
+src/components/ProjectForm.tsx

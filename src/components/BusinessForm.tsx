@@ -3,27 +3,14 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { DualOptionSelector } from "@/components/dualSelector";
 import { MultipleOptionSelector } from "@/components/multipleSelector";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { businessFormSchema } from "@/types/schemas/application.schema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@radix-ui/react-tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
@@ -54,14 +41,10 @@ const BusinessForm = ({
   let supabase = createSupabaseClient();
   const [businessPitch, setBusinessPitch] = useState("text");
   const [businessPitchFile, setBusinessPitchFile] = useState("");
-  const [countries, setCountries] = useState<{ id: number; name: string }[]>(
-    []
-  );
+  const [countries, setCountries] = useState<{ id: number; name: string }[]>([]);
   const [industry, setIndustry] = useState<{ id: number; name: string }[]>([]);
   const fetchIndustry = async () => {
-    let { data: BusinessType, error } = await supabase
-      .from("business_type")
-      .select("id, value");
+    let { data: BusinessType, error } = await supabase.from("business_type").select("id, value");
 
     if (error) {
       console.error(error);
@@ -84,18 +67,12 @@ const BusinessForm = ({
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      const countryList = data.map(
-        (country: { name: { common: string } }, index: number) => ({
-          id: index + 1,
-          name: country.name.common,
-        })
-      );
+      const countryList = data.map((country: { name: { common: string } }, index: number) => ({
+        id: index + 1,
+        name: country.name.common,
+      }));
 
-      setCountries(
-        countryList.sort((a: { name: string }, b: { name: any }) =>
-          a.name.localeCompare(b.name)
-        )
-      );
+      setCountries(countryList.sort((a: { name: string }, b: { name: any }) => a.name.localeCompare(b.name)));
     } catch (error) {
       console.error("Error fetching countries:", error);
     }
@@ -106,15 +83,11 @@ const BusinessForm = ({
   }, []);
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit as SubmitHandler<businessSchema>)}
-        className="space-y-8"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit as SubmitHandler<businessSchema>)} className="space-y-8">
         <div className="grid grid-flow-row auto-rows-max w-3/4 ml-1/2 md:ml-[0%] ">
           <h1 className="text-3xl font-bold mt-10 ml-96">About your company</h1>
           <p className="ml-96 mt-5 text-neutral-500">
-            <span className="text-red-500 font-bold">**</span>All requested
-            information in this section is required.
+            <span className="text-red-500 font-bold">**</span>All requested information in this section is required.
           </p>
           <div className="ml-96 mt-5 space-y-10">
             {/* Company Name */}
@@ -123,21 +96,13 @@ const BusinessForm = ({
               name="companyName"
               render={({ field }: { field: any }) => (
                 <FormItem>
-                  <FormLabel className="font-bold text-lg">
-                    Company name
-                  </FormLabel>
+                  <FormLabel className="font-bold text-lg">Company name</FormLabel>
                   <FormControl>
                     <div className="mt-10 space-y-5">
                       <div className="flex space-x-5">
-                        <Input
-                          type="text"
-                          id="companyName"
-                          className="w-96"
-                          {...field}
-                        />
+                        <Input type="text" id="companyName" className="w-96" {...field} />
                         <span className="text-[12px] text-neutral-500 self-center">
-                          This should be the name your company uses on your{" "}
-                          <br />
+                          This should be the name your company uses on your <br />
                           website and in the market.
                         </span>
                       </div>
@@ -162,9 +127,7 @@ const BusinessForm = ({
                         // console.log("Country selected: " + selectedValues.name);
                         field.onChange(selectedValues.name);
                       }}
-                      description={
-                        <>Select the country where your business is based.</>
-                      }
+                      description={<>Select the country where your business is based.</>}
                       placeholder="Select a country"
                       selectLabel="Country"
                     />
@@ -189,12 +152,7 @@ const BusinessForm = ({
                         // console.log("Type of selected value:", selectedValues.id);
                         field.onChange(selectedValues.id);
                       }}
-                      description={
-                        <>
-                          Choose the industry that best aligns with your
-                          business.
-                        </>
-                      }
+                      description={<>Choose the industry that best aligns with your business.</>}
                       placeholder="Select an industry"
                       selectLabel="Industry"
                     />
@@ -229,8 +187,7 @@ const BusinessForm = ({
                           value={field.value}
                         />
                         <span className="text-[12px] text-neutral-500 self-center">
-                          The sum total of past financing, including angel or
-                          venture <br />
+                          The sum total of past financing, including angel or venture <br />
                           capital, loans, grants, or token sales.
                         </span>
                       </div>
@@ -251,11 +208,7 @@ const BusinessForm = ({
                     <div className="flex space-x-5">
                       <DualOptionSelector
                         name="isInUS"
-                        label={
-                          <>
-                            Is your company incorporated in the United States?
-                          </>
-                        }
+                        label={<>Is your company incorporated in the United States?</>}
                         choice1="Yes"
                         choice2="No"
                         handleFunction={(selectedValues: string) => {
@@ -266,8 +219,7 @@ const BusinessForm = ({
                         value={field.value}
                       />
                       <span className="text-[12px] text-neutral-500 self-center">
-                        Only companies that are incorporated or formed in the US
-                        are eligible to raise via Reg CF.
+                        Only companies that are incorporated or formed in the US are eligible to raise via Reg CF.
                       </span>
                     </div>
                   </FormControl>
@@ -287,21 +239,14 @@ const BusinessForm = ({
                       <DualOptionSelector
                         name="isForSale"
                         value={field.value}
-                        label={
-                          <>Is your product available (for sale) in market?</>
-                        }
+                        label={<>Is your product available (for sale) in market?</>}
                         choice1="Yes"
                         choice2="No"
                         handleFunction={(selectedValues: string) => {
                           // setIsForSale;
                           field.onChange(selectedValues);
                         }}
-                        description={
-                          <>
-                            Only check this box if customers can access, use, or
-                            buy your product today.
-                          </>
-                        }
+                        description={<>Only check this box if customers can access, use, or buy your product today.</>}
                       />
                     </div>
                   </FormControl>
@@ -328,10 +273,7 @@ const BusinessForm = ({
                           field.onChange(selectedValues);
                         }}
                         description={
-                          <>
-                            Only check this box if your company is making money.
-                            Please elaborate on revenue below.
-                          </>
+                          <>Only check this box if your company is making money. Please elaborate on revenue below.</>
                         }
                       />
                     </div>
@@ -356,9 +298,7 @@ const BusinessForm = ({
                         <div className="flex space-x-2 w-96">
                           <Button
                             type="button"
-                            variant={
-                              businessPitch === "text" ? "default" : "outline"
-                            }
+                            variant={businessPitch === "text" ? "default" : "outline"}
                             onClick={() => setBusinessPitch("text")}
                             className="w-32 h-12 text-base"
                           >
@@ -366,9 +306,7 @@ const BusinessForm = ({
                           </Button>
                           <Button
                             type="button"
-                            variant={
-                              businessPitch === "file" ? "default" : "outline"
-                            }
+                            variant={businessPitch === "file" ? "default" : "outline"}
                             onClick={() => setBusinessPitch("file")}
                             className="w-32 h-12 text-base"
                           >
@@ -378,14 +316,8 @@ const BusinessForm = ({
                         <div className="flex space-x-5">
                           <Input
                             type={businessPitch === "file" ? "file" : "text"}
-                            placeholder={
-                              businessPitch === "file"
-                                ? "Upload your Markdown file"
-                                : "https:// "
-                            }
-                            accept={
-                              businessPitch === "file" ? ".md" : undefined
-                            }
+                            placeholder={businessPitch === "file" ? "Upload your Markdown file" : "https:// "}
+                            accept={businessPitch === "file" ? ".md" : undefined}
                             onChange={(e) => {
                               const value = e.target;
                               if (businessPitch === "file") {
@@ -399,17 +331,12 @@ const BusinessForm = ({
                           />
 
                           <span className="text-[12px] text-neutral-500 self-center">
-                            Your pitch deck and other application info will be
-                            used for <br />
+                            Your pitch deck and other application info will be used for <br />
                             internal purposes only. <br />
-                            Please make sure this document is publicly
-                            accessible. This can <br />
-                            be a DocSend, Box, Dropbox, Google Drive or other
-                            link.
+                            Please make sure this document is publicly accessible. This can <br />
+                            be a DocSend, Box, Dropbox, Google Drive or other link.
                             <br />
-                            <p className="text-red-500">
-                              ** support only markdown(.md) format
-                            </p>
+                            <p className="text-red-500">** support only markdown(.md) format</p>
                           </span>
                         </div>
                         {businessPitchFile && (
@@ -448,10 +375,7 @@ const BusinessForm = ({
                         field.onChange(selectedValues.name);
                       }}
                       description={
-                        <>
-                          Include your email list, social media following (e.g.,
-                          Instagram, Discord, Twitter).
-                        </>
+                        <>Include your email list, social media following (e.g., Instagram, Discord, Twitter).</>
                       }
                       placeholder="Select"
                       selectLabel="Select"
@@ -462,32 +386,25 @@ const BusinessForm = ({
               )}
             />
             <div className="flex space-x-5">
-              <Switch
-                onCheckedChange={() => setApplyProject(!applyProject)}
-              ></Switch>
+              <Switch onCheckedChange={() => setApplyProject(!applyProject)}></Switch>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span className="text-[12px] text-neutral-500 self-center cursor-pointer">
-                      Would you like to apply for your first fundraising project
-                      as well?
+                      Would you like to apply for your first fundraising project as well?
                     </span>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="text-[11px]">
-                      Toggling this option allows you to begin your first
-                      project, <br /> which is crucial for unlocking the tools
-                      necessary to raise funds.
+                      Toggling this option allows you to begin your first project, <br /> which is crucial for unlocking
+                      the tools necessary to raise funds.
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
             <center>
-              <Button
-                className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
-                type="submit"
-              >
+              <Button className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5" type="submit">
                 Submit application
               </Button>
             </center>

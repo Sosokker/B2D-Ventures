@@ -1,25 +1,11 @@
 "use client";
 
 import { Icons } from "./ui/icons";
-import { Button } from "./ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 export function CardsPaymentMethod() {
   return (
@@ -33,12 +19,7 @@ export function CardsPaymentMethod() {
       <CardContent className="grid gap-6">
         <RadioGroup defaultValue="card" className="flex w-full justify-center gap-1 md:gap-3">
           <div className="w-[100px] lg:w-[130px]">
-            <RadioGroupItem
-              value="card"
-              id="card"
-              className="peer sr-only"
-              aria-label="Card"
-            />
+            <RadioGroupItem value="card" id="card" className="peer sr-only" aria-label="Card" />
             <Label
               htmlFor="card"
               className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
@@ -61,12 +42,7 @@ export function CardsPaymentMethod() {
           </div>
 
           <div className="w-[100px] lg:w-[130px]">
-            <RadioGroupItem
-              value="paypal"
-              id="paypal"
-              className="peer sr-only"
-              aria-label="Paypal"
-            />
+            <RadioGroupItem value="paypal" id="paypal" className="peer sr-only" aria-label="Paypal" />
             <Label
               htmlFor="paypal"
               className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
@@ -77,12 +53,7 @@ export function CardsPaymentMethod() {
           </div>
 
           <div className="w-[100px] lg:w-[130px]">
-            <RadioGroupItem
-              value="apple"
-              id="apple"
-              className="peer sr-only"
-              aria-label="Apple"
-            />
+            <RadioGroupItem value="apple" id="apple" className="peer sr-only" aria-label="Apple" />
             <Label
               htmlFor="apple"
               className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
