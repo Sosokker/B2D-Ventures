@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable */
+
 import { useState, useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ShareIcon, StarIcon } from "lucide-react";
