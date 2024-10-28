@@ -68,6 +68,7 @@ export default function EditProfilePage({ params }: { params: { uid: string } })
             <FormField
               control={profileForm.control}
               name="avatars"
+              // eslint-disable-next-line no-unused-vars
               render={({ field: { value, onChange, ...fieldProps } }) => (
                 <FormItem>
                   <FormLabel>Avatar</FormLabel>

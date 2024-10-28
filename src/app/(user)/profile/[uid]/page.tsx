@@ -2,12 +2,9 @@ import React from "react";
 import Image from "next/image";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { getUserProfile } from "@/lib/data/userQuery";
-import { Tables } from "@/types/database.types";
 import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
-
-interface Profile extends Tables<"Profiles"> {}
 
 export default async function ProfilePage({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
