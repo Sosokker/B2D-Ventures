@@ -1,5 +1,6 @@
 "use client";
 
+import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
@@ -8,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getBusinessAndProject } from "@/lib/data/businessQuery";
 
-export default function Find() {
+function FindContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
 
@@ -76,5 +77,13 @@ export default function Find() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function Find() {
+  return (
+    <Suspense fallback={<p>Loading search parameters...</p>}>
+      <FindContent />
+    </Suspense>
   );
 }
