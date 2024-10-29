@@ -1,6 +1,27 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export const getBusinessAndProject = (client: SupabaseClient, businessName: String | null) => {
+export const getAllBusinesses = (client: SupabaseClient) => {
+  return client.from("business").select(`
+      id,
+      location,
+      business_name,
+      ...business_type (
+        business_type:value
+      ),
+      joined_date,
+      ...user_id (
+        user_id:id,
+        username,
+        full_name,
+        email
+      )
+    `);
+};
+
+export const getBusinessAndProject = (
+  client: SupabaseClient,
+  params: { businessName?: String | null; businessId?: number | null; single?: boolean } = { single: false }
+) => {
   const query = client.from("business").select(`
       business_id:id,
       location,
@@ -31,8 +52,17 @@ export const getBusinessAndProject = (client: SupabaseClient, businessName: Stri
       )
     `);
 
-  if (businessName && businessName.trim() !== "") {
-    return query.ilike("business_name", `%${businessName}%`);
+  if (params.businessName && params.businessName.trim() !== "") {
+    return query.ilike("business_name", `%${params.businessName}%`);
   }
+
+  if (params.businessId) {
+    query.eq("id", params.businessId);
+  }
+
+  if (params.single) {
+    query.single();
+  }
+
   return query;
 };

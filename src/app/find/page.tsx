@@ -19,7 +19,7 @@ function FindContent() {
     data: businesses,
     isLoading: isLoadingBusinesses,
     error: businessError,
-  } = useQuery(getBusinessAndProject(supabase, query));
+  } = useQuery(getBusinessAndProject(supabase, { businessName: query }));
 
   const isLoading = isLoadingBusinesses;
   const error = businessError;
