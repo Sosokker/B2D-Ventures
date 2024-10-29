@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Bell, Heart, Wallet } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logoutButton";
 import useSession from "@/lib/supabase/useSession";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const UnAuthenticatedComponents = () => {
   return (
@@ -34,6 +35,8 @@ const UnAuthenticatedComponents = () => {
 const AuthenticatedComponents = ({ uid }: { uid: string }) => {
   let notifications = 100;
   const displayValue = notifications >= 100 ? "..." : notifications;
+  const { data } = useUserRole();
+
   return (
     <div className="flex gap-3 pl-2 items-center">
       <Link href={"/notification"}>
@@ -62,6 +65,11 @@ const AuthenticatedComponents = ({ uid }: { uid: string }) => {
           <DropdownMenuSeparator />
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
+          {data != null && data != undefined && data.role === "admin" && (
+            <DropdownMenuItem>
+              <Link href="/admin">Admin</Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <LogoutButton />

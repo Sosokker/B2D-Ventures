@@ -27,7 +27,8 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
               "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
               className
             )}
-            {...props}>
+            {...props}
+          >
             <div className="text-sm font-medium leading-none">{title}</div>
             <hr />
             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
@@ -71,7 +72,8 @@ export function NavigationBar() {
             <Link
               className="flex-none text-xl font-semibold dark:text-white focus:outline-none focus:opacity-80"
               href="/"
-              aria-label="Brand">
+              aria-label="Brand"
+            >
               <span className="inline-flex items-center gap-x-2 text-xl font-semibold dark:text-white">
                 <Image src="/logo.svg" alt="logo" width={50} height={50} />
                 B2DVentures
