@@ -57,13 +57,6 @@ export function NavigationBar() {
     },
   ];
 
-  const blogComponents = [
-    {
-      title: "Blogs",
-      href: "/landing",
-      description: "Raise on B2DVentures",
-    },
-  ];
   return (
     <header className="sticky top-0 flex flex-wrap w-full bg-card text-sm py-3 border-b-2 border-border z-50">
       <nav className="max-w-screen-xl w-full mx-auto px-4">
@@ -108,25 +101,6 @@ export function NavigationBar() {
                       ))}
                     </ul>
                   </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-base">Blogs</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] ">
-                      {blogComponents.map((component) => (
-                        <ListItem key={component.title} title={component.title} href={component.href}>
-                          {component.description}
-                        </ListItem>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuLink className="text-base font-medium" href="docs">
-                    Docs
-                  </NavigationMenuLink>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem className="pl-5 flex">
