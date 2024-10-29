@@ -8,6 +8,7 @@ import { FolderOpenDot } from "lucide-react";
 import { getAllBusinessApplicationQuery } from "@/lib/data/applicationQuery";
 import { BusinessActionButtons } from "./BusinessActionButtons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 
 interface ApplicationData {
   id: any;
@@ -74,7 +75,7 @@ function ApplicationTable({ applications }: { applications: ApplicationData[] })
         )}
       </TableCell>
       <TableCell>
-        <BusinessActionButtons businessApplicationId={application.id} />
+        {application.status === "pending" && <BusinessActionButtons businessApplicationId={application.id} />}
       </TableCell>
     </TableRow>
   ));
@@ -106,7 +107,9 @@ export default async function AdminPage() {
   const rejectedApplications = businessApplicationData?.filter((app) => app.status === "rejecte") || [];
 
   return (
-    <div className="container max-w-screen-xl">
+    <div className="container max-w-screen-xl my-4">
+      <div className="font-bold text-2xl">Admin Page</div>
+      <Separator className="my-4" />
       <Tabs defaultValue="pending" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="pending">Pending ({pendingApplications.length})</TabsTrigger>
