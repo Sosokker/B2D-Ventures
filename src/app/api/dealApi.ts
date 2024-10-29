@@ -6,12 +6,13 @@ export type Deal = {
   created_time: Date;
   investor_id: string;
 };
+const supabase = createSupabaseClient();
 
 export async function getDealList() {
-  const supabase = createSupabaseClient();
   const { data: dealData, error } = await supabase
-    .from('business')
-    .select(`
+    .from("business")
+    .select(
+      `
       id,
       project (
         id,
@@ -21,24 +22,25 @@ export async function getDealList() {
           investor_id
         )
       )
-    `)
-    .eq('user_id', await getCurrentUserID())
+    `
+    )
+    .eq("user_id", await getCurrentUserID())
     .single();
 
-    if (error || !dealData) {
-      alert(JSON.stringify(error));
-      console.error('Error fetching deal list:', error);
-    } else {
-      const dealList = dealData.project[0].investment_deal;
+  if (error || !dealData) {
+    alert(JSON.stringify(error));
+    console.error("Error fetching deal list:", error);
+  } else {
+    const dealList = dealData.project[0].investment_deal;
 
-      if (!dealList.length) {
-        alert("No data available");
-        return; // Exit early if there's no data
-      }
-
-      // Sort the dealList by created_time in descending order
-      const byCreatedTimeDesc = (a: Deal, b: Deal) =>
-        new Date(b.created_time).getTime() - new Date(a.created_time).getTime();
-      return dealList.sort(byCreatedTimeDesc);
+    if (!dealList.length) {
+      alert("No data available");
+      return; // Exit early if there's no data
     }
-};
+
+    // Sort the dealList by created_time in descending order
+    const byCreatedTimeDesc = (a: Deal, b: Deal) =>
+      new Date(b.created_time).getTime() - new Date(a.created_time).getTime();
+    return dealList.sort(byCreatedTimeDesc);
+  }
+}

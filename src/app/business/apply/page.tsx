@@ -89,11 +89,16 @@ export default function ApplyBusiness() {
       .from("business")
       .select("*")
       .eq("user_id", userID);
-    console.table(business);
-    if (error) {
+    let { data: businessApplication, error: applicationError } = await supabase
+      .from("business_application")
+      .select("*")
+      .eq("user_id", userID);
+    // console.table(business);
+    if (error || applicationError) {
       console.error(error);
+      console.error(applicationError);
     }
-    if (business) {
+    if ((business && business.length != 0) || (businessApplication && businessApplication.length != 0)) {
       return true;
     }
     return false;

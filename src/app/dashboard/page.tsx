@@ -14,6 +14,57 @@ import { useState } from "react";
 
 import { useDealList } from "./hook";
 
+const data = [
+  {
+    name: "Jan",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Feb",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Mar",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Apr",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "May",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Jun",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Jul",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Aug",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Sep",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Oct",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Nov",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Dec",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+];
+
 export default function Dashboard() {
   const [graphType, setGraphType] = useState("line");
   const dealList = useDealList();
@@ -166,7 +217,7 @@ export default function Dashboard() {
                     <CardTitle>Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview graphType={graphType} />
+                    <Overview graphType={graphType} data={data} />
                     {/* tab to switch between line and bar graph */}
                     <Tabs
                       defaultValue="line"

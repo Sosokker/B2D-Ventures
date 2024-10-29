@@ -17,7 +17,7 @@ const BUCKET_PITCH_APPLICATION_NAME = "project-application";
 export default function ApplyProject() {
   const [isSuccess, setIsSuccess] = useState(true);
   const onSubmit: SubmitHandler<projectSchema> = async (data) => {
-    alert("มาแน้ววว");
+    // alert("มาแน้ววว");
     await sendApplication(data);
     // console.table(data);
     // console.log(typeof data["projectPhotos"], data["projectPhotos"]);
