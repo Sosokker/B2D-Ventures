@@ -78,7 +78,7 @@ export function Overview(props: OverViewProps) {
               tickFormatter={(value) => `$${value}`}
             />
             <Line
-              dataKey="total"
+              dataKey="value"
               fill="currentColor"
               className="fill-primary"
             />
@@ -99,7 +99,7 @@ export function Overview(props: OverViewProps) {
               axisLine={false}
               tickFormatter={(value) => `$${value}`}
             />
-            <Bar dataKey="total" fill="currentColor" className="fill-primary" />
+            <Bar dataKey="value" fill="currentColor" className="fill-primary" />
           </BarChart>
         )}
       </ResponsiveContainer>

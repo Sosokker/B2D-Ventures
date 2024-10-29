@@ -45,8 +45,13 @@ function getInvestmentCounts(client: SupabaseClient, projectIds: string[]) {
 }
 
 function getInvestorDeal(client: SupabaseClient, userId: string) {
-  return client.from("investment_deal").select("*").in("investor_id", [userId]);
+  return client
+    .from("investment_deal")
+    .select("*")
+    .in("investor_id", [userId])
+    .order("created_time", { ascending: true });
 }
+
 
 export {
   getBusinesses,
