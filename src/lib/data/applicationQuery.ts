@@ -26,3 +26,34 @@ export const getAllBusinessApplicationQuery = (client: SupabaseClient) => {
         `
   );
 };
+
+export const getAllProjectApplicationByBusinessQuery = (client: SupabaseClient, businessId: number) => {
+  return client
+    .from("project_application")
+    .select(
+      `
+      id,
+      created_at,
+      deadline,
+      status,
+      project_name,
+      ...business_id (
+        business_id:id,
+        business_name,
+        user_id
+      ),
+      ...project_type_id!inner (
+        project_type_id:id,
+        project_type_value:value
+      ),
+      short_description,
+      pitch_deck_url,
+      project_logo,
+      min_investment,
+      target_investment,
+      user_id,
+      project_photos
+    `
+    )
+    .eq("business_id", businessId);
+};
