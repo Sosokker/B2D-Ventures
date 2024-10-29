@@ -37,8 +37,11 @@ const AuthenticatedComponents = ({ uid }: { uid: string }) => {
   const displayValue = notifications >= 100 ? "..." : notifications;
   const { data } = useUserRole();
 
+  const businessClass =
+    data?.role === "business" ? "border-2 border-[#FFD700] bg-[#FFF8DC] dark:bg-[#4B3E2B] rounded-md p-1" : "";
+
   return (
-    <div className="flex gap-3 pl-2 items-center">
+    <div className={`flex gap-3 pl-2 items-center ${businessClass}`}>
       <Link href={"/notification"}>
         <div className="relative inline-block">
           <Bell className="h-6 w-6" />
