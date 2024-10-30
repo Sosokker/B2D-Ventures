@@ -24,11 +24,18 @@ const PieChart = (props: PieChartProps) => {
       },
     ],
   };
+  const options = {
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+      },
+    },
+  };
 
   return (
-    <div style={{ width: "50%", margin: "auto" }}>
-      <Pie data={chartData} />
-    </div>
+    <>
+      <Pie data={chartData} options={options} />
+    </>
   );
 };
 

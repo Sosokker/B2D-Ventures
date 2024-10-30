@@ -2,6 +2,7 @@ import { Overview } from "@/components/ui/overview";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { getInvestorDeal, getProjectTag, getTagName } from "@/lib/data/query";
 import PieChart from "@/components/pieChart";
+import { overAllGraphData, fourYearGraphData, dayOftheWeekData } from "./hook";
 
 export default async function Portfolio({
   params,
@@ -9,12 +10,13 @@ export default async function Portfolio({
   params: { uid: string };
 }) {
   const supabase = createSupabaseClient();
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const dayOfWeekData = daysOfWeek.map((day) => ({ name: day, value: 0 }));
   const { data: deals, error: investorDealError } = await getInvestorDeal(
     supabase,
     params.uid
   );
+  const overAllData = deals ? overAllGraphData(deals) : [];
+  const fourYearData = deals ? fourYearGraphData(deals) : [];
+  const dayOfWeekData = deals ? dayOftheWeekData(deals) : [];
 
   const projectTag = async () => {
     // get unique project id from deals
@@ -81,80 +83,6 @@ export default async function Portfolio({
     console.error(investorDealError);
   }
 
-  const yearAgo = (num: number) => {
-    const newDate = new Date();
-    newDate.setFullYear(newDate.getFullYear() - num);
-    return newDate;
-  };
-
-  const getMonthName = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("default", { month: "long", year: "numeric" });
-  };
-
-  // only use deal that were made at most year ago
-  const overAllGraphData = deals
-    ? deals
-        .filter((item) => new Date(item.created_time) >= yearAgo(1))
-        .reduce(
-          (acc, item) => {
-            const monthName = getMonthName(item.created_time).slice(0, 3);
-            const existingMonth = acc.find(
-              (entry: { name: string }) => entry.name === monthName
-            );
-
-            if (existingMonth) {
-              existingMonth.value += item.deal_amount;
-            } else {
-              acc.push({ name: monthName, value: item.deal_amount });
-            }
-
-            return acc;
-          },
-          [] as { name: string; value: number }[]
-        )
-    : [];
-
-  const threeYearGraphData = deals
-    ? deals
-        .filter((item) => new Date(item.created_time) >= yearAgo(3))
-        .reduce(
-          (acc, item) => {
-            const year = new Date(item.created_time).getFullYear();
-            const existingYear = acc.find(
-              (entry: { name: string }) => entry.name === year.toString()
-            );
-
-            if (existingYear) {
-              existingYear.value += item.deal_amount;
-            } else {
-              acc.push({ name: year.toString(), value: item.deal_amount });
-            }
-
-            return acc;
-          },
-          [] as { name: string; value: number }[]
-        )
-    : [];
-  const getDayAbbreviation = (dateString: string | number | Date) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("default", { weekday: "short" });
-  };
-
-  let totalInvest = 0;
-  if (deals) {
-    deals
-      .filter((item) => new Date(item.created_time) >= yearAgo(1))
-      .forEach((item) => {
-        const day = getDayAbbreviation(item.created_time);
-        const dayEntry = dayOfWeekData.find((entry) => entry.name === day);
-        if (dayEntry) {
-          dayEntry.value += item.deal_amount;
-        }
-      });
-    totalInvest = deals.reduce((acc, item) => acc + item.deal_amount, 0);
-  }
-
   return (
     <div>
       {/* {JSON.stringify(params.uid)} */}
@@ -169,19 +97,21 @@ export default async function Portfolio({
         <div>{totalInvest}</div>
       </div> */}
       <div className="flex w-full gap-10">
-        <Overview graphType="line" data={overAllGraphData}></Overview>
-        <Overview graphType="bar" data={threeYearGraphData}></Overview>
+        <Overview graphType="line" data={overAllData}></Overview>
+        <Overview graphType="bar" data={fourYearData}></Overview>
         <Overview graphType="bar" data={dayOfWeekData}></Overview>
       </div>
-      <PieChart
-        data={tagCount.map(
-          (item: { name: string; count: number }) => item.count
-        )}
-        labels={tagCount.map(
-          (item: { name: string; count: number }) => item.name
-        )}
-        header="Total"
-      />
+      <div className="w-96">
+        <PieChart
+          data={tagCount.map(
+            (item: { name: string; count: number }) => item.count
+          )}
+          labels={tagCount.map(
+            (item: { name: string; count: number }) => item.name
+          )}
+          header="Total"
+        />
+      </div>
     </div>
   );
 }
