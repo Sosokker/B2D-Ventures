@@ -1,10 +1,40 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getProjectTag, getTagName } from "@/lib/data/query";
 
+async function checkForInvest(supabase: SupabaseClient, userId: string) {
+  let { count, error } = await supabase
+    .from("investment_deal")
+    .select("*", { count: "exact" })
+    .eq("investor_id", "8as1761d2");
+  if (error) {
+    console.error(error);
+    return false;
+  }
+  // if user already invest in something
+  if (count !== null && count > 0) {
+    return true;
+  }
+  return false;
+}
+
+function countValues(arr: { value: string }[][]): Record<string, number> {
+  const counts: Record<string, number> = {};
+
+  arr.forEach((subArray) => {
+    subArray.forEach((item) => {
+      const value = item.value;
+      counts[value] = (counts[value] || 0) + 1;
+    });
+  });
+
+  return counts;
+}
+
 async function getBusinessTypeName(
   supabase: SupabaseClient,
   projectId: number
 ) {
+  // step 1: get business id from project id
   let { data: project, error: projectError } = await supabase
     .from("project")
     .select("business_id")
@@ -13,6 +43,7 @@ async function getBusinessTypeName(
     console.error(projectError);
   }
 
+  //  step 2: get business type's id from business id
   let { data: business, error: businessError } = await supabase
     .from("business")
     .select("business_type")
@@ -20,7 +51,7 @@ async function getBusinessTypeName(
   if (businessError) {
     console.error(businessError);
   }
-
+  // step 3: get business type from its id
   let { data: business_type, error: businessTypeError } = await supabase
     .from("business_type")
     .select("value")
@@ -204,4 +235,6 @@ export {
   getInvestorProjectTag,
   countTags,
   getBusinessTypeName,
+  countValues,
+  checkForInvest,
 };

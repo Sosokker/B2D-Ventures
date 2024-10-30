@@ -9,8 +9,11 @@ import {
   getInvestorProjectTag,
   countTags,
   getBusinessTypeName,
+  countValues,
+  checkForInvest,
 } from "./hook";
 import CountUpComponent from "@/components/countUp";
+import { RecentFunds } from "@/components/recent-funds";
 
 export default async function Portfolio({
   params,
@@ -18,6 +21,7 @@ export default async function Portfolio({
   params: { uid: string };
 }) {
   const supabase = createSupabaseClient();
+  await checkForInvest(supabase, params.uid);
   const { data: deals, error: investorDealError } = await getInvestorDeal(
     supabase,
     params.uid
@@ -38,14 +42,17 @@ export default async function Portfolio({
         )
       )
     : [];
-  console.log(businessType);
+  const countedBusinessType = countValues(
+    businessType.filter((item) => item !== null)
+  );
+  // console.log(countedBusinessType);
 
   // console.log(tagCount);
   return (
     <div>
       {/* {JSON.stringify(params.uid)} */}
       {/* {JSON.stringify(tagCount)} */}
-      {JSON.stringify(deals)}
+      {/* {JSON.stringify(deals)} */}
       {/* {JSON.stringify(dayOfWeekData)} */}
       {/* {JSON.stringify(overAllGraphData)} */}
       {/* {JSON.stringify(threeYearGraphData)} */}
@@ -60,16 +67,28 @@ export default async function Portfolio({
         <Overview graphType="bar" data={fourYearData}></Overview>
         <Overview graphType="bar" data={dayOfWeekData}></Overview>
       </div>
-      <div className="w-96">
-        <PieChart
-          data={tagCount.map(
-            (item: { name: string; count: number }) => item.count
-          )}
-          labels={tagCount.map(
-            (item: { name: string; count: number }) => item.name
-          )}
-          header="Total"
-        />
+      <div className="flex flex-cols-3 w-96">
+        <div className="">
+          <h1>Project tag</h1>
+          <PieChart
+            data={tagCount.map(
+              (item: { name: string; count: number }) => item.count
+            )}
+            labels={tagCount.map(
+              (item: { name: string; count: number }) => item.name
+            )}
+            header="Total"
+          />
+        </div>
+        <div className="">
+          <h1>Business Type</h1>
+          <PieChart
+            data={Object.values(countedBusinessType)}
+            labels={Object.keys(countedBusinessType)}
+            header="Total"
+          />
+        </div>
+        <RecentFunds />
       </div>
     </div>
   );
