@@ -59,7 +59,7 @@ export default async function Portfolio({
 
   // console.log(tagCount);
   return (
-    <div>
+    <div className="p-5">
       {/* {JSON.stringify(params.uid)} */}
       {/* {JSON.stringify(tagCount)} */}
       {/* {JSON.stringify(deals)} */}
@@ -72,8 +72,8 @@ export default async function Portfolio({
         <div>{totalInvest}</div>
       </div> */}
       {/* <CountUpComponent end={100} duration={3} /> */}
-      <div className="flex flew-rows-3 gap-10 mt-5">
-        <Card className="w-[500px]">
+      <div className="flex flew-rows-3 gap-10 mt-5 w-full">
+        <Card className="w-1/3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">
               Types of Businesses Invested In
@@ -83,7 +83,7 @@ export default async function Portfolio({
             <Overview graphType="line" data={overAllData}></Overview>
           </CardContent>
         </Card>
-        <Card className="w-[500px]">
+        <Card className="w-1/3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">
               Types of Businesses Invested In
@@ -93,7 +93,7 @@ export default async function Portfolio({
             <Overview graphType="bar" data={fourYearData}></Overview>
           </CardContent>
         </Card>
-        <Card className="w-[500px]">
+        <Card className="w-1/3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">
               Types of Businesses Invested In
