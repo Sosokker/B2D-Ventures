@@ -1,3 +1,6 @@
+import { SupabaseClient } from "@supabase/supabase-js";
+import { getProjectTag, getTagName } from "@/lib/data/query";
+
 // only use deal that were made at most year ago
 interface Deal {
   created_time: string | number | Date;
@@ -87,6 +90,67 @@ function dayOftheWeekData(deals: Deal[]): DayOfWeekData[] {
     });
   return dayOfWeekData;
 }
+async function getInvestorProjectTag(
+  supabase: SupabaseClient,
+  deals: number | { project_id: number }[]
+) {
+  // get unique project id from deals
+  const uniqueProjectIds: number[] = Array.isArray(deals)
+    ? Array.from(
+        new Set(deals.map((deal: { project_id: number }) => deal.project_id))
+      )
+    : [];
+
+  const tagIds = (
+    await Promise.all(
+      uniqueProjectIds.map(async (projectId: number) => {
+        const { data: tagIdsArray, error: tagError } = await getProjectTag(
+          supabase,
+          projectId
+        );
+        if (tagError) {
+          console.error(tagError);
+          return [];
+        }
+        return tagIdsArray?.map((tag: { tag_id: any }) => tag.tag_id) || [];
+      })
+    )
+  ).flat();
+
+  // console.log(tagIds, uniqueProjectIds);
+  const tagNames = await Promise.all(
+    tagIds
+      .filter((tagId) => tagId !== null)
+      .map(async (id: number) => {
+        const { data: tagName, error: nameError } = await getTagName(
+          supabase,
+          id
+        );
+        if (nameError) {
+          console.error(nameError);
+          return null;
+        }
+        return tagName;
+      })
+  );
+  // console.log(tagNames);
+  return tagNames.filter((tagName) => tagName !== null);
+}
+const countTags = (tags: any[]) => {
+  const tagCounts = tags.flat().reduce(
+    (acc, tag) => {
+      const tagName = tag.value;
+      acc[tagName] = (acc[tagName] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  return Object.entries(tagCounts).map(([name, count]) => ({
+    name,
+    count: count as number,
+  }));
+};
 const getDayAbbreviation = (dateString: string | number | Date) => {
   const date = new Date(dateString);
   return date.toLocaleString("default", { weekday: "short" });
@@ -103,4 +167,10 @@ const getMonthName = (dateString: string) => {
   return date.toLocaleString("default", { month: "long", year: "numeric" });
 };
 
-export { overAllGraphData, fourYearGraphData, dayOftheWeekData };
+export {
+  overAllGraphData,
+  fourYearGraphData,
+  dayOftheWeekData,
+  getInvestorProjectTag,
+  countTags,
+};
