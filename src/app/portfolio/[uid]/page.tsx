@@ -1,22 +1,19 @@
-"use client";
 import { Overview } from "@/components/ui/overview";
-import {
-  getInvestorDeal,
-  getProjectTag,
-  getTagName,
-} from "@/app/api/generalApi";
-import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
+import { getInvestorDeal, getProjectTag, getTagName } from "@/lib/data/query";
 import PieChart from "@/components/pieChart";
 
-export default function Portfolio({
+export default async function Portfolio({
   params,
 }: {
   params: { uid: string };
 }) {
+  const supabase = createSupabaseClient();
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const dayOfWeekData = daysOfWeek.map((day) => ({ name: day, value: 0 }));
-  const { data: deals, error: investorDealError } = useQuery(
-    getInvestorDeal(params.uid)
+  const { data: deals, error: investorDealError } = await getInvestorDeal(
+    supabase,
+    params.uid
   );
 
   const projectTag = async () => {
@@ -28,7 +25,7 @@ export default function Portfolio({
       await Promise.all(
         uniqueProjectIds.map(async (projectId: number) => {
           const { data: tagIdsArray, error: tagError } =
-            await getProjectTag(projectId);
+            await getProjectTag(supabase, projectId);
           if (tagError) {
             console.error(tagError);
             return [];
@@ -43,7 +40,7 @@ export default function Portfolio({
       tagIds
         .filter((tagId) => tagId !== null)
         .map(async (id: number) => {
-          const { data: tagName, error: nameError } = await getTagName(id);
+          const { data: tagName, error: nameError } = await getTagName(supabase, id);
           if (nameError) {
             console.error(nameError);
             return null;
@@ -55,19 +52,20 @@ export default function Portfolio({
     return tagNames.filter((tagName) => tagName !== null);
   };
   const countTags = (tags: any[]) => {
-    const tagCounts = tags.flat().reduce((acc, tag) => {
-      const tagName = tag.value;
-      acc[tagName] = (acc[tagName] || 0) + 1;
-      return acc;
-    }, {});
-
-    return Object.entries(tagCounts).map(([name, count]) => ({
-      name,
-      count: count as number,
-    }));
-  };
-  const {data:tags, error: projectTagError, isLoading: projectTagLoading} = useQuery(projectTag());
-  const tagCount = countTags(tags);
+      const tagCounts = tags.flat().reduce((acc, tag) => {
+        const tagName = tag.value;
+        acc[tagName] = (acc[tagName] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+  
+      return Object.entries(tagCounts).map(([name, count]) => ({
+        name,
+        count: count as number,
+      }));
+    };
+  const tags = await projectTag();
+  console.log(tags)
+  // const tagCount = countTags(tags);
 
   if (investorDealError) {
     console.error(investorDealError);
@@ -150,7 +148,7 @@ export default function Portfolio({
   return (
     <div>
       {/* {JSON.stringify(params.uid)} */}
-      {JSON.stringify(tagCount)}
+      {/* {JSON.stringify(tagCount)} */}
       {/* {JSON.stringify(deals)} */}
       {/* {JSON.stringify(dayOfWeekData)} */}
       {/* {JSON.stringify(overAllGraphData)} */}
@@ -165,13 +163,6 @@ export default function Portfolio({
         <Overview graphType="bar" data={threeYearGraphData}></Overview>
         <Overview graphType="bar" data={dayOfWeekData}></Overview>
       </div>
-      <PieChart
-        labels={tagCount.map((item: { name: string }) => {
-          return item.name;
-        })}
-        data={tagCount.map((item: { count: number }) => item.count)}
-        header="Ratio of Investment's project category"
-      />
     </div>
   );
 }

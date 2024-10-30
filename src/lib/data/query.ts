@@ -44,28 +44,28 @@ function getInvestmentCounts(client: SupabaseClient, projectIds: string[]) {
     .in("project_id", projectIds);
 }
 
-// function getInvestorDeal(client: SupabaseClient, userId: string) {
-//   return client
-//     .from("investment_deal")
-//     .select("*")
-//     .in("investor_id", [userId])
-//     .order("created_time", { ascending: true });
-// }
+function getInvestorDeal(client: SupabaseClient, userId: string) {
+  return client
+    .from("investment_deal")
+    .select("*")
+    .in("investor_id", [userId])
+    .order("created_time", { ascending: true });
+}
 
-// function getProjectTag(client: SupabaseClient, projectId: number) {
-//   return client.from("project_tag").select("tag_id").in("item_id", [projectId]);
-// }
+function getProjectTag(client: SupabaseClient, projectId: number) {
+  return client.from("project_tag").select("tag_id").in("item_id", [projectId]);
+}
 
-// function getTagName(client: SupabaseClient, tagId: number){ 
-//   return client.from("tag").select("value").in("id", [tagId]); 
-// }
+function getTagName(client: SupabaseClient, tagId: number){ 
+  return client.from("project_tag").select("tag_id").in("item_id", [tagId]); 
+}
 
 export {
   getBusinesses,
   getInvestmentCounts,
   getProjects,
   getTags,
-  // getInvestorDeal,
-  // getProjectTag,
-  // getTagName,
+  getInvestorDeal,
+  getProjectTag,
+  getTagName
 };

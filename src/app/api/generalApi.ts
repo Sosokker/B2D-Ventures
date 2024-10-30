@@ -34,23 +34,6 @@ async function clearFolder(
   return errors;
 }
 
-export async function getProjectTag(projectId: number) {
-  return supabase
-    .from("project_tag")
-    .select("tag_id")
-    .in("item_id", [projectId]);
-}
-export async function getTagName(tagId: number) {
-  return supabase.from("tag").select("value").in("id", [tagId]);
-}
-export async function getInvestorDeal(userId: string) {
-  return supabase
-    .from("investment_deal")
-    .select("*")
-    .in("investor_id", [userId])
-    .order("created_time", { ascending: true });
-}
-
 async function uploadToFolder(
   bucketName: string,
   filePath: string,
