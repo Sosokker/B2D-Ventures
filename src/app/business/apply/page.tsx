@@ -154,8 +154,8 @@ export default function ApplyBusiness() {
         console.error("Error fetching user ID:", error);
       }
     };
-    setSucess(true);
-    // fetchUserData();
+    // setSucess(true);
+    fetchUserData();
   }, []);
 
   return (
