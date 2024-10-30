@@ -1,25 +1,34 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getProjectTag, getTagName } from "@/lib/data/query";
 
-async function getBusinessId(supabase: SupabaseClient, projectId: number) {
-  let { data: project, error } = await supabase
+async function getBusinessTypeName(
+  supabase: SupabaseClient,
+  projectId: number
+) {
+  let { data: project, error: projectError } = await supabase
     .from("project")
     .select("business_id")
     .eq("id", projectId);
-  if (error) {
-    console.error(error);
+  if (projectError) {
+    console.error(projectError);
   }
-  return project?.[0]?.business_id;
-}
-async function getBusinessType(supabase: SupabaseClient, businessId: number) {
-  let { data: business, error } = await supabase
+
+  let { data: business, error: businessError } = await supabase
     .from("business")
     .select("business_type")
-    .eq("id", businessId);
-  if (error) {
-    console.error(error);
+    .eq("id", project?.[0]?.business_id);
+  if (businessError) {
+    console.error(businessError);
   }
-  return business?.[0]?.business_type;
+
+  let { data: business_type, error: businessTypeError } = await supabase
+    .from("business_type")
+    .select("value")
+    .eq("id", business?.[0]?.business_type);
+  if (businessTypeError) {
+    console.error(businessError);
+  }
+  return business_type;
 }
 
 // only use deal that were made at most year ago
@@ -194,6 +203,5 @@ export {
   dayOftheWeekData,
   getInvestorProjectTag,
   countTags,
-  getBusinessId,
-  getBusinessType,
+  getBusinessTypeName,
 };

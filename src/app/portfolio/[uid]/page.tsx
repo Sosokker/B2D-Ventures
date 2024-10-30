@@ -8,8 +8,7 @@ import {
   dayOftheWeekData,
   getInvestorProjectTag,
   countTags,
-  getBusinessId,
-  getBusinessType,
+  getBusinessTypeName,
 } from "./hook";
 import CountUpComponent from "@/components/countUp";
 
@@ -31,16 +30,15 @@ export default async function Portfolio({
   const dayOfWeekData = deals ? dayOftheWeekData(deals) : [];
   const tags = deals ? await getInvestorProjectTag(supabase, deals) : [];
   const tagCount = countTags(tags);
-  // get business id from project id
-  const investedBusinessIds = deals
+  // console.log(investedBusinessIds);
+  const businessType = deals
     ? await Promise.all(
         deals.map(
-          async (item) => await getBusinessId(supabase, item.project_id)
+          async (item) => await getBusinessTypeName(supabase, item.project_id)
         )
       )
     : [];
-  console.log(investedBusinessIds);
-  // console.log(tags);
+  console.log(businessType);
 
   // console.log(tagCount);
   return (
