@@ -13,6 +13,12 @@ import {
   checkForInvest,
 } from "./hook";
 import CountUpComponent from "@/components/countUp";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { RecentFunds } from "@/components/recent-funds";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import QuestionMarkIcon from "@/components/icon/questionMark";
@@ -66,18 +72,57 @@ export default async function Portfolio({
         <div>{totalInvest}</div>
       </div> */}
       {/* <CountUpComponent end={100} duration={3} /> */}
-      <div className="flex w-full gap-10">
-        <Overview graphType="line" data={overAllData}></Overview>
-        <Overview graphType="bar" data={fourYearData}></Overview>
-        <Overview graphType="bar" data={dayOfWeekData}></Overview>
+      <div className="flex flew-rows-3 gap-10 mt-5">
+        <Card className="w-[500px]">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-md font-bold">
+              Types of Businesses Invested In
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="mt-5">
+            <Overview graphType="line" data={overAllData}></Overview>
+          </CardContent>
+        </Card>
+        <Card className="w-[500px]">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-md font-bold">
+              Types of Businesses Invested In
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="mt-5">
+            <Overview graphType="bar" data={fourYearData}></Overview>
+          </CardContent>
+        </Card>
+        <Card className="w-[500px]">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-md font-bold">
+              Types of Businesses Invested In
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="mt-5">
+            <Overview graphType="bar" data={dayOfWeekData}></Overview>
+          </CardContent>
+        </Card>
       </div>
-      <div className="flex flex-cols-3 w-96 gap-5">
+      <div className="flex flex-cols-3 w-96 gap-5 mt-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">
               Categories of Invested Projects
             </CardTitle>
-            <QuestionMarkIcon />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <QuestionMarkIcon />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    Displays the distribution of project tags in your <br />
+                    investments, highlighting areas of interest.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </CardHeader>
           <CardContent className="mt-5">
             <PieChart
@@ -94,9 +139,22 @@ export default async function Portfolio({
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">
-              Categories of Invested Projects
+              Types of Businesses Invested In
             </CardTitle>
-            <QuestionMarkIcon />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <QuestionMarkIcon />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    Shows the breakdown of business types in your portfolio,{" "}
+                    <br />
+                    illustrating sector diversity.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </CardHeader>
           <CardContent className="mt-5">
             <PieChart
@@ -106,7 +164,16 @@ export default async function Portfolio({
             />
           </CardContent>
         </Card>
-        <RecentFunds />
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-md font-bold">
+              Recent investment
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="mt-5">
+            <RecentFunds />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
