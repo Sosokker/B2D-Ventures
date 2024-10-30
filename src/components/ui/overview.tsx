@@ -1,6 +1,15 @@
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, LineChart, Line } from "recharts";
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  LineChart,
+  Line,
+  Tooltip,
+} from "recharts";
 
 // const data = [
 //   {
@@ -77,6 +86,14 @@ export function Overview(props: OverViewProps) {
               axisLine={false}
               tickFormatter={(value) => `$${value}`}
             />
+            <Tooltip
+              formatter={(value) => `$${value}`}
+              contentStyle={{
+                backgroundColor: "#f5f5f5",
+                borderRadius: "5px",
+                color: "#000",
+              }}
+            />
             <Line
               dataKey="value"
               fill="currentColor"
@@ -99,7 +116,20 @@ export function Overview(props: OverViewProps) {
               axisLine={false}
               tickFormatter={(value) => `$${value}`}
             />
-            <Bar dataKey="value" fill="currentColor" className="fill-primary" />
+            <Tooltip
+              formatter={(value) => `$${value}`}
+              contentStyle={{
+                backgroundColor: "#f5f5f5",
+                borderRadius: "5px",
+                color: "#000",
+              }}
+            />
+            <Bar
+              dataKey="value"
+              fill="currentColor"
+              className="fill-primary"
+              radius={[15, 15, 0, 0]}
+            />
           </BarChart>
         )}
       </ResponsiveContainer>
