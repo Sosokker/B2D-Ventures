@@ -56,8 +56,8 @@ function getProjectTag(client: SupabaseClient, projectId: number) {
   return client.from("project_tag").select("tag_id").in("item_id", [projectId]);
 }
 
-function getTagName(client: SupabaseClient, tagId: number){ 
-  return client.from("project_tag").select("tag_id").in("item_id", [tagId]); 
+function getTagName(client: SupabaseClient, tagId: number) {
+  return client.from("tag").select("value").in("id", [tagId]);
 }
 
 export {
@@ -67,5 +67,5 @@ export {
   getTags,
   getInvestorDeal,
   getProjectTag,
-  getTagName
+  getTagName,
 };
