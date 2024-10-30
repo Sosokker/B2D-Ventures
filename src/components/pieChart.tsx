@@ -5,7 +5,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface PieChartProps {
   labels: string[];
-  data: string[];
+  data: number[];
   header:string
 }
 
