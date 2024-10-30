@@ -5,7 +5,7 @@ async function checkForInvest(supabase: SupabaseClient, userId: string) {
   let { count, error } = await supabase
     .from("investment_deal")
     .select("*", { count: "exact" })
-    .eq("investor_id", "8as1761d2");
+    .eq("investor_id", userId);
   if (error) {
     console.error(error);
     return false;

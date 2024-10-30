@@ -14,6 +14,8 @@ import {
 } from "./hook";
 import CountUpComponent from "@/components/countUp";
 import { RecentFunds } from "@/components/recent-funds";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import QuestionMarkIcon from "@/components/icon/questionMark";
 
 export default async function Portfolio({
   params,
@@ -21,7 +23,9 @@ export default async function Portfolio({
   params: { uid: string };
 }) {
   const supabase = createSupabaseClient();
-  await checkForInvest(supabase, params.uid);
+  //  if user hasn't invest in anything
+  if (!(await checkForInvest(supabase, params.uid))) {
+  }
   const { data: deals, error: investorDealError } = await getInvestorDeal(
     supabase,
     params.uid
@@ -67,27 +71,41 @@ export default async function Portfolio({
         <Overview graphType="bar" data={fourYearData}></Overview>
         <Overview graphType="bar" data={dayOfWeekData}></Overview>
       </div>
-      <div className="flex flex-cols-3 w-96">
-        <div className="">
-          <h1>Project tag</h1>
-          <PieChart
-            data={tagCount.map(
-              (item: { name: string; count: number }) => item.count
-            )}
-            labels={tagCount.map(
-              (item: { name: string; count: number }) => item.name
-            )}
-            header="Total"
-          />
-        </div>
-        <div className="">
-          <h1>Business Type</h1>
-          <PieChart
-            data={Object.values(countedBusinessType)}
-            labels={Object.keys(countedBusinessType)}
-            header="Total"
-          />
-        </div>
+      <div className="flex flex-cols-3 w-96 gap-5">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-md font-bold">
+              Categories of Invested Projects
+            </CardTitle>
+            <QuestionMarkIcon />
+          </CardHeader>
+          <CardContent className="mt-5">
+            <PieChart
+              data={tagCount.map(
+                (item: { name: string; count: number }) => item.count
+              )}
+              labels={tagCount.map(
+                (item: { name: string; count: number }) => item.name
+              )}
+              header="Total"
+            />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-md font-bold">
+              Categories of Invested Projects
+            </CardTitle>
+            <QuestionMarkIcon />
+          </CardHeader>
+          <CardContent className="mt-5">
+            <PieChart
+              data={Object.values(countedBusinessType)}
+              labels={Object.keys(countedBusinessType)}
+              header="Total"
+            />
+          </CardContent>
+        </Card>
         <RecentFunds />
       </div>
     </div>
