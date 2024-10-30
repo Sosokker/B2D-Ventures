@@ -15,7 +15,6 @@ const BUCKET_PITCH_NAME = "business-application";
 let supabase = createSupabaseClient();
 
 export default function ApplyBusiness() {
-  const [applyProject, setApplyProject] = useState(false);
   const alertShownRef = useRef(false);
   const [success, setSucess] = useState(false);
 
@@ -75,12 +74,8 @@ export default function ApplyBusiness() {
       text:
         error == null ? "Your application has been submitted" : error.message,
       confirmButtonColor: error == null ? "green" : "red",
-    }).then((result) => {
-      if (result.isConfirmed && applyProject) {
-        window.location.href = "/project/apply";
-      } else {
-        window.location.href = "/";
-      }
+    }).then(() => {
+      window.location.href = "/";
     });
   };
 
@@ -98,7 +93,10 @@ export default function ApplyBusiness() {
       console.error(error);
       console.error(applicationError);
     }
-    if ((business && business.length != 0) || (businessApplication && businessApplication.length != 0)) {
+    if (
+      (business && business.length != 0) ||
+      (businessApplication && businessApplication.length != 0)
+    ) {
       return true;
     }
     return false;
@@ -156,8 +154,8 @@ export default function ApplyBusiness() {
         console.error("Error fetching user ID:", error);
       }
     };
-    // setSucess(true);
-    fetchUserData();
+    setSucess(true);
+    // fetchUserData();
   }, []);
 
   return (
@@ -180,11 +178,7 @@ export default function ApplyBusiness() {
       </div>
       {/* form */}
       {/* <form action="" onSubmit={handleSubmit(handleSubmitForms)}> */}
-      <BusinessForm
-        onSubmit={onSubmit}
-        applyProject={applyProject}
-        setApplyProject={setApplyProject}
-      />
+      <BusinessForm onSubmit={onSubmit} />
     </div>
   );
 }

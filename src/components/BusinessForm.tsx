@@ -17,25 +17,14 @@ import { businessFormSchema } from "@/types/schemas/application.schema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@radix-ui/react-tooltip";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 
 interface BusinessFormProps {
-  applyProject: boolean;
-  setApplyProject: Function;
   onSubmit: SubmitHandler<businessSchema>;
 }
 const BusinessForm = ({
-  applyProject,
-  setApplyProject,
   onSubmit,
 }: BusinessFormProps & { onSubmit: SubmitHandler<businessSchema> }) => {
   const communitySize = [
@@ -461,28 +450,6 @@ const BusinessForm = ({
                 </FormItem>
               )}
             />
-            <div className="flex space-x-5">
-              <Switch
-                onCheckedChange={() => setApplyProject(!applyProject)}
-              ></Switch>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="text-[12px] text-neutral-500 self-center cursor-pointer">
-                      Would you like to apply for your first fundraising project
-                      as well?
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-[11px]">
-                      Toggling this option allows you to begin your first
-                      project, <br /> which is crucial for unlocking the tools
-                      necessary to raise funds.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
             <center>
               <Button
                 className="mt-12 mb-20  h-10 text-base font-bold py-6 px-5"
