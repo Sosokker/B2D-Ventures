@@ -142,23 +142,27 @@ export default async function Home() {
             </CardHeader>
             <CardContent className="flex gap-2">
               <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-                <Image
-                  src={"/github.svg"}
-                  width={20}
-                  height={20}
-                  alt="github"
-                  className="scale-75 md:scale-100"
-                />
+                <div className="dark:bg-white rounded-full">
+                  <Image
+                    src={"/github.svg"}
+                    width={20}
+                    height={20}
+                    alt="github"
+                    className="scale-75 md:scale-100"
+                  />
+                </div>
                 Github
               </Button>
               <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-                <Image
-                  src={"/github.svg"}
-                  width={20}
-                  height={20}
-                  alt="github"
-                  className="scale-75 md:scale-100"
-                />
+                <div className="dark:bg-white rounded-full">
+                  <Image
+                    src={"/github.svg"}
+                    width={20}
+                    height={20}
+                    alt="github"
+                    className="scale-75 md:scale-100"
+                  />
+                </div>
                 Github
               </Button>
             </CardContent>
