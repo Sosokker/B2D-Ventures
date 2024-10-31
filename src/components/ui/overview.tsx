@@ -62,14 +62,15 @@ import {
 //   },
 // ];
 
-interface OverViewProps{
-    graphType:string;
-    data: {name: string, value: number}[];
+interface OverViewProps {
+  graphType: string;
+  data: { name: string; value: number }[];
+  graphHeight?: number | string;
 }
 
 export function Overview(props: OverViewProps) {
-    return (
-      <ResponsiveContainer width="100%" height={350}>
+  return (
+      <ResponsiveContainer width="100%" height={props.graphHeight || 350}>
         {props.graphType === "line" ? (
           <LineChart data={props.data}>
             <XAxis
@@ -133,5 +134,5 @@ export function Overview(props: OverViewProps) {
           </BarChart>
         )}
       </ResponsiveContainer>
-    );
+  );
 }

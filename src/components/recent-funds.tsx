@@ -38,7 +38,13 @@ const data = [
   },
 ];
 
-export function RecentFunds() {
+interface RecentFundsProps{
+  name?: string; 
+  email?: string;
+  amount?: number; 
+  avatar?: string;
+}
+export function RecentFunds(props: RecentFundsProps) {
   return (
     <div className="space-y-8">
       {data.map((person, index) => (

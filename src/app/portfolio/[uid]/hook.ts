@@ -30,6 +30,7 @@ function countValues(arr: { value: string }[][]): Record<string, number> {
   return counts;
 }
 
+
 async function getBusinessTypeName(
   supabase: SupabaseClient,
   projectId: number

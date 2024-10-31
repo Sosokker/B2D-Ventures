@@ -68,7 +68,8 @@ const data = [
 export default function Dashboard() {
   const [graphType, setGraphType] = useState("line");
   const dealList = useDealList();
-  const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
+  const totalDealAmount =
+    dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
 
   return (
     <>
@@ -98,7 +99,9 @@ export default function Dashboard() {
       <div className="hidden flex-col md:flex">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Business Dashboard</h2>
+            <h2 className="text-3xl font-bold tracking-tight">
+              Business Dashboard
+            </h2>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
@@ -248,8 +251,7 @@ export default function Dashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentFunds>
-                    </RecentFunds>
+                    <RecentFunds></RecentFunds>
                   </CardContent>
                 </Card>
               </div>
