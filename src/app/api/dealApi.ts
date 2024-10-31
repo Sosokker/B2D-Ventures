@@ -1,5 +1,4 @@
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { getCurrentUserID } from "./userApi";
 
 export type Deal = {
   deal_amount: number;
@@ -7,9 +6,14 @@ export type Deal = {
   investor_id: string;
 };
 
-export async function getDealList() {
+export async function getDealList(userId: string | undefined) {
+  if (!userId) {
+    // console.error("No deal list of this user was found");
+    return; // Exit on error
+  }
+
   const supabase = createSupabaseClient();
-  // get id of investor who invests in the business
+  // get id of investors who invest in the business
   const { data: dealData, error: dealError } = await supabase
     .from("business")
     .select(
@@ -21,11 +25,11 @@ export async function getDealList() {
       )
     `
     )
-    .eq("user_id", await getCurrentUserID())
+    .eq("user_id", userId)
     .single();
 
   if (dealError) {
-    alert(JSON.stringify(dealError));
+    // alert(JSON.stringify(dealError));
     console.error("Error fetching deal list:", dealError);
     return; // Exit on error
   }
@@ -56,13 +60,19 @@ export async function getDealList() {
     return; // Exit on error
   }
 
+  console.log(sortedDealData)
   return sortedDealData;
 }
 
 // #TODO fix query to be non unique
-export async function getRecentDealData() {
+export async function getRecentDealData(userId: string | undefined) {
+  if (!userId) {
+    console.error("User not found");
+    return; // Exit on error
+  }
+  
   const supabase = createSupabaseClient();
-  const dealList = await getDealList();
+  const dealList = await getDealList(userId);
 
   if (!dealList) {
     // #TODO div error
@@ -100,6 +110,8 @@ export async function getRecentDealData() {
   const recentDealData = recentDealList.map((item, index) => {
     return { ...item, ...recentUserData[index] };
   });
+
+  
   return recentDealData;
 }
 
@@ -121,8 +133,6 @@ export function convertToGraphData(deals: Deal[]): Record<string, number> {
 
   // Create a sorted graph data object
   const sortedGraphData: Record<string, number> = {};
-  sortedKeys.forEach((key) => {
-    sortedGraphData[key] = graphData[key];
-  });
+  sortedKeys.forEach((key) => {sortedGraphData[key] = graphData[key]});
   return sortedGraphData;
 }
