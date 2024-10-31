@@ -19,7 +19,7 @@ interface Project {
   id: number;
   project_name: string;
   project_short_description: string;
-  card_image_url: string;
+  project_logo: string;
   published_time: string;
   business: { location: string }[];
   project_tag: { tag: { id: number; value: string }[] }[];
@@ -44,7 +44,7 @@ const TopProjects: FC<TopProjectsProps> = ({ projects }) => {
           <ProjectCard
             name={project.project_name}
             description={project.project_short_description}
-            imageUri={project.card_image_url}
+            imageUri={project.project_logo}
             joinDate={new Date(project.published_time).toLocaleDateString()}
             location={project.business[0]?.location || ""}
             tags={project.project_tag.flatMap(

@@ -14,7 +14,7 @@ async function getTopProjects(
             business_id,
             published_time,
             project_short_description,
-            card_image_url,
+            project_logo,
             project_investment_detail (
               min_investment,
               total_investment,
@@ -39,7 +39,7 @@ async function getTopProjects(
       console.error("Error fetching top projects:", error.message);
       return { data: null, error: error.message };
     }
-
+    // console.log(data);
     return { data, error: null };
   } catch (err) {
     console.error("Unexpected error:", err);
@@ -88,7 +88,7 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
         target_investment,
         investment_deadline
       ),
-      tags:item_tag!inner (
+      tags:project_tag!inner (
         ...tag!inner (
           tag_name:value
         )
