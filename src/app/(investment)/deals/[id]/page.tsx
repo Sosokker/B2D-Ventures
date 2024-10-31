@@ -135,7 +135,7 @@ export default async function ProjectDealPage({
                   </h1>
                   <p className="text-sm md:text-lg">
                     {" "}
-                    5% raised of \$5M max goal
+                    5% raised of $5M max goal
                   </p>
                   <Progress
                     value={
