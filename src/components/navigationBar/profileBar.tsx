@@ -33,14 +33,14 @@ const UnAuthenticatedComponents = () => {
 };
 
 const AuthenticatedComponents = ({ uid }: { uid: string }) => {
-  let notifications = 100;
+  let notifications = 1;
   const displayValue = notifications >= 100 ? "..." : notifications;
   return (
     <div className="flex gap-3 pl-2 items-center">
       <Link href={"/notification"}>
         <div className="relative inline-block">
-          <Bell className="h-6 w-6" />
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full">
+          <Bell className="h-6 w-6 " />
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full animate-ping">
             {displayValue}
           </span>
         </div>
