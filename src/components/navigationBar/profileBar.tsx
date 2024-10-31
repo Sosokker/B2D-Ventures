@@ -46,10 +46,16 @@ const AuthenticatedComponents = ({ uid }: { uid: string }) => {
         </div>
       </Link>
       <Heart />
-      <Wallet />
+      <Link href={"/portfolio/" + uid}>
+        <Wallet className="cursor-pointer" />
+      </Link>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
+          <Button
+            variant="outline"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
             <Avatar>
               <AvatarImage src="https://api.dicebear.com/9.x/pixel-art/svg" />
               <AvatarFallback>1</AvatarFallback>
