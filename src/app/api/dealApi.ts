@@ -9,7 +9,7 @@ export type Deal = {
 export async function getDealList(userId: string | undefined) {
   if (!userId) {
     // console.error("No deal list of this user was found");
-    return; // Exit on error
+    return []; // Exit on error
   }
 
   const supabase = createSupabaseClient();
@@ -31,12 +31,12 @@ export async function getDealList(userId: string | undefined) {
   if (dealError) {
     // alert(JSON.stringify(dealError));
     console.error("Error fetching deal list:", dealError);
-    return; // Exit on error
+    return []; // Exit on error
   }
 
   if (!dealData || !dealData.project.length) {
     alert("No project available");
-    return; // Exit if there's no data
+    return []; // Exit if there's no data
   }
 
   const investorIdList = dealData.project[0].investment_deal.map((deal) => deal.investor_id);
@@ -57,10 +57,10 @@ export async function getDealList(userId: string | undefined) {
   if (sortedDealDataError) {
     alert(JSON.stringify(sortedDealDataError));
     console.error("Error sorting deal list:", sortedDealDataError);
-    return; // Exit on error
+    return []; // Exit on error
   }
 
-  console.log(sortedDealData)
+  // console.log(sortedDealData)
   return sortedDealData;
 }
 

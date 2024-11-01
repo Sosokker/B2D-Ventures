@@ -90,7 +90,7 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
           tag_name:value
         )
       ),
-      business (
+      ...business (
         user_id
       )
     `

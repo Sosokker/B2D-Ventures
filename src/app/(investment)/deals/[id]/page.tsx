@@ -28,9 +28,9 @@ export default async function ProjectDealPage({ params }: { params: { id: number
     return <div>Error</div>;
   }
 
-  // console.log(projectData);
+  console.log(projectData);
 
-  const projectBusinessOwnerId = projectData.business.user_id;
+  const projectBusinessOwnerId = projectData.user_id;
   // console.log(projectBusinessOwnerId);
   const dealData = await getDealList(projectBusinessOwnerId);
   // console.log(dealData);
@@ -96,7 +96,10 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                 <span>
                   {/* #TODO use sum() instead of storing total in database */}
                   <h1 className="font-semibold text-xl md:text-4xl mt-8">${projectData?.total_investment}</h1>
-                  <p className="text-sm md:text-lg">5% raised of $5M max goal</p>
+                  <p className="text-sm md:text-lg">
+                    {projectData?.total_investment / projectData?.target_investment}%
+                    raised of ${projectData?.target_investment} max goal
+                  </p>
                   <Progress
                     value={projectData?.total_investment / projectData?.target_investment}
                     className="w-[60%] h-3 mt-3"

@@ -5,7 +5,7 @@ import { getCurrentUserID } from "../api/userApi";
 
 // custom hook for deal list
 export function useDealList() {
-  const [dealList, setDealList] = useState<Deal[]>();
+  const [dealList, setDealList] = useState<Deal[]>([]);
 
   const fetchDealList = async () => {
     // set the state to the deal list of current business user
