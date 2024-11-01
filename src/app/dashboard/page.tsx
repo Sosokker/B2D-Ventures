@@ -24,13 +24,6 @@ export default function Dashboard() {
 
   return (
     <>
-      {/* {dealList?.map((deal, index) => (
-        <div key={index} className="deal-item">
-          <p>Deal Amount: {deal.deal_amount}</p>
-          <p>Created Time: {new Date(deal.created_time).toUTCString()}</p>
-          <p>Investor ID: {deal.investor_id}</p>
-        </div>
-      ))} */}
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"

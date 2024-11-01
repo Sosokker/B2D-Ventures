@@ -26,3 +26,8 @@ export function sumByKey(list: any[], key: string) {
   // console.log(totalAmount); // Output: 100
   return list.reduce((total, obj) => total + (obj[key] || 0), 0);
 }
+
+export function toPercentage(part: number, total: number): number {
+  if (total === 0) return 0; // Prevent division by zero
+  return Number(((part * 100) / total).toFixed(2));
+}

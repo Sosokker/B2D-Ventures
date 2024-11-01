@@ -14,6 +14,7 @@ import FollowShareButtons from "./followShareButton";
 
 import { getProjectData } from "@/lib/data/projectQuery";
 import { getDealList } from "@/app/api/dealApi";
+import { sumByKey, toPercentage } from "@/lib/utils";
 
 export default async function ProjectDealPage({ params }: { params: { id: number } }) {
   const supabase = createSupabaseClient();
@@ -28,13 +29,13 @@ export default async function ProjectDealPage({ params }: { params: { id: number
     return <div>Error</div>;
   }
 
-  console.log(projectData);
-
   const projectBusinessOwnerId = projectData.user_id;
-  // console.log(projectBusinessOwnerId);
-  const dealData = await getDealList(projectBusinessOwnerId);
-  // console.log(dealData);
-
+  const dealList = await getDealList(projectBusinessOwnerId);
+  const totalDealAmount = sumByKey(dealList, "deal_amount");
+  // timeDiff, if negative convert to zero
+  const timeDiff = Math.max((new Date(projectData.investment_deadline)).getTime() - new Date().getTime(), 0)
+  const hourLeft = Math.floor(timeDiff / (1000 * 60 * 60));
+  console.log(hourLeft)
   const carouselData = [
     { src: "/boiler1.jpg", alt: "Boiler 1" },
     { src: "/boiler1.jpg", alt: "Boiler 1" },
@@ -95,27 +96,33 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <div className="pl-5">
                 <span>
                   {/* #TODO use sum() instead of storing total in database */}
-                  <h1 className="font-semibold text-xl md:text-4xl mt-8">${projectData?.total_investment}</h1>
+                  <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
                   <p className="text-sm md:text-lg">
-                    {projectData?.total_investment / projectData?.target_investment}%
+                    {toPercentage(totalDealAmount, projectData?.target_investment)}%
                     raised of ${projectData?.target_investment} max goal
                   </p>
                   <Progress
-                    value={projectData?.total_investment / projectData?.target_investment}
+                    value={toPercentage(totalDealAmount, projectData?.target_investment)}
                     className="w-[60%] h-3 mt-3"
                   />
                 </span>
                 <span>
                   <h1 className="font-semibold text-4xl md:mt-8">
-                    <p className="text-xl md:text-4xl">{dealData ? dealData.length: 0}</p>
+                    <p className="text-xl md:text-4xl">{dealList.length}</p>
                   </h1>
                   <p className="text-sm md:text-lg">Investors</p>
                 </span>
                 <Separator decorative className="mt-3 w-3/4 ml-5" />
                 <span>
                   <h1 className="font-semibold text-xl md:text-4xl mt-8 ml-5"></h1>
-                  <p className="text-xl md:text-4xl">1 hours</p>
-                  <p>Left to invest</p>
+                    {projectData?.investment_deadline ? (
+                      <>
+                        <p className="text-xl md:text-4xl">{Math.floor(hourLeft)} hours</p>
+                        <p>Left to invest</p>
+                      </>
+                    ) : (
+                      <p className="text-xl md:text-4xl">No deadline</p>
+                  )}
                 </span>
                 <Button className="mt-5 w-3/4 h-12">
                   <Link href={`/invest/${params.id}`}>Invest in {projectData?.project_name}</Link>
