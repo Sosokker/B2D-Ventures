@@ -27,6 +27,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import QuestionMarkIcon from "@/components/icon/questionMark";
 import { NoDataAlert } from "@/components/alert/noData/alert";
 import { error } from "console";
+import { UnAuthorizedAlert } from "@/components/alert/unauthorized/alert";
 
 export default async function Portfolio({
   params,
@@ -35,7 +36,8 @@ export default async function Portfolio({
 }) {
   const supabase = createSupabaseClient();
   //  if user hasn't invest in anything
-  if (!(await checkForInvest(supabase, params.uid))) {
+  const hasInvestments = await checkForInvest(supabase, params.uid);
+  if (!hasInvestments) {
     return (
       <div>
         <NoDataAlert />
@@ -49,14 +51,20 @@ export default async function Portfolio({
   if (investorDealError) {
     console.error(investorDealError);
   }
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError) {
+  const { data: localUser, error: localUserError } =
+    await supabase.auth.getUser();
+  if (localUserError) {
     console.error("Error while fetching user" + error);
   }
-  const username = user ? user.user_metadata.name : "Anonymous";
+  // block user from try to see other user portfolio
+  if (params.uid != localUser.user?.id) {
+    return (
+      <>
+        <UnAuthorizedAlert />
+      </>
+    );
+  }
+  const username = localUser ? localUser.user.user_metadata.name : "Anonymous";
   // console.log(username)
   const overAllData = deals ? overAllGraphData(deals) : [];
   const fourYearData = deals ? fourYearGraphData(deals) : [];
