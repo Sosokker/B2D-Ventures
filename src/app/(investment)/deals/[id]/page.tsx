@@ -36,13 +36,10 @@ export default async function ProjectDealPage({ params }: { params: { id: number
   const timeDiff = Math.max((new Date(projectData.investment_deadline)).getTime() - new Date().getTime(), 0)
   const hourLeft = Math.floor(timeDiff / (1000 * 60 * 60));
 
-  const carouselData = [
-    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
-    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
-    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
-    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
-    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
-  ];
+  const carouselData = Array(5).fill({
+    src: projectData.card_image_url || "/boiler1.jpg",
+    alt: `${projectData.project_name} Image`,
+  });
 
   return (
     <div className="container max-w-screen-xl my-5">
