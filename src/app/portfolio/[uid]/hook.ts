@@ -1,6 +1,38 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getProjectTag, getTagName } from "@/lib/data/query";
 
+function getTotalInvestment(deals: { deal_amount : number}[]) {
+  let total = 0;
+  for (let index = 0; index < deals.length; index++) {
+    total += deals[index].deal_amount;
+  }
+  return total;
+}
+async function getLatestInvestment(
+  supabase: SupabaseClient,
+  deals: { project_id: number; deal_amount: number; created_time: Date }[]
+) {
+  const llist = [];
+  const count = 8;
+
+  for (let i = deals.length - 1; i >= 0 && llist.length < count; --i) {
+    let { data: project, error } = await supabase
+      .from("project")
+      .select("project_name")
+      .eq("id", deals[i].project_id);
+    if (error) {
+      console.error(error);
+    }
+    llist.push({
+      name: project?.[0]?.project_name,
+      amount: deals[i].deal_amount,
+      date: new Date(deals[i].created_time),
+    });
+  }
+
+  return llist;
+}
+
 async function checkForInvest(supabase: SupabaseClient, userId: string) {
   let { count, error } = await supabase
     .from("investment_deal")
@@ -29,7 +61,6 @@ function countValues(arr: { value: string }[][]): Record<string, number> {
 
   return counts;
 }
-
 
 async function getBusinessTypeName(
   supabase: SupabaseClient,
@@ -75,31 +106,37 @@ interface GraphData {
 }
 
 function overAllGraphData(deals: Deal[]): GraphData[] {
-  return deals
-    ? deals
-        .filter((item: Deal) => new Date(item.created_time) >= yearAgo(1))
-        .reduce((acc: GraphData[], item: Deal) => {
-          // get the first three initial letter of the month
-          const monthName = getMonthName(item.created_time.toString()).slice(
-            0,
-            3
-          );
-          const existingMonth = acc.find(
-            (entry: GraphData) => entry.name === monthName
-          );
+  // Initialize all months with value 0
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const acc: GraphData[] = months.map((month) => ({ name: month, value: 0 }));
 
-          if (existingMonth) {
-            existingMonth.value += item.deal_amount;
-          }
-          //   if month doesnt exist yet, create new record
-          else {
-            acc.push({ name: monthName, value: item.deal_amount });
-          }
+  deals
+    .filter((item: Deal) => new Date(item.created_time) >= yearAgo(1))
+    .forEach((item: Deal) => {
+      const monthName = getMonthName(item.created_time.toString()).slice(0, 3);
+      const monthEntry = acc.find((entry) => entry.name === monthName);
 
-          return acc;
-        }, [] as GraphData[])
-    : [];
+      if (monthEntry) {
+        monthEntry.value += item.deal_amount;
+      }
+    });
+
+  return acc;
 }
+
 
 interface Deal {
   created_time: string | number | Date;
@@ -112,23 +149,25 @@ interface GraphData {
 }
 
 function fourYearGraphData(deals: Deal[]): GraphData[] {
-  return deals
+  const currentYear = new Date().getFullYear();
+  const acc: GraphData[] = Array.from({ length: 4 }, (_, i) => ({
+    name: (currentYear - i).toString(),
+    value: 0,
+  })).reverse(); 
+  deals
     .filter((item: Deal) => new Date(item.created_time) >= yearAgo(3))
-    .reduce((acc: GraphData[], item: Deal) => {
-      const year = new Date(item.created_time).getFullYear();
-      const existingYear = acc.find(
-        (entry: GraphData) => entry.name === year.toString()
-      );
+    .forEach((item: Deal) => {
+      const year = new Date(item.created_time).getFullYear().toString();
+      const yearEntry = acc.find((entry) => entry.name === year);
 
-      if (existingYear) {
-        existingYear.value += item.deal_amount;
-      } else {
-        acc.push({ name: year.toString(), value: item.deal_amount });
+      if (yearEntry) {
+        yearEntry.value += item.deal_amount;
       }
+    });
 
-      return acc;
-    }, [] as GraphData[]);
+  return acc;
 }
+
 
 interface DayOfWeekData {
   name: string;
@@ -238,4 +277,6 @@ export {
   getBusinessTypeName,
   countValues,
   checkForInvest,
+  getLatestInvestment,
+  getTotalInvestment,
 };

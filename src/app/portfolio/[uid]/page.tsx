@@ -11,6 +11,8 @@ import {
   getBusinessTypeName,
   countValues,
   checkForInvest,
+  getLatestInvestment,
+  getTotalInvestment,
 } from "./hook";
 import CountUpComponent from "@/components/countUp";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,6 +26,7 @@ import { RecentFunds } from "@/components/recent-funds";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import QuestionMarkIcon from "@/components/icon/questionMark";
 import { NoDataAlert } from "@/components/alert/noData/alert";
+import { error } from "console";
 
 export default async function Portfolio({
   params,
@@ -33,7 +36,6 @@ export default async function Portfolio({
   const supabase = createSupabaseClient();
   //  if user hasn't invest in anything
   if (!(await checkForInvest(supabase, params.uid))) {
-
     return (
       <div>
         <NoDataAlert />
@@ -47,10 +49,22 @@ export default async function Portfolio({
   if (investorDealError) {
     console.error(investorDealError);
   }
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError) {
+    console.error("Error while fetching user" + error);
+  }
+  const username = user ? user.user_metadata.name : "Anonymous";
+  // console.log(username)
   const overAllData = deals ? overAllGraphData(deals) : [];
   const fourYearData = deals ? fourYearGraphData(deals) : [];
   const dayOfWeekData = deals ? dayOftheWeekData(deals) : [];
   const tags = deals ? await getInvestorProjectTag(supabase, deals) : [];
+  const latestDeals = deals ? await getLatestInvestment(supabase, deals) : [];
+  const totalInvestment = deals ? getTotalInvestment(deals) : 0;
+  // console.log(latestDeals);
   const tagCount = countTags(tags);
   // console.log(investedBusinessIds);
   const businessType = deals
@@ -80,9 +94,22 @@ export default async function Portfolio({
         <div>{totalInvest}</div>
       </div> */}
       {/* <CountUpComponent end={100} duration={3} /> */}
+      <div className="text-center py-4">
+        <h1 className="text-2xl font-semibold">
+          Welcome to your Portfolio, {username}!
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Here's an overview of your investment journey and progress.
+        </p>
+        <p className="text-xl font-medium text-green-400">
+          Total Investment: $
+          <CountUpComponent end={totalInvestment} duration={1} />
+        </p>
+      </div>
+
       <div className="flex flew-rows-3 gap-10 mt-5 w-full">
         <Tabs defaultValue="daily" className="space-y-4 w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-96 grid-cols-3">
             <TabsTrigger value="daily">Daily</TabsTrigger>
             <TabsTrigger value="monthly">Monthly</TabsTrigger>
             <TabsTrigger value="yearly">Yearly</TabsTrigger>
@@ -246,7 +273,7 @@ export default async function Portfolio({
             </CardTitle>
           </CardHeader>
           <CardContent className="mt-5">
-            <RecentFunds />
+            <RecentFunds data={latestDeals} />
           </CardContent>
         </Card>
       </div>

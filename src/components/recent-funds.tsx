@@ -38,26 +38,23 @@ const data = [
   },
 ];
 
-interface RecentFundsProps{
-  name?: string; 
-  email?: string;
-  amount?: number; 
-  avatar?: string;
+interface RecentFundsProps {
+  data?: { name?: string; amount?: number; avatar?: string ; date?: Date}[];
 }
 export function RecentFunds(props: RecentFundsProps) {
   return (
     <div className="space-y-8">
-      {data.map((person, index) => (
+      {(props?.data || []).map((deal, index) => (
         <div className="flex items-center" key={index}>
           <Avatar className="h-9 w-9">
-            <AvatarImage src={person.avatar} alt={person.name} />
-            <AvatarFallback>{person.initials}</AvatarFallback>
+            <AvatarImage src={deal.avatar} alt={deal.name} />
+            <AvatarFallback>{(deal.name ?? "").slice(0, 3)}</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">{person.name}</p>
-            <p className="text-sm text-muted-foreground">{person.email}</p>
+            <p className="text-sm font-medium leading-none">{deal.name}</p>
+            <p className="text-xs text-muted-foreground">{deal?.date?.toLocaleDateString()}</p>
           </div>
-          <div className="ml-auto font-medium">+${person.amount}</div>
+          <div className="ml-auto font-medium">+${deal.amount}</div>
         </div>
       ))}
     </div>
