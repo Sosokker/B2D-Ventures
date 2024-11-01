@@ -35,13 +35,13 @@ export default async function ProjectDealPage({ params }: { params: { id: number
   // timeDiff, if negative convert to zero
   const timeDiff = Math.max((new Date(projectData.investment_deadline)).getTime() - new Date().getTime(), 0)
   const hourLeft = Math.floor(timeDiff / (1000 * 60 * 60));
-  console.log(hourLeft)
+
   const carouselData = [
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
+    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
+    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
+    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
+    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
+    { src: projectData.card_image_url, alt: `${projectData.project_name} Image` },
   ];
 
   return (
@@ -95,7 +95,6 @@ export default async function ProjectDealPage({ params }: { params: { id: number
             <div id="stats" className="flex flex-col w-full mt-4 pl-12">
               <div className="pl-5">
                 <span>
-                  {/* #TODO use sum() instead of storing total in database */}
                   <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
                   <p className="text-sm md:text-lg">
                     {toPercentage(totalDealAmount, projectData?.target_investment)}%
