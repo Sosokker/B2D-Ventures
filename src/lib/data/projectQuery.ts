@@ -6,28 +6,28 @@ async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 
       .from("project")
       .select(
         `
-            id,
-            project_name,
-            business_id,
-            published_time,
-            project_short_description,
-            card_image_url,
-            project_investment_detail (
-              min_investment,
-              total_investment,
-              target_investment,
-              investment_deadline
-            ),
-            project_tag (
-              tag (
-                id,
-                value
-              )
-            ),
-            business (
-              location
+          id,
+          project_name,
+          business_id,
+          published_time,
+          project_short_description,
+          card_image_url,
+          project_investment_detail (
+            min_investment,
+            total_investment,
+            target_investment,
+            investment_deadline
+          ),
+          project_tag (
+            tag (
+              id,
+              value
             )
-          `
+          ),
+          business (
+            location
+          )
+        `
       )
       .order("published_time", { ascending: false })
       .limit(numberOfRecords);
@@ -79,6 +79,7 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
       project_short_description,
       project_description,
       published_time,
+      card_image_url,
       ...project_investment_detail!inner (
         min_investment,
         total_investment,
@@ -89,6 +90,9 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
         ...tag!inner (
           tag_name:value
         )
+      ),
+      ...business (
+        user_id
       )
     `
     )
