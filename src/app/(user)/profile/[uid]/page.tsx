@@ -5,10 +5,15 @@ import { getUserProfile } from "@/lib/data/userQuery";
 import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
+import { getUserRole } from "@/lib/data/userQuery";
 
 export default async function ProfilePage({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
   const uid = params.uid;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: userRoleData, error: userRoleError } = await getUserRole(supabase, uid);
 
   const { data: profileData, error } = await getUserProfile(supabase, uid);
 
@@ -16,6 +21,14 @@ export default async function ProfilePage({ params }: { params: { uid: string } 
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-red-500">Error loading profile: {error}</p>
+      </div>
+    );
+  }
+
+  if (userRoleError) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-500">Error fetching role data. Please try again later.</p>
       </div>
     );
   }
@@ -33,9 +46,11 @@ export default async function ProfilePage({ params }: { params: { uid: string } 
       <div className="bg-card border-2 border-border shadow-xl rounded-lg overflow-hidden">
         <div className="bg-cover bg-center h-64 p-4" style={{ backgroundImage: "url(/banner.jpg)" }}>
           <div className="flex justify-end">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              <Link href={`/profile/${uid}/edit`}>Edit Profile</Link>
-            </button>
+            {user && user.id === uid && (
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <Link href={`/profile/${uid}/edit`}>Edit Profile</Link>
+              </button>
+            )}
           </div>
         </div>
         <div className="px-4 py-2">
@@ -62,13 +77,19 @@ export default async function ProfilePage({ params }: { params: { uid: string } 
                   </a>
                 </p>
               )}
+              {/* Business Profile Indicator */}
+              {userRoleData.role === "business" && (
+                <span className="mt-2 inline-block bg-yellow-500 text-white text-sm font-medium px-2 py-1 rounded-full">
+                  Business Profile
+                </span>
+              )}
             </div>
           </div>
           {/* Lower */}
           <div>
             <div className="mt-6">
               <h2 className="text-xl font-semibold mb-2">Bio</h2>
-              <div className="prose prose-sm max-w-none">
+              <div className="prose prose-sm max-w-none dark:prose-invert">
                 <ReactMarkdown>{profileData.bio || "No bio available."}</ReactMarkdown>
               </div>
             </div>

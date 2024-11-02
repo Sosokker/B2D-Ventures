@@ -14,15 +14,25 @@ import { uploadAvatar } from "@/lib/data/bucket/uploadAvatar";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import useSession from "@/lib/supabase/useSession";
 
 export default function EditProfilePage({ params }: { params: { uid: string } }) {
   const uid = params.uid;
   const client = createSupabaseClient();
   const router = useRouter();
+  const { session, loading: isLoadingSession } = useSession();
 
   const profileForm = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
   });
+
+  if (isLoadingSession) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>Loading session...</p>
+      </div>
+    );
+  }
 
   const onProfileSubmit = async (updates: z.infer<typeof profileSchema>) => {
     const { avatars, username, full_name, bio } = updates;
@@ -55,6 +65,10 @@ export default function EditProfilePage({ params }: { params: { uid: string } })
       console.error("Error updating profile:", error);
     }
   };
+
+  if (uid != session?.user.id) {
+    router.push(`/profile/${uid}`);
+  }
 
   return (
     <div className="container max-w-screen-xl">
