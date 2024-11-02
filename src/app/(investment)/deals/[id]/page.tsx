@@ -15,6 +15,7 @@ import FollowShareButtons from "./followShareButton";
 import { getProjectData } from "@/lib/data/projectQuery";
 import { getDealList } from "@/app/api/dealApi";
 import { sumByKey, toPercentage } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 export default async function ProjectDealPage({ params }: { params: { id: number } }) {
   const supabase = createSupabaseClient();
@@ -22,18 +23,25 @@ export default async function ProjectDealPage({ params }: { params: { id: number
   const { data: projectData, error: projectDataError } = await getProjectData(supabase, params.id);
 
   if (!projectData) {
-    return <div>No data available</div>;
+    redirect("/deals");
   }
 
   if (projectDataError) {
-    return <div>Error</div>;
+    return (
+      <div className="container max-w-screen-xl my-5">
+        <p className="text-red-600">Error fetching data. Please try again.</p>
+        <Button className="mt-4" onClick={() => window.location.reload()}>
+          Refresh
+        </Button>
+      </div>
+    );
   }
 
   const projectBusinessOwnerId = projectData.user_id;
   const dealList = await getDealList(projectBusinessOwnerId);
   const totalDealAmount = sumByKey(dealList, "deal_amount");
   // timeDiff, if negative convert to zero
-  const timeDiff = Math.max((new Date(projectData.investment_deadline)).getTime() - new Date().getTime(), 0)
+  const timeDiff = Math.max(new Date(projectData.investment_deadline).getTime() - new Date().getTime(), 0);
   const hourLeft = Math.floor(timeDiff / (1000 * 60 * 60));
 
   const carouselData = Array(5).fill({
@@ -94,8 +102,8 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                 <span>
                   <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
                   <p className="text-sm md:text-lg">
-                    {toPercentage(totalDealAmount, projectData?.target_investment)}%
-                    raised of ${projectData?.target_investment} max goal
+                    {toPercentage(totalDealAmount, projectData?.target_investment)}% raised of $
+                    {projectData?.target_investment} max goal
                   </p>
                   <Progress
                     value={toPercentage(totalDealAmount, projectData?.target_investment)}
@@ -111,13 +119,13 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                 <Separator decorative className="mt-3 w-3/4 ml-5" />
                 <span>
                   <h1 className="font-semibold text-xl md:text-4xl mt-8 ml-5"></h1>
-                    {projectData?.investment_deadline ? (
-                      <>
-                        <p className="text-xl md:text-4xl">{Math.floor(hourLeft)} hours</p>
-                        <p>Left to invest</p>
-                      </>
-                    ) : (
-                      <p className="text-xl md:text-4xl">No deadline</p>
+                  {projectData?.investment_deadline ? (
+                    <>
+                      <p className="text-xl md:text-4xl">{Math.floor(hourLeft)} hours</p>
+                      <p>Left to invest</p>
+                    </>
+                  ) : (
+                    <p className="text-xl md:text-4xl">No deadline</p>
                   )}
                 </span>
                 <Button className="mt-5 w-3/4 h-12">
