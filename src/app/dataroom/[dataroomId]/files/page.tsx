@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FileIcon, defaultStyles } from "react-file-icon";
 import { getFilesByDataroomId } from "@/lib/data/dataroomQuery";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
@@ -10,37 +10,83 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { getAccessRequests } from "@/lib/data/dataroomQuery";
+import useSession from "@/lib/supabase/useSession";
 
 export default function ViewDataRoomFilesPage({ params }: { params: { dataroomId: number } }) {
   const dataroomId = params.dataroomId;
   const supabase = createSupabaseClient();
   const router = useRouter();
+  const [sortOption, setSortOption] = useState("name");
+  const { session, loading: sessionLoading } = useSession();
+  const userId = session?.user?.id;
 
-  const getProjectDataQuery = supabase
-    .from("project")
-    .select(`id, project_name, dataroom_id`)
-    .eq("dataroom_id", dataroomId);
-  const { data: project, error: projectError, isLoading: isLoadingProject } = useQuery(getProjectDataQuery);
-  const { data: files, error, isLoading: isLoadingFiles } = useQuery(getFilesByDataroomId(supabase, dataroomId));
+  useEffect(() => {
+    if (!sessionLoading && !session) {
+      toast.error("Please login to access this page");
+      router.push("/auth/login");
+    }
+  }, [session, sessionLoading, router]);
+
+  const {
+    data: project,
+    error: projectError,
+    isLoading: isLoadingProject,
+  } = useQuery(supabase.from("project").select(`id, project_name, dataroom_id`).eq("dataroom_id", dataroomId), {
+    enabled: !!userId,
+  });
+  const {
+    data: accessRequest,
+    error: accessRequestError,
+    isLoading: accessRequestLoading,
+  } = useQuery(getAccessRequests(supabase, { dataroomId: dataroomId, userId: userId }));
+
+  useEffect(() => {
+    if (!accessRequestLoading && accessRequest) {
+      const hasAccess = accessRequest[0]?.status === "approve";
+      if (!hasAccess) {
+        toast.error("You don't have permission to access this dataroom");
+        router.push("/dataroom/overview");
+      }
+    }
+  }, [accessRequest, accessRequestLoading, router]);
+
+  const {
+    data: files,
+    error: filesError,
+    isLoading: isLoadingFiles,
+  } = useQuery(getFilesByDataroomId(supabase, dataroomId));
+
+  if (projectError || filesError || accessRequestError) {
+    const errorMessage = projectError
+      ? "Unable to load project details"
+      : filesError
+        ? "Unable to load files"
+        : "Unable to verify access permissions";
+
+    toast.error(errorMessage);
+    router.push("/dataroom/overview");
+    return null;
+  }
+
+  if (isLoadingProject || isLoadingFiles || accessRequestLoading) {
+    return (
+      <div className="container max-w-screen-xl p-4">
+        <Skeleton className="h-8 w-64 mb-4" />
+        <div className="space-y-3">
+          {[...Array(3)].map((_, index) => (
+            <Skeleton key={index} className="h-16 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   function getFileNameFromUrl(fileUrl: string): string {
     const fullFileName = fileUrl.split("/").pop() || "";
     return decodeURIComponent(fullFileName.split("?")[0]);
   }
 
-  if (error) {
-    toast.error("Unable to load files.");
-    router.push("/");
-    throw error;
-  }
-
-  if (projectError) {
-    toast.error("Unable to load project that relate to dataroom.");
-    router.push("/");
-    throw projectError;
-  }
-
-  const [sortOption, setSortOption] = useState("name");
   const sortedFiles = [...(files || [])].sort((a, b) => {
     if (sortOption === "name") {
       const nameA = getFileNameFromUrl(a.file_url).toLowerCase();

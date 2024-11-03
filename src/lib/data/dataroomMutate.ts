@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export const requestAccessToDataRoom = (client: SupabaseClient, dataRoomId: number, userId: number) => {
+export const requestAccessToDataRoom = (client: SupabaseClient, dataRoomId: number, userId: string) => {
   return client.from("access_request").insert([
     {
       dataroom_id: dataRoomId,
