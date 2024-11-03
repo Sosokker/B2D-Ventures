@@ -9,3 +9,23 @@ export const getInvestmentCountsByProjectsIds = (client: SupabaseClient, project
     })
     .in("project_id", projectIds);
 };
+
+export const getInvestmentByUserId = (client: SupabaseClient, userId: string) => {
+  return client
+    .from("investment_deal")
+    .select(
+      `
+    id,
+    ...project_id (
+      project_id:id,
+      project_name,
+      project_short_description,
+      dataroom_id
+    ),
+    deal_amount,
+    investor_id,
+    created_time
+    `
+    )
+    .eq("investor_id", userId);
+};
