@@ -152,11 +152,11 @@ export default function Deals() {
   };
 
   const filterProjectQueryParams: FilterProjectQueryParams = {
-    searchTerm,
-    tagsFilter: tagFilter,
-    projectStatusFilter,
-    businessTypeFilter,
-    sortByTimeFilter,
+    searchTerm: "",
+    tagsFilter: [],
+    projectStatusFilter: "all",
+    businessTypeFilter: "all",
+    sortByTimeFilter: "all",
     page,
     pageSize,
   };

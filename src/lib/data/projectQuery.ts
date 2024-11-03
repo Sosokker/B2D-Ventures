@@ -130,7 +130,7 @@ function searchProjectsQuery(
   }: FilterProjectQueryParams
 ) {
   const start = (page - 1) * pageSize;
-  const end = start + pageSize - 1;
+  const end = start + pageSize;
 
   let query = client
     .from("project")
