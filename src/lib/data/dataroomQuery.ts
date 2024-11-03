@@ -44,10 +44,14 @@ export const getDataRoomsByProjectId = (client: SupabaseClient, projectId: numbe
     .eq("project_id", projectId);
 };
 
-export const getAccessRequests = (client: SupabaseClient, filters: { dataroomId?: number; userId?: string }) => {
+export const getAccessRequests = (
+  client: SupabaseClient<Database>,
+  filters: { dataroomId?: number; userId?: string }
+) => {
   let query = client.from("access_request").select(
     `
         id,
+        dataroom_id,
         user_id,
         status,
         requested_at
@@ -55,7 +59,7 @@ export const getAccessRequests = (client: SupabaseClient, filters: { dataroomId?
   );
 
   if (filters.dataroomId !== undefined) {
-    query = query.eq("data_room_id", filters.dataroomId);
+    query = query.eq("dataroom_id", filters.dataroomId);
   }
 
   if (filters.userId !== undefined) {

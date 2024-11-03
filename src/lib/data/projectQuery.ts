@@ -222,4 +222,27 @@ const getProjectByBusinessId = (client: SupabaseClient, businessIds: string[]) =
     .in("business_id", businessIds);
 };
 
-export { getProjectData, getProjectDataQuery, getTopProjects, searchProjectsQuery, getProjectByBusinessId };
+const getProjectByUserId = (client: SupabaseClient, userId: string) => {
+  return client
+    .from("project")
+    .select(
+      `
+      id,
+      project_name,
+      business_id:business!inner (
+        user_id
+      ),
+      dataroom_id
+    `
+    )
+    .eq("business.user_id", userId);
+};
+
+export {
+  getProjectData,
+  getProjectDataQuery,
+  getTopProjects,
+  searchProjectsQuery,
+  getProjectByBusinessId,
+  getProjectByUserId,
+};
