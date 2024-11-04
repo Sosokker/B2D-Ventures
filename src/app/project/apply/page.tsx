@@ -1,4 +1,5 @@
 "use client";
+
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import ProjectForm from "@/components/ProjectForm";
 import { projectFormSchema } from "@/types/schemas/application.schema";
@@ -29,8 +30,7 @@ export default function ApplyProject() {
       .insert([
         {
           user_id: userId,
-          pitch_deck_url:
-            pitchType === "string" ? recvData["projectPitchDeck"] : "",
+          pitch_deck_url: pitchType === "string" ? recvData["projectPitchDeck"] : "",
           target_investment: recvData["targetInvest"],
           deadline: recvData["deadline"],
           project_name: recvData["projectName"],
@@ -58,36 +58,21 @@ export default function ApplyProject() {
     const results = await Promise.all(tagPromises);
 
     // Collect errors
-    const errors = results
-      .filter((result) => result.error)
-      .map((result) => result.error);
+    const errors = results.filter((result) => result.error).map((result) => result.error);
 
     return { errors };
   };
 
-  const uploadPitchFile = async (
-    file: File,
-    userId: string,
-    projectId: string
-  ) => {
+  const uploadPitchFile = async (file: File, userId: string, projectId: string) => {
     if (!file || !userId) {
       console.error("Pitch file or user ID is undefined.");
       return false;
     }
 
-    return await uploadFile(
-      file,
-      BUCKET_PITCH_APPLICATION_NAME,
-      `${userId}/${projectId}/pitches/${file.name}`
-    );
+    return await uploadFile(file, BUCKET_PITCH_APPLICATION_NAME, `${userId}/${projectId}/pitches/${file.name}`);
   };
 
-  const uploadLogoAndPhotos = async (
-    logoFile: File,
-    photos: File[],
-    userId: string,
-    projectId: string
-  ) => {
+  const uploadLogoAndPhotos = async (logoFile: File, photos: File[], userId: string, projectId: string) => {
     const uploadResults: { logo?: any; photos: any[] } = { photos: [] };
 
     // upload logo
@@ -108,11 +93,7 @@ export default function ApplyProject() {
 
     // upload each photo
     const uploadPhotoPromises = photos.map((image) =>
-      uploadFile(
-        image,
-        BUCKET_PITCH_APPLICATION_NAME,
-        `${userId}/${projectId}/photos/${image.name}`
-      )
+      uploadFile(image, BUCKET_PITCH_APPLICATION_NAME, `${userId}/${projectId}/photos/${image.name}`)
     );
 
     const photoResults = await Promise.all(uploadPhotoPromises);
@@ -132,8 +113,7 @@ export default function ApplyProject() {
     Swal.fire({
       icon: error == null ? "success" : "error",
       title: error == null ? "Success" : `Error: ${error.code}`,
-      text:
-        error == null ? "Your application has been submitted" : error.message,
+      text: error == null ? "Your application has been submitted" : error.message,
       confirmButtonColor: error == null ? "green" : "red",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -168,11 +148,7 @@ export default function ApplyProject() {
 
     //  upload pitch file if it’s a file
     if (typeof recvData["projectPitchDeck"] === "object") {
-      const uploadPitchSuccess = await uploadPitchFile(
-        recvData["projectPitchDeck"],
-        user.id,
-        projectId
-      );
+      const uploadPitchSuccess = await uploadPitchFile(recvData["projectPitchDeck"], user.id, projectId);
 
       if (!uploadPitchSuccess) {
         console.error("Error uploading pitch file.");
@@ -196,21 +172,11 @@ export default function ApplyProject() {
     // console.log("Logo Path:", logo.data.path);
     // console.table(photos);
 
-    const logoURL = await getPrivateURL(
-      logo.data.path,
-      BUCKET_PITCH_APPLICATION_NAME
-    );
+    const logoURL = await getPrivateURL(logo.data.path, BUCKET_PITCH_APPLICATION_NAME);
     let photoURLsArray: string[] = [];
     const photoURLPromises = photos.map(
-      async (item: {
-        success: boolean;
-        errors: typeof errors;
-        data: { path: string };
-      }) => {
-        const photoURL = await getPrivateURL(
-          item.data.path,
-          BUCKET_PITCH_APPLICATION_NAME
-        );
+      async (item: { success: boolean; errors: typeof errors; data: { path: string } }) => {
+        const photoURL = await getPrivateURL(item.data.path, BUCKET_PITCH_APPLICATION_NAME);
         if (photoURL?.signedUrl) {
           photoURLsArray.push(photoURL.signedUrl);
         } else {
@@ -233,11 +199,7 @@ export default function ApplyProject() {
     setIsSuccess(true);
     displayAlert(error);
   };
-  const updateImageURL = async (
-    url: string | string[],
-    columnName: string,
-    projectId: number
-  ) => {
+  const updateImageURL = async (url: string | string[], columnName: string, projectId: number) => {
     const { error } = await supabase
       .from("project_application")
       .update({ [columnName]: url })
@@ -250,9 +212,7 @@ export default function ApplyProject() {
     }
   };
   const getPrivateURL = async (path: string, bucketName: string) => {
-    const { data } = await supabase.storage
-      .from(bucketName)
-      .createSignedUrl(path, 9999999999999999999999999999);
+    const { data } = await supabase.storage.from(bucketName).createSignedUrl(path, 9999999999999999999999999999);
     // console.table(data);
     return data;
   };
@@ -265,12 +225,10 @@ export default function ApplyProject() {
         </h1>
         <div className="mt-5 justify-self-center">
           <p className="text-sm md:text-base text-neutral-500">
-            Begin Your First Fundraising Project. Starting a fundraising project
-            is mandatory for all businesses.
+            Begin Your First Fundraising Project. Starting a fundraising project is mandatory for all businesses.
           </p>
           <p className="text-sm md:text-base text-neutral-500">
-            This step is crucial to begin your journey and unlock the necessary
-            tools for raising funds.
+            This step is crucial to begin your journey and unlock the necessary tools for raising funds.
           </p>
         </div>
       </div>

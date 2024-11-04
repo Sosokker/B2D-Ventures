@@ -27,7 +27,8 @@ export function ProjectCard(props: ProjectCardProps) {
       className={cn(
         "flex flex-col group border-[1px] border-border relative hover:shadow-md rounded-xl h-[450px] ",
         props.className
-      )}>
+      )}
+    >
       <div className="flex flex-col h-full">
         {/* Image */}
         <div className="relative h-3/4 w-full">
@@ -69,11 +70,15 @@ export function ProjectCard(props: ProjectCardProps) {
                 <span className="text-xs">{props.location}</span>
               </div>
               <div className="flex flex-wrap mt-1 items-center text-muted-foreground">
-                {props.tags.map((tag) => (
-                  <span id="tag" key={tag} className="text-[10px] rounded-md bg-slate-200 dark:bg-slate-700 p-1 mr-1">
-                    {tag}
-                  </span>
-                ))}
+                {props.tags && Array.isArray(props.tags) ? (
+                  props.tags.map((tag) => (
+                    <span id="tag" key={tag} className="text-[10px] rounded-md bg-slate-200 dark:bg-slate-700 p-1 mr-1">
+                      {tag}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-muted-foreground">No tags available</span>
+                )}
               </div>
             </div>
           </div>

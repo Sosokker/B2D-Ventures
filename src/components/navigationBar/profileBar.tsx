@@ -7,7 +7,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -16,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Bell, Heart, Wallet } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logoutButton";
 import useSession from "@/lib/supabase/useSession";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const UnAuthenticatedComponents = () => {
   return (
@@ -35,8 +35,13 @@ const UnAuthenticatedComponents = () => {
 const AuthenticatedComponents = ({ uid }: { uid: string }) => {
   let notifications = 1;
   const displayValue = notifications >= 100 ? "..." : notifications;
+  const { data } = useUserRole();
+
+  const businessClass =
+    data?.role === "business" ? "border-2 border-[#FFD700] bg-[#FFF8DC] dark:bg-[#4B3E2B] rounded-md p-1" : "";
+
   return (
-    <div className="flex gap-3 pl-2 items-center">
+    <div className={`flex gap-3 pl-2 items-center ${businessClass}`}>
       <Link href={"/notification"}>
         <div className="relative inline-block">
           <Bell className="h-6 w-6 " />
@@ -69,6 +74,11 @@ const AuthenticatedComponents = ({ uid }: { uid: string }) => {
           <DropdownMenuSeparator />
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
+          {data != null && data != undefined && data.role === "admin" && (
+            <DropdownMenuItem>
+              <Link href="/admin">Admin</Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <LogoutButton />

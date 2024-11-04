@@ -5,51 +5,49 @@ import ReactMarkdown from "react-markdown";
 
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import FollowShareButtons from "./followShareButton";
 
 import { getProjectData } from "@/lib/data/projectQuery";
+import { getDealList } from "@/app/api/dealApi";
+import { sumByKey, toPercentage } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
-export default async function ProjectDealPage({
-  params,
-}: {
-  params: { id: number };
-}) {
+export default async function ProjectDealPage({ params }: { params: { id: number } }) {
   const supabase = createSupabaseClient();
 
-  const { data: projectData, error: projectDataError } = await getProjectData(
-    supabase,
-    params.id
-  );
+  const { data: projectData, error: projectDataError } = await getProjectData(supabase, params.id);
 
-  const carouselData = [
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-  ];
+  if (!projectData) {
+    redirect("/deals");
+  }
 
   if (projectDataError) {
-    console.error(projectDataError);
-    return <div>Error while fetching project data</div>;
+    return (
+      <div className="container max-w-screen-xl my-5">
+        <p className="text-red-600">Error fetching data. Please try again.</p>
+        <Button className="mt-4" onClick={() => window.location.reload()}>
+          Refresh
+        </Button>
+      </div>
+    );
   }
+
+  const projectBusinessOwnerId = projectData.user_id;
+  const dealList = await getDealList(projectBusinessOwnerId);
+  const totalDealAmount = sumByKey(dealList, "deal_amount");
+  // timeDiff, if negative convert to zero
+  const timeDiff = Math.max(new Date(projectData.investment_deadline).getTime() - new Date().getTime(), 0);
+  const hourLeft = Math.floor(timeDiff / (1000 * 60 * 60));
+
+  const carouselData = Array(5).fill({
+    src: projectData.card_image_url || "/boiler1.jpg",
+    alt: `${projectData.project_name} Image`,
+  });
 
   return (
     <div className="container max-w-screen-xl my-5">
@@ -59,29 +57,16 @@ export default async function ProjectDealPage({
           <div id="header" className="flex flex-col">
             <div className="flex justify-between">
               <span className="flex">
-                <Image
-                  src="/logo.svg"
-                  alt="logo"
-                  width={50}
-                  height={50}
-                  className="sm:scale-75"
-                />
-                <h1 className="mt-3 font-bold  text-lg md:text-3xl">
-                  {projectData?.project_name}
-                </h1>
+                <Image src="/logo.svg" alt="logo" width={50} height={50} className="sm:scale-75" />
+                <h1 className="mt-3 font-bold  text-lg md:text-3xl">{projectData?.project_name}</h1>
               </span>
               <FollowShareButtons />
             </div>
             {/* end of pack */}
-            <p className="mt-2 sm:text-sm">
-              {projectData?.project_short_description}
-            </p>
+            <p className="mt-2 sm:text-sm">{projectData?.project_short_description}</p>
             <div className="flex flex-wrap mt-3">
               {projectData?.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1"
-                >
+                <span key={index} className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1 mx-1 mb-1">
                   {tag.tag_name}
                 </span>
               ))}
@@ -89,21 +74,12 @@ export default async function ProjectDealPage({
           </div>
           <div id="sub-content" className="flex flex-row mt-5">
             {/* image carousel */}
-            <div
-              id="image-corousel"
-              className="shrink-0 w-[700px] flex flex-col"
-            >
+            <div id="image-corousel" className="shrink-0 w-[700px] flex flex-col">
               <Carousel className="w-full h-full ml-1">
                 <CarouselContent className="flex h-full">
                   {carouselData.map((item, index) => (
                     <CarouselItem key={index}>
-                      <Image
-                        src={item.src}
-                        alt={item.alt}
-                        width={700}
-                        height={400}
-                        className="rounded-lg"
-                      />
+                      <Image src={item.src} alt={item.alt} width={700} height={400} className="rounded-lg" />
                     </CarouselItem>
                   ))}
                 </CarouselContent>
@@ -115,13 +91,7 @@ export default async function ProjectDealPage({
                 <CarouselContent className="flex space-x-1">
                   {carouselData.map((item, index) => (
                     <CarouselItem key={index} className="flex">
-                      <Image
-                        src={item.src}
-                        alt={item.alt}
-                        width={200}
-                        height={100}
-                        className="rounded-lg basis-0"
-                      />
+                      <Image src={item.src} alt={item.alt} width={200} height={100} className="rounded-lg basis-0" />
                     </CarouselItem>
                   ))}
                 </CarouselContent>
@@ -130,39 +100,36 @@ export default async function ProjectDealPage({
             <div id="stats" className="flex flex-col w-full mt-4 pl-12">
               <div className="pl-5">
                 <span>
-                  <h1 className="font-semibold text-xl md:text-4xl mt-8">
-                    ${projectData?.total_investment}
-                  </h1>
+                  <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
                   <p className="text-sm md:text-lg">
-                    {" "}
-                    5% raised of $5M max goal
+                    {toPercentage(totalDealAmount, projectData?.target_investment)}% raised of $
+                    {projectData?.target_investment} max goal
                   </p>
                   <Progress
-                    value={
-                      projectData?.total_investment /
-                      projectData?.target_investment
-                    }
+                    value={toPercentage(totalDealAmount, projectData?.target_investment)}
                     className="w-[60%] h-3 mt-3"
                   />
                 </span>
                 <span>
                   <h1 className="font-semibold text-4xl md:mt-8">
-                    <p className="text-xl md:text-4xl">
-                      {projectData?.total_investment}
-                    </p>
+                    <p className="text-xl md:text-4xl">{dealList.length}</p>
                   </h1>
-                  <p className="text-sm md:text-lg"> Investors</p>
+                  <p className="text-sm md:text-lg">Investors</p>
                 </span>
                 <Separator decorative className="mt-3 w-3/4 ml-5" />
                 <span>
                   <h1 className="font-semibold text-xl md:text-4xl mt-8 ml-5"></h1>
-                  <p className="text-xl md:text-4xl">1 hours</p>
-                  <p> Left to invest</p>
+                  {projectData?.investment_deadline ? (
+                    <>
+                      <p className="text-xl md:text-4xl">{Math.floor(hourLeft)} hours</p>
+                      <p>Left to invest</p>
+                    </>
+                  ) : (
+                    <p className="text-xl md:text-4xl">No deadline</p>
+                  )}
                 </span>
                 <Button className="mt-5 w-3/4 h-12">
-                  <Link href={`/invest/${params.id}`}>
-                    Invest in {projectData?.project_name}
-                  </Link>
+                  <Link href={`/invest/${params.id}`}>Invest in {projectData?.project_name}</Link>
                 </Button>
               </div>
             </div>
@@ -181,14 +148,13 @@ export default async function ProjectDealPage({
               <Tabs.Content value="pitch">
                 <Card>
                   <CardHeader>
-                    <CardTitle></CardTitle>
-                    <CardDescription></CardDescription>
+                    <CardTitle>{projectData.project_name}</CardTitle>
+                    <CardDescription />
                   </CardHeader>
                   <CardContent>
                     <div className="prose prose-sm max-w-none">
                       <ReactMarkdown className="text-black dark:text-white">
-                        {projectData?.project_description ||
-                          "No pitch available."}
+                        {projectData?.project_description || "No pitch available."}
                       </ReactMarkdown>
                     </div>
                   </CardContent>

@@ -20,4 +20,8 @@ async function getUserProfile(client: SupabaseClient, userId: string) {
   }
 }
 
-export { getUserProfile };
+function getUserRole(client: SupabaseClient, userId: string) {
+  return client.from("user_role").select("role").eq("user_id", userId).single();
+}
+
+export { getUserProfile, getUserRole };
