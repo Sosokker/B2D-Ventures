@@ -1,8 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+export type RecentDealData = {
+  created_time: Date;
+  deal_amount: number;
+  investor_id: string;
+  username: string;
+  avatar_url?: string;
+  // email: string;
+};
+
 interface RecentFundsProps {
   data?: { name?: string; amount?: number; avatar?: string; date?: Date }[];
 }
+
 export function RecentFunds(props: RecentFundsProps) {
   return (
     <div className="space-y-8">

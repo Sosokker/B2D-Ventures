@@ -6,18 +6,73 @@ import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
 import { useState } from "react";
 
-import { useDealList, useGraphData, useRecentDealData } from "./hook";
-import { sumByKey } from "@/lib/utils";
+import { useDealList } from "./hook";
+
+const data = [
+  {
+    name: "Jan",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Feb",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Mar",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Apr",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "May",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Jun",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Jul",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Aug",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Sep",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Oct",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Nov",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Dec",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+];
 
 export default function Dashboard() {
   const [graphType, setGraphType] = useState("line");
-  const graphData = useGraphData();
   const dealList = useDealList();
-  // #TODO dependency injection refactor + define default value inside function (and not here)
-  const recentDealData = useRecentDealData() || [];
+  const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
 
   return (
     <>
+      {dealList?.map((deal, index) => (
+        <div key={index} className="deal-item">
+          <p>Deal Amount: {deal.deal_amount}</p>
+          <p>Created Time: {new Date(deal.created_time).toUTCString()}</p>
+          <p>Investor ID: {deal.investor_id}</p>
+        </div>
+      ))}
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
@@ -63,7 +118,7 @@ export default function Dashboard() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">${sumByKey(dealList, "deal_amount")}</div>
+                    <div className="text-2xl font-bold">${totalDealAmount}</div>
                     {/* <p className="text-xs text-muted-foreground">
                       +20.1% from last month
                     </p> */}
@@ -150,7 +205,7 @@ export default function Dashboard() {
                     <CardTitle>Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview graphType={graphType} graphData={graphData} />
+                    <Overview graphType={graphType} data={data} />
                     {/* tab to switch between line and bar graph */}
                     <Tabs defaultValue="line" className="space-y-4 ml-[50%] mt-2">
                       <TabsList>
@@ -170,7 +225,7 @@ export default function Dashboard() {
                     <CardDescription>You made {dealList?.length || 0} sales this month.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentFunds recentDealData={recentDealData}></RecentFunds>
+                    <RecentFunds></RecentFunds>
                   </CardContent>
                 </Card>
               </div>

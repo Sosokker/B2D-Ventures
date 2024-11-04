@@ -10,7 +10,7 @@ export function useDealList() {
   const fetchDealList = async () => {
     // set the state to the deal list of current business user
     setDealList(await getDealList(await getCurrentUserID()));
-  }
+  };
 
   useEffect(() => {
     fetchDealList();
@@ -28,7 +28,7 @@ export function useGraphData() {
     if (dealList) {
       setGraphData(convertToGraphData(dealList));
     }
-  }
+  };
 
   useEffect(() => {
     fetchGraphData();
@@ -43,7 +43,7 @@ export function useRecentDealData() {
   const fetchRecentDealData = async () => {
     // set the state to the deal list of current business user
     setRecentDealData(await getRecentDealData(await getCurrentUserID()));
-  }
+  };
 
   useEffect(() => {
     fetchRecentDealData();

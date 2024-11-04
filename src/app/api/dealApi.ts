@@ -5,7 +5,6 @@ export type Deal = {
   created_time: Date;
   investor_id: string;
 };
-const supabase = createSupabaseClient();
 
 export async function getDealList(userId: string | undefined) {
   if (!userId) {

@@ -115,16 +115,6 @@ function overAllGraphData(deals: Deal[]): GraphData[] {
   return acc;
 }
 
-interface Deal {
-  created_time: string | number | Date;
-  deal_amount: any;
-}
-
-interface GraphData {
-  name: string;
-  value: number;
-}
-
 function fourYearGraphData(deals: Deal[]): GraphData[] {
   const currentYear = new Date().getFullYear();
   const acc: GraphData[] = Array.from({ length: 4 }, (_, i) => ({
