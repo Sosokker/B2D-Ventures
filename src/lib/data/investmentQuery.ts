@@ -29,3 +29,11 @@ export const getInvestmentByUserId = (client: SupabaseClient, userId: string) =>
     )
     .eq("investor_id", userId);
 };
+
+export function getInvestorDeal(client: SupabaseClient, userId: string) {
+  return client
+    .from("investment_deal")
+    .select("*")
+    .in("investor_id", [userId])
+    .order("created_time", { ascending: true });
+}

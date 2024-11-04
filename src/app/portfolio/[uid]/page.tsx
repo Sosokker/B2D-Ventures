@@ -1,6 +1,6 @@
 import { Overview } from "@/components/ui/overview";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
-import { getInvestorDeal } from "@/lib/data/query";
+import { getInvestorDeal } from "@/lib/data/investmentQuery";
 import PieChart from "@/components/pieChart";
 import {
   overAllGraphData,
@@ -16,12 +16,7 @@ import {
 } from "./hook";
 import CountUpComponent from "@/components/countUp";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { RecentFunds } from "@/components/recent-funds";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import QuestionMarkIcon from "@/components/icon/questionMark";
@@ -29,11 +24,7 @@ import { NoDataAlert } from "@/components/alert/noData/alert";
 import { error } from "console";
 import { UnAuthorizedAlert } from "@/components/alert/unauthorized/alert";
 
-export default async function Portfolio({
-  params,
-}: {
-  params: { uid: string };
-}) {
+export default async function Portfolio({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
   //  if user hasn't invest in anything
   const hasInvestments = await checkForInvest(supabase, params.uid);
@@ -44,15 +35,11 @@ export default async function Portfolio({
       </div>
     );
   }
-  const { data: deals, error: investorDealError } = await getInvestorDeal(
-    supabase,
-    params.uid
-  );
+  const { data: deals, error: investorDealError } = await getInvestorDeal(supabase, params.uid);
   if (investorDealError) {
     console.error(investorDealError);
   }
-  const { data: localUser, error: localUserError } =
-    await supabase.auth.getUser();
+  const { data: localUser, error: localUserError } = await supabase.auth.getUser();
   if (localUserError) {
     console.error("Error while fetching user" + error);
   }
@@ -76,15 +63,9 @@ export default async function Portfolio({
   const tagCount = countTags(tags);
   // console.log(investedBusinessIds);
   const businessType = deals
-    ? await Promise.all(
-        deals.map(
-          async (item) => await getBusinessTypeName(supabase, item.project_id)
-        )
-      )
+    ? await Promise.all(deals.map(async (item) => await getBusinessTypeName(supabase, item.project_id)))
     : [];
-  const countedBusinessType = countValues(
-    businessType.filter((item) => item !== null)
-  );
+  const countedBusinessType = countValues(businessType.filter((item) => item !== null));
   // console.log(countedBusinessType);
 
   // console.log(tagCount);
@@ -103,9 +84,7 @@ export default async function Portfolio({
       </div> */}
       {/* <CountUpComponent end={100} duration={3} /> */}
       <div className="text-center py-4">
-        <h1 className="text-2xl font-semibold">
-          Welcome to your Portfolio, {username}!
-        </h1>
+        <h1 className="text-2xl font-semibold">Welcome to your Portfolio, {username}!</h1>
         <p className="text-lg text-muted-foreground">
           Here&lsquo;s an overview of your investment journey and progress.
         </p>
@@ -125,9 +104,7 @@ export default async function Portfolio({
           <TabsContent value="monthly">
             <Card className="w-full">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-md font-bold">
-                  Monthly Investment Trend
-                </CardTitle>
+                <CardTitle className="text-md font-bold">Monthly Investment Trend</CardTitle>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -135,8 +112,7 @@ export default async function Portfolio({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        Displays total investments each month over the past 12{" "}
-                        <br />
+                        Displays total investments each month over the past 12 <br />
                         months, up to today.
                       </p>
                     </TooltipContent>
@@ -144,20 +120,14 @@ export default async function Portfolio({
                 </TooltipProvider>
               </CardHeader>
               <CardContent className="mt-5">
-                <Overview
-                  graphType="line"
-                  data={overAllData}
-                  graphHeight={500}
-                ></Overview>
+                <Overview graphType="line" data={overAllData} graphHeight={500}></Overview>
               </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="yearly">
             <Card className="w-full">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-md font-bold">
-                  Yearly Investment Summary
-                </CardTitle>
+                <CardTitle className="text-md font-bold">Yearly Investment Summary</CardTitle>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -165,8 +135,7 @@ export default async function Portfolio({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        Shows total investments for each of the last four years,{" "}
-                        <br />
+                        Shows total investments for each of the last four years, <br />
                         including the current year to date.
                       </p>
                     </TooltipContent>
@@ -174,20 +143,14 @@ export default async function Portfolio({
                 </TooltipProvider>
               </CardHeader>
               <CardContent className="mt-5">
-                <Overview
-                  graphType="bar"
-                  data={fourYearData}
-                  graphHeight={500}
-                ></Overview>
+                <Overview graphType="bar" data={fourYearData} graphHeight={500}></Overview>
               </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="daily">
             <Card className="w-full">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-md font-bold">
-                  Daily Investment Breakdown
-                </CardTitle>
+                <CardTitle className="text-md font-bold">Daily Investment Breakdown</CardTitle>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -195,8 +158,7 @@ export default async function Portfolio({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        Illustrates total investments for each day over the past{" "}
-                        <br />
+                        Illustrates total investments for each day over the past <br />
                         year, up to today.
                       </p>
                     </TooltipContent>
@@ -204,11 +166,7 @@ export default async function Portfolio({
                 </TooltipProvider>
               </CardHeader>
               <CardContent className="mt-5">
-                <Overview
-                  graphType="bar"
-                  data={dayOfWeekData}
-                  graphHeight={500}
-                ></Overview>
+                <Overview graphType="bar" data={dayOfWeekData} graphHeight={500}></Overview>
               </CardContent>
             </Card>
           </TabsContent>
@@ -217,9 +175,7 @@ export default async function Portfolio({
       <div className="flex flex-cols-3 w-full gap-5 mt-5">
         <Card className="w-1/3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-md font-bold">
-              Categories of Invested Projects
-            </CardTitle>
+            <CardTitle className="text-md font-bold">Categories of Invested Projects</CardTitle>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -236,21 +192,15 @@ export default async function Portfolio({
           </CardHeader>
           <CardContent className="mt-5">
             <PieChart
-              data={tagCount.map(
-                (item: { name: string; count: number }) => item.count
-              )}
-              labels={tagCount.map(
-                (item: { name: string; count: number }) => item.name
-              )}
+              data={tagCount.map((item: { name: string; count: number }) => item.count)}
+              labels={tagCount.map((item: { name: string; count: number }) => item.name)}
               header="Total"
             />
           </CardContent>
         </Card>
         <Card className="w-1/3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-md font-bold">
-              Types of Businesses Invested In
-            </CardTitle>
+            <CardTitle className="text-md font-bold">Types of Businesses Invested In</CardTitle>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -258,8 +208,7 @@ export default async function Portfolio({
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>
-                    Shows the breakdown of business types in your portfolio,{" "}
-                    <br />
+                    Shows the breakdown of business types in your portfolio, <br />
                     illustrating sector diversity.
                   </p>
                 </TooltipContent>
@@ -276,9 +225,7 @@ export default async function Portfolio({
         </Card>
         <Card className="w-1/3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-md font-bold">
-              Recent investment
-            </CardTitle>
+            <CardTitle className="text-md font-bold">Recent investment</CardTitle>
           </CardHeader>
           <CardContent className="mt-5">
             <RecentFunds data={latestDeals} />
