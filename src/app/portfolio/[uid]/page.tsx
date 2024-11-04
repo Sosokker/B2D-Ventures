@@ -107,7 +107,7 @@ export default async function Portfolio({
           Welcome to your Portfolio, {username}!
         </h1>
         <p className="text-lg text-muted-foreground">
-          Here's an overview of your investment journey and progress.
+          Here&lsquo;s an overview of your investment journey and progress.
         </p>
         <p className="text-xl font-medium text-green-400">
           Total Investment: $

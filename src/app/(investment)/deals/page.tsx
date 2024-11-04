@@ -13,7 +13,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const ProjectSection = ({ filteredProjects }) => {
+interface Project {
+  project_id: string;
+  project_name: string;
+  project_short_description: string;
+  published_time: string;
+  card_image_url: string;
+  business_location: string;
+  min_investment: number;
+  total_investment: number;
+  target_investment: number;
+  tags: { tag_name: string }[];
+}
+
+const ProjectSection = ({ filteredProjects }: { filteredProjects: Project[] }) => {
   interface Tags {
     tag_name: string;
   }
@@ -266,7 +279,7 @@ export default function Deals() {
         <Separator className="mt-10" />
 
         {/* Project Cards Section */}
-        <ProjectSection filteredProjects={projects} />
+        <ProjectSection filteredProjects={projects || []} />
       </div>
     </div>
   );
