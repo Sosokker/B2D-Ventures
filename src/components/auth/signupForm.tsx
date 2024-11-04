@@ -1,50 +1,65 @@
 "use client";
 
-import React from "react";
-import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { signup } from "./action";
+import { signupSchema } from "@/types/schemas/authentication.schema";
 
 export function SignupForm() {
   const router = useRouter();
-  const supabase = createSupabaseClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSignup = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+    const parsedData = signupSchema.safeParse({
+      email,
+      password,
+      confirmPassword,
+    });
+
+    if (!parsedData.success) {
+      setError(parsedData.error.errors[0].message);
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("confirmPassword", confirmPassword);
 
-    if (error) {
-      toast.error(error.message);
-    } else {
+    try {
+      await signup(formData);
       toast.success("Account created successfully!");
       router.push("/");
+    } catch (error: any) {
+      setError(error.message);
     }
   };
 
   return (
-    <div className="flex flex-col space-y-2">
-      <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+    <form onSubmit={handleSignup} className="flex flex-col space-y-2">
+      <Input
+        id="email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
+        required
+      />
       <Input
         id="password"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
+        required
       />
       <Input
         id="confirmPassword"
@@ -52,10 +67,12 @@ export function SignupForm() {
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         placeholder="Confirm Password"
+        required
       />
-      <Button id="signup" onClick={handleSignup}>
+      {error && <p className="text-red-600">{error}</p>}
+      <Button id="signup" type="submit">
         Sign Up
       </Button>
-    </div>
+    </form>
   );
 }
