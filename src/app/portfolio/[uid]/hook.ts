@@ -1,7 +1,7 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { getProjectTag, getTagName } from "@/lib/data/query";
+import { getProjectTag, getTagName } from "@/lib/data/tagQuery";
 
-function getTotalInvestment(deals: { deal_amount : number}[]) {
+function getTotalInvestment(deals: { deal_amount: number }[]) {
   let total = 0;
   for (let index = 0; index < deals.length; index++) {
     total += deals[index].deal_amount;
@@ -16,10 +16,7 @@ async function getLatestInvestment(
   const count = 8;
 
   for (let i = deals.length - 1; i >= 0 && llist.length < count; --i) {
-    let { data: project, error } = await supabase
-      .from("project")
-      .select("project_name")
-      .eq("id", deals[i].project_id);
+    let { data: project, error } = await supabase.from("project").select("project_name").eq("id", deals[i].project_id);
     if (error) {
       console.error(error);
     }
@@ -62,15 +59,9 @@ function countValues(arr: { value: string }[][]): Record<string, number> {
   return counts;
 }
 
-async function getBusinessTypeName(
-  supabase: SupabaseClient,
-  projectId: number
-) {
+async function getBusinessTypeName(supabase: SupabaseClient, projectId: number) {
   // step 1: get business id from project id
-  let { data: project, error: projectError } = await supabase
-    .from("project")
-    .select("business_id")
-    .eq("id", projectId);
+  let { data: project, error: projectError } = await supabase.from("project").select("business_id").eq("id", projectId);
   if (projectError) {
     console.error(projectError);
   }
@@ -107,20 +98,7 @@ interface GraphData {
 
 function overAllGraphData(deals: Deal[]): GraphData[] {
   // Initialize all months with value 0
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const acc: GraphData[] = months.map((month) => ({ name: month, value: 0 }));
 
   deals
@@ -137,7 +115,6 @@ function overAllGraphData(deals: Deal[]): GraphData[] {
   return acc;
 }
 
-
 interface Deal {
   created_time: string | number | Date;
   deal_amount: any;
@@ -153,7 +130,7 @@ function fourYearGraphData(deals: Deal[]): GraphData[] {
   const acc: GraphData[] = Array.from({ length: 4 }, (_, i) => ({
     name: (currentYear - i).toString(),
     value: 0,
-  })).reverse(); 
+  })).reverse();
   deals
     .filter((item: Deal) => new Date(item.created_time) >= yearAgo(3))
     .forEach((item: Deal) => {
@@ -167,7 +144,6 @@ function fourYearGraphData(deals: Deal[]): GraphData[] {
 
   return acc;
 }
-
 
 interface DayOfWeekData {
   name: string;
@@ -191,24 +167,16 @@ function dayOftheWeekData(deals: Deal[]): DayOfWeekData[] {
     });
   return dayOfWeekData;
 }
-async function getInvestorProjectTag(
-  supabase: SupabaseClient,
-  deals: number | { project_id: number }[]
-) {
+async function getInvestorProjectTag(supabase: SupabaseClient, deals: number | { project_id: number }[]) {
   // get unique project id from deals
   const uniqueProjectIds: number[] = Array.isArray(deals)
-    ? Array.from(
-        new Set(deals.map((deal: { project_id: number }) => deal.project_id))
-      )
+    ? Array.from(new Set(deals.map((deal: { project_id: number }) => deal.project_id)))
     : [];
 
   const tagIds = (
     await Promise.all(
       uniqueProjectIds.map(async (projectId: number) => {
-        const { data: tagIdsArray, error: tagError } = await getProjectTag(
-          supabase,
-          projectId
-        );
+        const { data: tagIdsArray, error: tagError } = await getProjectTag(supabase, projectId);
         if (tagError) {
           console.error(tagError);
           return [];
@@ -223,10 +191,7 @@ async function getInvestorProjectTag(
     tagIds
       .filter((tagId) => tagId !== null)
       .map(async (id: number) => {
-        const { data: tagName, error: nameError } = await getTagName(
-          supabase,
-          id
-        );
+        const { data: tagName, error: nameError } = await getTagName(supabase, id);
         if (nameError) {
           console.error(nameError);
           return null;

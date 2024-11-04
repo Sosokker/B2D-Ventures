@@ -2,22 +2,68 @@
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, LineChart, Line, Tooltip } from "recharts";
 
+// const data = [
+//   {
+//     name: "Jan",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Feb",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Mar",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Apr",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "May",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Jun",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Jul",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Aug",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Sep",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Oct",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Nov",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+//   {
+//     name: "Dec",
+//     total: Math.floor(Math.random() * 5000) + 1000,
+//   },
+// ];
+
 interface OverViewProps {
   graphType: string;
-  graphData: Record<string, number>; // Object with month-year as keys and sum as value
+  data: { name: string; value: number }[];
+  graphHeight?: number | string;
 }
 
 export function Overview(props: OverViewProps) {
-  // Transform the grouped data into the format for the chart
-  const chartData = Object.entries(props.graphData).map(([monthYear, totalArray]) => ({
-    name: monthYear,
-    total: totalArray, // Get the total amount for the month
-  }));
-
   return (
-    <ResponsiveContainer width="100%" height={350}>
+    <ResponsiveContainer width="100%" height={props.graphHeight || 350}>
       {props.graphType === "line" ? (
-        <LineChart data={chartData}>
+        <LineChart data={props.data}>
           <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
           <YAxis
             stroke="#888888"
@@ -26,10 +72,18 @@ export function Overview(props: OverViewProps) {
             axisLine={false}
             tickFormatter={(value) => `$${value}`}
           />
-          <Line dataKey="total" fill="currentColor" className="fill-primary" />
+          <Tooltip
+            formatter={(value) => `$${value}`}
+            contentStyle={{
+              backgroundColor: "#f5f5f5",
+              borderRadius: "5px",
+              color: "#000",
+            }}
+          />
+          <Line dataKey="value" fill="currentColor" className="fill-primary" />
         </LineChart>
       ) : (
-        <BarChart data={chartData}>
+        <BarChart data={props.data}>
           <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
           <YAxis
             stroke="#888888"
@@ -38,7 +92,15 @@ export function Overview(props: OverViewProps) {
             axisLine={false}
             tickFormatter={(value) => `$${value}`}
           />
-          <Bar dataKey="total" fill="currentColor" className="fill-primary" />
+          <Tooltip
+            formatter={(value) => `$${value}`}
+            contentStyle={{
+              backgroundColor: "#f5f5f5",
+              borderRadius: "5px",
+              color: "#000",
+            }}
+          />
+          <Bar dataKey="value" fill="currentColor" className="fill-primary" radius={[15, 15, 0, 0]} />
         </BarChart>
       )}
     </ResponsiveContainer>
