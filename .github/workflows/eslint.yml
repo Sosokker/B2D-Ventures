@@ -1,0 +1,44 @@
+name: Eslint CI
+
+on: pull_request
+
+jobs:
+  build:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Caching
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: Set environment variables
+        run: |
+          echo NEXT_PUBLIC_AUTH_GOOGLE_ID=${{ secrets.NEXT_PUBLIC_AUTH_GOOGLE_ID }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_AUTH_GOOGLE_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_GOOGLE_SECRET }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_DUMMY_EMAIL=${{ secrets.NEXT_PUBLIC_DUMMY_EMAIL }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_DUMMY_PASSWORD=${{ secrets.NEXT_PUBLIC_DUMMY_PASSWORD }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_STRIPE_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SUPABASE_URL_SOURCE=${{ secrets.NEXT_PUBLIC_SUPABASE_URL_SOURCE }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_TEST_URL=${{ secrets.NEXT_PUBLIC_TEST_URL }} >> $GITHUB_ENV
+          echo PROJECT_ID=${{ secrets.PROJECT_ID }} >> $GITHUB_ENV
+          echo STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run eslint
+        run: npm run lint

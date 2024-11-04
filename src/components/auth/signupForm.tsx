@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";

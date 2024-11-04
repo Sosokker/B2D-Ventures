@@ -1,11 +1,11 @@
 "use client";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Clock3Icon, UserIcon, UsersIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ProjectCard } from "@/components/projectCard";
-import { getAllTagsQuery, getALlFundedStatusQuery, getAllBusinessTypeQuery } from "@/lib/data/dropdownQuery";
+import { getALlFundedStatusQuery, getAllBusinessTypeQuery } from "@/lib/data/dropdownQuery";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { searchProjectsQuery, FilterParams, FilterProjectQueryParams } from "@/lib/data/projectQuery";
@@ -13,7 +13,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const ProjectSection = ({ filteredProjects }) => {
+interface Project {
+  project_id: string;
+  project_name: string;
+  published_time: string;
+  project_short_description: string;
+  card_image_url: string;
+  project_status: {
+    value: string;
+  };
+  min_investment: number;
+  total_investment: number;
+  target_investment: number;
+  investment_deadline: string;
+  tags: {
+    tag_name: string;
+  }[];
+  business_type: {
+    value: string;
+  };
+  business_location: string;
+}
+
+const ProjectSection = ({ filteredProjects }: { filteredProjects: Project[] }) => {
   interface Tags {
     tag_name: string;
   }
@@ -117,7 +139,7 @@ export default function Deals() {
   const [sortByTimeFilter, setSortByTimeFilter] = useState("all");
   const [businessTypeFilter, setBusinessTypeFilter] = useState("all");
   const [tagFilter, setTagFilter] = useState([]);
-  const [projectStatusFilter, setprojectStatusFilter] = useState("all");
+  const [projectStatusFilter, setProjectStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(4);
 
@@ -130,16 +152,15 @@ export default function Deals() {
   };
 
   const filterProjectQueryParams: FilterProjectQueryParams = {
-    searchTerm,
-    tagsFilter: tagFilter,
-    projectStatusFilter,
-    businessTypeFilter,
-    sortByTimeFilter,
+    searchTerm: "",
+    tagsFilter: [],
+    projectStatusFilter: "all",
+    businessTypeFilter: "all",
+    sortByTimeFilter: "all",
     page,
     pageSize,
   };
 
-  const { data: tags, isLoading: isLoadingTags, error: tagsLoadingError } = useQuery(getAllTagsQuery(supabase));
   const {
     data: projectStatus,
     isLoading: isLoadingFunded,
@@ -160,10 +181,19 @@ export default function Deals() {
   const clearAll = () => {
     setSearchTerm("");
     setTagFilter([]);
-    setprojectStatusFilter("all");
+    setProjectStatusFilter("all");
     setBusinessTypeFilter("all");
     setSortByTimeFilter("all");
   };
+
+  const handlePageSizeChange = (value: number) => {
+    setPageSize(value);
+    setPage(1);
+  };
+
+  useEffect(() => {
+    setSearchTerm(searchTermVisual);
+  }, [searchTermVisual]);
 
   return (
     <div className="container max-w-screen-xl mx-auto px-4">
@@ -175,8 +205,7 @@ export default function Deals() {
           All companies are <u>vetted & pass due diligence.</u>
         </p>
 
-        {/* {JSON.stringify(projects, null, 4)} */}
-
+        {/* Search Input and Filters */}
         <div className="flex mt-10 gap-3">
           <Input
             type="text"
@@ -205,7 +234,7 @@ export default function Deals() {
           </Select>
 
           {/* Business Type Filter */}
-          <Select onValueChange={(value) => setBusinessTypeFilter}>
+          <Select onValueChange={(value) => setBusinessTypeFilter(value)}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <UsersIcon className="ml-2" />
               <SelectValue placeholder="Business Type" />
@@ -234,7 +263,7 @@ export default function Deals() {
           </Select>
 
           {/* Project Status Filter */}
-          <Select onValueChange={(key) => setprojectStatusFilter(key)}>
+          <Select onValueChange={(key) => setProjectStatusFilter(key)}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <UserIcon className="ml-2" />
               <SelectValue placeholder="Project Status" />
@@ -262,11 +291,54 @@ export default function Deals() {
             </SelectContent>
           </Select>
         </div>
+
+        {/* Active Filters */}
         <ShowFilter filterParams={filterParams} clearAll={clearAll} />
         <Separator className="mt-10" />
 
         {/* Project Cards Section */}
-        <ProjectSection filteredProjects={projects} />
+        {isLoadingProjects ? (
+          <div>Loading...</div>
+        ) : projectsLoadingError ? (
+          <div>Error loading projects.</div>
+        ) : projects ? (
+          <ProjectSection filteredProjects={projects} />
+        ) : (
+          <div>No projects found!</div>
+        )}
+        {/* Pagination Controls */}
+        <div className="mt-6 flex items-center justify-between">
+          <Button
+            variant="outline"
+            onClick={() => setPage((prevPage) => Math.max(prevPage - 1, 1))}
+            disabled={page === 1}
+          >
+            Previous
+          </Button>
+
+          <div className="flex items-center gap-2">
+            <span>Page Size:</span>
+            <Select onValueChange={(value) => handlePageSizeChange(Number(value))}>
+              <SelectTrigger className="w-[100px]">
+                <SelectValue placeholder={`${pageSize}`} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="4">4</SelectItem>
+                <SelectItem value="8">8</SelectItem>
+                <SelectItem value="12">12</SelectItem>
+                <SelectItem value="16">16</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={() => setPage((prevPage) => prevPage + 1)}
+            disabled={projects! && projects.length < pageSize}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

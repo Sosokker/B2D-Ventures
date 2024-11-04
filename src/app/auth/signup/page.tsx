@@ -1,5 +1,3 @@
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { SignupButton } from "@/components/auth/signupButton";
@@ -9,7 +7,8 @@ export default function Signup() {
   return (
     <div
       className="bg-cover bg-center min-h-screen flex items-center justify-center"
-      style={{ backgroundImage: "url(/signup.png)" }}>
+      style={{ backgroundImage: "url(/signup.png)" }}
+    >
       <Card>
         <CardHeader className="items-center">
           <CardTitle className="text-2xl font-bold">Join Our Community</CardTitle>

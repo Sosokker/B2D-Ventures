@@ -13,23 +13,41 @@ import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import FollowShareButtons from "./followShareButton";
 
 import { getProjectData } from "@/lib/data/projectQuery";
+import { getDealList } from "@/app/api/dealApi";
+import { sumByKey, toPercentage } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 export default async function ProjectDealPage({ params }: { params: { id: number } }) {
   const supabase = createSupabaseClient();
 
   const { data: projectData, error: projectDataError } = await getProjectData(supabase, params.id);
 
-  const carouselData = [
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-    { src: "/boiler1.jpg", alt: "Boiler 1" },
-  ];
+  if (!projectData) {
+    redirect("/deals");
+  }
 
   if (projectDataError) {
-    return <div>Error</div>;
+    return (
+      <div className="container max-w-screen-xl my-5">
+        <p className="text-red-600">Error fetching data. Please try again.</p>
+        <Button className="mt-4" onClick={() => window.location.reload()}>
+          Refresh
+        </Button>
+      </div>
+    );
   }
+
+  const projectBusinessOwnerId = projectData.user_id;
+  const dealList = await getDealList(projectBusinessOwnerId);
+  const totalDealAmount = sumByKey(dealList, "deal_amount");
+  // timeDiff, if negative convert to zero
+  const timeDiff = Math.max(new Date(projectData.investment_deadline).getTime() - new Date().getTime(), 0);
+  const hourLeft = Math.floor(timeDiff / (1000 * 60 * 60));
+
+  const carouselData = Array(5).fill({
+    src: projectData.card_image_url || "/boiler1.jpg",
+    alt: `${projectData.project_name} Image`,
+  });
 
   return (
     <div className="container max-w-screen-xl my-5">
@@ -82,24 +100,33 @@ export default async function ProjectDealPage({ params }: { params: { id: number
             <div id="stats" className="flex flex-col w-full mt-4 pl-12">
               <div className="pl-5">
                 <span>
-                  <h1 className="font-semibold text-xl md:text-4xl mt-8">${projectData?.total_investment}</h1>
-                  <p className="text-sm md:text-lg"> 5% raised of \$5M max goal</p>
+                  <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
+                  <p className="text-sm md:text-lg">
+                    {toPercentage(totalDealAmount, projectData?.target_investment)}% raised of $
+                    {projectData?.target_investment} max goal
+                  </p>
                   <Progress
-                    value={projectData?.total_investment / projectData?.target_investment}
+                    value={toPercentage(totalDealAmount, projectData?.target_investment)}
                     className="w-[60%] h-3 mt-3"
                   />
                 </span>
                 <span>
                   <h1 className="font-semibold text-4xl md:mt-8">
-                    <p className="text-xl md:text-4xl">{projectData?.total_investment}</p>
+                    <p className="text-xl md:text-4xl">{dealList.length}</p>
                   </h1>
-                  <p className="text-sm md:text-lg"> Investors</p>
+                  <p className="text-sm md:text-lg">Investors</p>
                 </span>
                 <Separator decorative className="mt-3 w-3/4 ml-5" />
                 <span>
                   <h1 className="font-semibold text-xl md:text-4xl mt-8 ml-5"></h1>
-                  <p className="text-xl md:text-4xl">1 hours</p>
-                  <p> Left to invest</p>
+                  {projectData?.investment_deadline ? (
+                    <>
+                      <p className="text-xl md:text-4xl">{Math.floor(hourLeft)} hours</p>
+                      <p>Left to invest</p>
+                    </>
+                  ) : (
+                    <p className="text-xl md:text-4xl">No deadline</p>
+                  )}
                 </span>
                 <Button className="mt-5 w-3/4 h-12">
                   <Link href={`/invest/${params.id}`}>Invest in {projectData?.project_name}</Link>
@@ -121,8 +148,8 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <Tabs.Content value="pitch">
                 <Card>
                   <CardHeader>
-                    <CardTitle></CardTitle>
-                    <CardDescription></CardDescription>
+                    <CardTitle>{projectData.project_name}</CardTitle>
+                    <CardDescription />
                   </CardHeader>
                   <CardContent>
                     <div className="prose prose-sm max-w-none ">

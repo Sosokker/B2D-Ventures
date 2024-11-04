@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import { useStripe, useElements, CardNumberElement, CardCvcElement, CardExpiryElement } from "@stripe/react-stripe-js";
 import convertToSubcurrency from "@/lib/convertToSubcurrency";
 import {
   Dialog,
@@ -14,9 +14,9 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import useSession from "@/lib/supabase/useSession";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import toast from "react-hot-toast";
 
 const CheckoutPage = ({
   amount,
@@ -35,11 +35,8 @@ const CheckoutPage = ({
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false); // New success dialog state
   const isAcceptTerm = isAcceptTermAndService();
-  const router = useRouter();
-
-  const { session } = useSession();
-  const user = session?.user;
 
   useEffect(() => {
     fetch("/api/create-payment-intent", {
@@ -72,7 +69,7 @@ const CheckoutPage = ({
     await stripe
       .confirmCardPayment(clientSecret, {
         payment_method: {
-          card: elements.getElement(CardElement)!,
+          card: elements.getElement(CardNumberElement)!,
         },
       })
       .then(async (result) => {
@@ -90,12 +87,15 @@ const CheckoutPage = ({
             ]);
 
             if (error) {
+              toast.error("Unexpected error with server");
               console.error("Supabase Insert Error:", error.message);
             } else {
               console.log("Insert successful:", data);
-              router.push(`http://www.localhost:3000/payment-success?amount=${amount}`);
+              toast.success("Invest successfully");
+              setIsSuccessDialogOpen(true);
             }
           } catch (err) {
+            toast.error("Unexpected error with server");
             console.error("Unexpected error during Supabase insert:", err);
           }
         }
@@ -108,7 +108,8 @@ const CheckoutPage = ({
       <div className="flex items-center justify-center">
         <div
           className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white"
-          role="status">
+          role="status"
+        >
           <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
             Loading...
           </span>
@@ -119,7 +120,70 @@ const CheckoutPage = ({
 
   return (
     <div>
-      {clientSecret && <CardElement />}
+      {clientSecret && (
+        <div className="space-y-4 bg-gray-50 p-6 rounded-lg shadow-md">
+          <div>
+            <label className="text-gray-700 text-sm font-medium" htmlFor="cardNumber">
+              Card Number
+            </label>
+            <CardNumberElement
+              id="cardNumber"
+              className="block w-full p-3 mt-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#32325d",
+                    "::placeholder": { color: "#a0aec0" },
+                  },
+                  invalid: { color: "#e53e3e" },
+                },
+              }}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-gray-700 text-sm font-medium" htmlFor="cardExpiry">
+                Expiration Date
+              </label>
+              <CardExpiryElement
+                id="cardExpiry"
+                className="block w-full p-3 mt-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                options={{
+                  style: {
+                    base: {
+                      fontSize: "16px",
+                      color: "#32325d",
+                      "::placeholder": { color: "#a0aec0" },
+                    },
+                    invalid: { color: "#e53e3e" },
+                  },
+                }}
+              />
+            </div>
+            <div>
+              <label className="text-gray-700 text-sm font-medium" htmlFor="cardCvc">
+                CVC
+              </label>
+              <CardCvcElement
+                id="cardCvc"
+                className="block w-full p-3 mt-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                options={{
+                  style: {
+                    base: {
+                      fontSize: "16px",
+                      color: "#32325d",
+                      "::placeholder": { color: "#a0aec0" },
+                    },
+                    invalid: { color: "#e53e3e" },
+                  },
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {errorMessage && <div>{errorMessage}</div>}
 
@@ -130,7 +194,8 @@ const CheckoutPage = ({
             type="button"
             onClick={() => setIsDialogOpen(true)}
             disabled={!stripe || loading}
-            className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse">
+            className="text-white w-full p-5 bg-black mt-2 rounded-md font-bold disabled:opacity-50 disabled:animate-pulse"
+          >
             {!loading ? `Pay $${amount}` : "Processing..."}
           </button>
         </DialogTrigger>
@@ -152,6 +217,23 @@ const CheckoutPage = ({
             </DialogClose>
           </DialogFooter>
           {errorMessage && <p className="text-red-500 mt-2 text-lg font-bold">{errorMessage}</p>}
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Dialog */}
+      <Dialog open={isSuccessDialogOpen} onOpenChange={setIsSuccessDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Thank you!</DialogTitle>
+            <DialogDescription>You successfully sent ${amount}.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button">
+                <Link href="/">Return to Main Page</Link>
+              </Button>
+            </DialogClose>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

@@ -1,3 +1,6 @@
+[![Build CI](https://github.com/Sosokker/B2D-Ventures/actions/workflows/build.yml/badge.svg)](https://github.com/Sosokker/B2D-Ventures/actions/workflows/build.yml)
+[![Eslint CI](https://github.com/Sosokker/B2D-Ventures/actions/workflows/eslint.yml/badge.svg)](https://github.com/Sosokker/B2D-Ventures/actions/workflows/eslint.yml)
+[![Playwright Tests](https://github.com/Sosokker/B2D-Ventures/actions/workflows/playwright.yml/badge.svg)](https://github.com/Sosokker/B2D-Ventures/actions/workflows/playwright.yml)
 # B2D-Ventures
 
 ## About

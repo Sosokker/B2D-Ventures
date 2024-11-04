@@ -49,7 +49,7 @@ export default function ApplyBusiness() {
       }
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("business_application")
       .insert([
         {
@@ -60,20 +60,18 @@ export default function ApplyBusiness() {
           is_for_sale: recvData["isForSale"],
           is_generating_revenue: recvData["isGenerating"],
           is_in_us: recvData["isInUS"],
-          pitch_deck_url:
-            pitchType === "string" ? recvData["businessPitchDeck"] : "",
+          pitch_deck_url: pitchType === "string" ? recvData["businessPitchDeck"] : "",
           money_raised_to_date: recvData["totalRaised"],
           community_size: recvData["communitySize"],
         },
       ])
       .select();
     setSucess(true);
-    // console.table(data);
+
     Swal.fire({
       icon: error == null ? "success" : "error",
       title: error == null ? "success" : "Error: " + error.code,
-      text:
-        error == null ? "Your application has been submitted" : error.message,
+      text: error == null ? "Your application has been submitted" : error.message,
       confirmButtonColor: error == null ? "green" : "red",
     }).then((result) => {
       if (result.isConfirmed && applyProject) {
@@ -85,10 +83,7 @@ export default function ApplyBusiness() {
   };
 
   const hasUserApplied = async (userID: string) => {
-    let { data: business, error } = await supabase
-      .from("business")
-      .select("*")
-      .eq("user_id", userID);
+    let { data: business, error } = await supabase.from("business").select("*").eq("user_id", userID);
     console.table(business);
     if (error) {
       console.error(error);
@@ -100,24 +95,21 @@ export default function ApplyBusiness() {
   };
   const transformChoice = (data: any) => {
     // convert any yes and no to true or false
-    const transformedData = Object.entries(data).reduce(
-      (acc: Record<any, any>, [key, value]) => {
-        if (typeof value === "string") {
-          const lowerValue = value.toLowerCase();
-          if (lowerValue === "yes") {
-            acc[key] = true;
-          } else if (lowerValue === "no") {
-            acc[key] = false;
-          } else {
-            acc[key] = value; // keep other string values unchanged
-          }
+    const transformedData = Object.entries(data).reduce((acc: Record<any, any>, [key, value]) => {
+      if (typeof value === "string") {
+        const lowerValue = value.toLowerCase();
+        if (lowerValue === "yes") {
+          acc[key] = true;
+        } else if (lowerValue === "no") {
+          acc[key] = false;
         } else {
-          acc[key] = value; // keep other types unchanged
+          acc[key] = value; // keep other string values unchanged
         }
-        return acc;
-      },
-      {}
-    );
+      } else {
+        acc[key] = value; // keep other types unchanged
+      }
+      return acc;
+    }, {});
     return transformedData;
   };
   useEffect(() => {
@@ -164,22 +156,16 @@ export default function ApplyBusiness() {
         </h1>
         <div className="mt-5 justify-self-center">
           <p className="text-sm md:text-base text-neutral-500">
-            All information submitted in this application is for internal use
-            only and is treated with the utmost{" "}
+            All information submitted in this application is for internal use only and is treated with the utmost{" "}
           </p>
           <p className="text-sm md:text-base text-neutral-500">
-            confidentiality. Companies may apply to raise with B2DVentures more
-            than once.
+            confidentiality. Companies may apply to raise with B2DVentures more than once.
           </p>
         </div>
       </div>
       {/* form */}
       {/* <form action="" onSubmit={handleSubmit(handleSubmitForms)}> */}
-      <BusinessForm
-        onSubmit={onSubmit}
-        applyProject={applyProject}
-        setApplyProject={setApplyProject}
-      />
+      <BusinessForm onSubmit={onSubmit} applyProject={applyProject} setApplyProject={setApplyProject} />
     </div>
   );
 }

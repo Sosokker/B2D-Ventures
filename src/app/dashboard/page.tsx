@@ -12,22 +12,18 @@ import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
 import { useState } from "react";
 
-import { useDealList } from "./hook";
+import { useDealList, useGraphData, useRecentDealData } from "./hook";
+import { sumByKey } from "@/lib/utils";
 
 export default function Dashboard() {
   const [graphType, setGraphType] = useState("line");
+  const graphData = useGraphData();
   const dealList = useDealList();
-  const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
+  // #TODO dependency injection refactor + define default value inside function (and not here)
+  const recentDealData = useRecentDealData() || [];
 
   return (
     <>
-      {dealList?.map((deal, index) => (
-        <div key={index} className="deal-item">
-          <p>Deal Amount: {deal.deal_amount}</p>
-          <p>Created Time: {new Date(deal.created_time).toUTCString()}</p>
-          <p>Investor ID: {deal.investor_id}</p>
-        </div>
-      ))}
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
@@ -75,7 +71,7 @@ export default function Dashboard() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">${totalDealAmount}</div>
+                    <div className="text-2xl font-bold">${sumByKey(dealList, "deal_amount")}</div>
                     {/* <p className="text-xs text-muted-foreground">
                       +20.1% from last month
                     </p> */}
@@ -166,7 +162,7 @@ export default function Dashboard() {
                     <CardTitle>Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview graphType={graphType} />
+                    <Overview graphType={graphType} graphData={graphData} />
                     {/* tab to switch between line and bar graph */}
                     <Tabs
                       defaultValue="line"
@@ -197,7 +193,7 @@ export default function Dashboard() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentFunds>
+                    <RecentFunds recentDealData={recentDealData}>
                     </RecentFunds>
                   </CardContent>
                 </Card>
