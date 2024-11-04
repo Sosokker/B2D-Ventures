@@ -8,13 +8,14 @@ import { profileSchema } from "@/types/schemas/profile.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import { uploadAvatar } from "@/lib/data/bucket/uploadAvatar";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import useSession from "@/lib/supabase/useSession";
+import React, { useState } from "react";
+import { MdxEditor } from "@/components/MarkdownEditor";
 
 export default function EditProfilePage({ params }: { params: { uid: string } }) {
   const uid = params.uid;
@@ -26,6 +27,8 @@ export default function EditProfilePage({ params }: { params: { uid: string } })
     resolver: zodResolver(profileSchema),
   });
 
+  const [bioContent, setBioContent] = useState<string>("");
+
   if (isLoadingSession) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -35,7 +38,7 @@ export default function EditProfilePage({ params }: { params: { uid: string } })
   }
 
   const onProfileSubmit = async (updates: z.infer<typeof profileSchema>) => {
-    const { avatars, username, full_name, bio } = updates;
+    const { avatars, username, full_name } = updates;
 
     try {
       let avatarUrl = null;
@@ -50,7 +53,7 @@ export default function EditProfilePage({ params }: { params: { uid: string } })
       const result = await updateProfile(client, uid, {
         username,
         full_name,
-        bio,
+        bio: bioContent,
         ...(avatarUrl && { avatar_url: avatarUrl }),
       });
 
@@ -129,13 +132,13 @@ export default function EditProfilePage({ params }: { params: { uid: string } })
             <FormField
               control={profileForm.control}
               name="bio"
-              render={({ field }) => (
+              render={() => (
                 <FormItem>
                   <FormLabel>Bio</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Your bio here" {...field} />
+                    <MdxEditor content={bioContent} setContentInParent={setBioContent} />
                   </FormControl>
-                  <FormDescription>This is your public bio description.</FormDescription>
+                  <FormDescription>This is your public bio description in Markdown format.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
