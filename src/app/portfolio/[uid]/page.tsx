@@ -57,9 +57,17 @@ export default async function Portfolio({ params }: { params: { uid: string } })
   const fourYearData = deals ? fourYearGraphData(deals) : [];
   const dayOfWeekData = deals ? dayOftheWeekData(deals) : [];
   const tags = deals ? await getInvestorProjectTag(supabase, deals) : [];
-  const latestDeals = deals ? await getLatestInvestment(supabase, deals) : [];
+  const latestDeals = deals
+    ? await Promise.all(
+        (await getLatestInvestment(supabase, deals)).map(async (deal) => ({
+          ...deal,
+          logo_url: await deal.logo_url,
+        }))
+      )
+    : [];
   const totalInvestment = deals ? getTotalInvestment(deals) : 0;
   // console.log(latestDeals);
+
   const tagCount = countTags(tags);
   // console.log(investedBusinessIds);
   const businessType = deals

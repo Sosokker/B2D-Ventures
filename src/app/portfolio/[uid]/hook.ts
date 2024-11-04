@@ -1,6 +1,22 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getProjectTag, getTagName } from "@/lib/data/tagQuery";
 
+async function fetchLogoURL(supabase: SupabaseClient, projectId: number) {
+  const logoIndex = 1;
+  let { data: project_material, error } = await supabase
+    .from("project_material")
+    .select("material_url")
+    .eq("project_id", projectId)
+    .eq("material_type_id", logoIndex);
+  if (error) {
+    console.error("Error while fetching golo url" + error);
+  }
+  if (project_material && project_material.length > 0) {
+    return project_material[0].material_url;
+  }
+  return "";
+}
+
 function getTotalInvestment(deals: { deal_amount: number }[]) {
   let total = 0;
   for (let index = 0; index < deals.length; index++) {
@@ -20,10 +36,12 @@ async function getLatestInvestment(
     if (error) {
       console.error(error);
     }
+    let url = fetchLogoURL(supabase, deals[i].project_id);
     llist.push({
       name: project?.[0]?.project_name,
       amount: deals[i].deal_amount,
       date: new Date(deals[i].created_time),
+      logo_url: url,
     });
   }
 
@@ -234,4 +252,5 @@ export {
   checkForInvest,
   getLatestInvestment,
   getTotalInvestment,
+  fetchLogoURL,
 };

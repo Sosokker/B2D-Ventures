@@ -5,12 +5,12 @@ export type RecentDealData = {
   deal_amount: number;
   investor_id: string;
   username: string;
-  avatar_url?: string;
+  logo_url?: string;
   // email: string;
 };
 
 interface RecentFundsProps {
-  data?: { name?: string; amount?: number; avatar?: string; date?: Date }[];
+  data?: { name?: string; amount?: number; avatar?: string; date?: Date; logo_url?: string }[];
 }
 
 export function RecentFunds(props: RecentFundsProps) {
@@ -19,7 +19,7 @@ export function RecentFunds(props: RecentFundsProps) {
       {(props?.data || []).map((deal, index) => (
         <div className="flex items-center" key={index}>
           <Avatar className="h-9 w-9">
-            <AvatarImage src={deal.avatar} alt={deal.name} />
+            <AvatarImage src={deal.logo_url} alt={deal.name} />
             <AvatarFallback>{(deal.name ?? "").slice(0, 2)}</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
