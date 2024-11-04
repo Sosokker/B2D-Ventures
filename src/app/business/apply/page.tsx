@@ -48,7 +48,7 @@ export default function ApplyBusiness() {
       }
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("business_application")
       .insert([
         {
@@ -66,7 +66,7 @@ export default function ApplyBusiness() {
       ])
       .select();
     setSucess(true);
-
+    // console.table(data);
     Swal.fire({
       icon: error == null ? "success" : "error",
       title: error == null ? "success" : "Error: " + error.code,
