@@ -14,7 +14,10 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { SearchBar } from "./serchBar";
-import { ProfileBar } from "./profileBar";
+import { AuthenticatedComponents } from "./AuthenticatedComponents";
+import { UnAuthenticatedComponents } from "./UnAuthenticatedComponents";
+
+import { getUserId } from "@/lib/supabase/actions/getUserId";
 
 const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
   ({ className, title, children, ...props }, ref) => {
@@ -40,7 +43,9 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
 );
 ListItem.displayName = "ListItem";
 
-export function NavigationBar() {
+export async function NavigationBar() {
+  const userId = await getUserId();
+
   const businessComponents = [
     {
       title: "Business",
@@ -112,7 +117,7 @@ export function NavigationBar() {
             <div className="flex gap-2 pl-2">
               <ThemeToggle />
               <Separator orientation="vertical" className="mx-3" />
-              <ProfileBar />
+              {userId ? <AuthenticatedComponents uid={userId} /> : <UnAuthenticatedComponents />}
             </div>
           </div>
         </div>

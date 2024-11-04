@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,29 +10,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Bell, Heart, Wallet } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logoutButton";
-import useSession from "@/lib/supabase/useSession";
 import { useUserRole } from "@/hooks/useUserRole";
 
-const UnAuthenticatedComponents = () => {
-  return (
-    <div className="flex gap-2 pl-2">
-      <Link href="/auth">
-        <Button variant="secondary" className="border-2 border-border">
-          Login
-        </Button>
-      </Link>
-      <Link href="/auth/signup">
-        <Button>Sign up</Button>
-      </Link>
-    </div>
-  );
-};
+interface AuthenticatedComponentsProps {
+  uid: string;
+}
 
-const AuthenticatedComponents = ({ uid }: { uid: string }) => {
-  let notifications = 100;
+export const AuthenticatedComponents = ({ uid }: AuthenticatedComponentsProps) => {
+  const notifications = 100;
   const displayValue = notifications >= 100 ? "..." : notifications;
   const { data } = useUserRole();
 
@@ -68,7 +54,7 @@ const AuthenticatedComponents = ({ uid }: { uid: string }) => {
           <DropdownMenuSeparator />
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
-          {data != null && data != undefined && data.role === "admin" && (
+          {data?.role === "admin" && (
             <DropdownMenuItem>
               <Link href="/admin">Admin</Link>
             </DropdownMenuItem>
@@ -82,31 +68,3 @@ const AuthenticatedComponents = ({ uid }: { uid: string }) => {
     </div>
   );
 };
-
-export function ProfileBar() {
-  const { session } = useSession();
-  const user = session?.user;
-  const [sessionLoaded, setSessionLoaded] = useState(false);
-
-  useEffect(() => {
-    if (!session) {
-      setSessionLoaded(true);
-    }
-  }, [session]);
-
-  return (
-    <>
-      {sessionLoaded ? (
-        user ? (
-          <AuthenticatedComponents uid={user.id} />
-        ) : (
-          <UnAuthenticatedComponents />
-        )
-      ) : (
-        <div>
-          <Skeleton className="rounded-lg h-full w-[160px]" />
-        </div>
-      )}
-    </>
-  );
-}
