@@ -56,11 +56,7 @@ const AuthenticatedComponents = ({ uid }: { uid: string }) => {
       </Link>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
+          <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
             <Avatar>
               <AvatarImage src="https://api.dicebear.com/9.x/pixel-art/svg" />
               <AvatarFallback>1</AvatarFallback>
@@ -77,6 +73,11 @@ const AuthenticatedComponents = ({ uid }: { uid: string }) => {
           {data != null && data != undefined && data.role === "admin" && (
             <DropdownMenuItem>
               <Link href="/admin">Admin</Link>
+            </DropdownMenuItem>
+          )}
+          {data != null && data != undefined && data.role === "business" && (
+            <DropdownMenuItem>
+              <Link href="/dataroom/manage">Dataroom</Link>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
