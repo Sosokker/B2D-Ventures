@@ -16,7 +16,7 @@ export const ProjectProfileSection = async ({ userId }: { userId: string }) => {
           <CardTitle>Error Loading Data</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>Can't load business data</p>
+          <p>Can&apos;t load business data</p>
         </CardContent>
       </Card>
     );
@@ -29,7 +29,7 @@ export const ProjectProfileSection = async ({ userId }: { userId: string }) => {
           <CardTitle>No Project Found</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>This business doesn't have any projects</p>
+          <p>This business doesn&apos;t have any projects</p>
         </CardContent>
       </Card>
     );

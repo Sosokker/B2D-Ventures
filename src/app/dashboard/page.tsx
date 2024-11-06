@@ -70,7 +70,6 @@ export default function Dashboard() {
   >([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
-  const [currentTab, setCurrentTab] = useState();
   const dealList = useDealList();
   const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
   useEffect(() => {
@@ -120,7 +119,9 @@ export default function Dashboard() {
           <Tabs defaultValue={projects[0].project_name} className="space-y-4">
             <TabsList>
               {projects.map((project) => (
-                <TabsTrigger value={project.project_name}>{project.project_name}</TabsTrigger>
+                <TabsTrigger key={project.id} value={project.project_name}>
+                  {project.project_name}
+                </TabsTrigger>
               ))}
             </TabsList>
             <TabsContent value={projects[0].project_name} className="space-y-4">

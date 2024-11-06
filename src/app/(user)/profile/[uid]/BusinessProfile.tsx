@@ -13,7 +13,7 @@ export const BusinessProfile = async ({ userId }: { userId: string }) => {
           <CardTitle>Error Loading Data</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>Can't load business data</p>
+          <p>Can&apos;t load business data</p>
         </CardContent>
       </Card>
     );
@@ -26,7 +26,7 @@ export const BusinessProfile = async ({ userId }: { userId: string }) => {
           <CardTitle>No Business Found</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>This business account doesn't have businesses</p>
+          <p>This business account doesn&apos;t have businesses</p>
         </CardContent>
       </Card>
     );

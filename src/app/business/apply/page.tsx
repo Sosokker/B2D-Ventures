@@ -48,7 +48,7 @@ export default function ApplyBusiness() {
       }
     }
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("business_application")
       .insert([
         {
