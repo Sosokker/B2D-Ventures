@@ -2,7 +2,6 @@
 
 import "@mdxeditor/editor/style.css";
 import React, { useEffect, useRef, useState } from "react";
-
 import {
   MDXEditor,
   MDXEditorMethods,
@@ -54,9 +53,11 @@ export const MdxEditor: React.FC<MdxEditorProps> = ({ content, setContentInParen
       <MDXEditor
         ref={ref}
         className="dark-theme dark-editor w-full h-48 border rounded-md p-2 overflow-auto resize-none"
-        onChange={(markdownContent) => setMarkdownContent(markdownContent)}
+        onChange={(markdownContent) => {
+          setMarkdownContent(markdownContent);
+        }}
         markdown={markdownContent}
-        contentEditableClassName="prose"
+        contentEditableClassName="prose dark:prose-invert"
         suppressHtmlProcessing={true}
         onError={(error) => {
           console.error("MDXEditor error:", error);
