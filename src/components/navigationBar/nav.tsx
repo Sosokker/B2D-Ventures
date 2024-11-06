@@ -64,6 +64,14 @@ export async function NavigationBar() {
     },
   ];
 
+  const dataroomComponents = [
+    {
+      title: "Overview",
+      href: "/dataroom/overview",
+      description: "View all dataroom available to you",
+    },
+  ];
+
   return (
     <header className="sticky top-0 flex flex-wrap w-full bg-card text-sm py-3 border-b-2 border-border z-50">
       <nav className="max-w-screen-xl w-full mx-auto px-4">
@@ -102,6 +110,19 @@ export async function NavigationBar() {
                   <NavigationMenuContent>
                     <ul className="grid w-[400px] ">
                       {projectComponents.map((component) => (
+                        <ListItem key={component.title} title={component.title} href={component.href}>
+                          {component.description}
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-base font-medium ">Dataroom</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[400px] ">
+                      {dataroomComponents.map((component) => (
                         <ListItem key={component.title} title={component.title} href={component.href}>
                           {component.description}
                         </ListItem>
