@@ -18,6 +18,33 @@ export const getAllBusinesses = (client: SupabaseClient) => {
     `);
 };
 
+export const getBusinessByName = (
+  client: SupabaseClient,
+  params: { businessName?: string | null; single?: boolean } = { single: false }
+) => {
+  const query = client.from("business").select(`
+      business_id:id,
+      location,
+      business_name,
+      ...business_type (
+        business_type_id: id,
+        business_type: value
+      ),
+      joined_date,
+      user_id
+    `);
+
+  if (params.businessName && params.businessName.trim() !== "") {
+    query.ilike("business_name", `%${params.businessName}%`);
+  }
+
+  if (params.single) {
+    query.single();
+  }
+
+  return query;
+};
+
 export const getBusinessAndProject = (
   client: SupabaseClient,
   params: { businessName?: String | null; businessId?: number | null; single?: boolean } = { single: false }
@@ -53,7 +80,7 @@ export const getBusinessAndProject = (
     `);
 
   if (params.businessName && params.businessName.trim() !== "") {
-    return query.ilike("business_name", `%${params.businessName}%`);
+    return query.or(`business_name.ilike.%${params.businessName}%,project_name.ilike.%${params.businessName}%`);
   }
 
   if (params.businessId) {

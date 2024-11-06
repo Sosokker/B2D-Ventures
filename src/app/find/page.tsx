@@ -1,89 +1,43 @@
-"use client";
-
 import React, { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { ProjectCard } from "@/components/projectCard";
+import { getBusinessByName } from "@/lib/data/businessQuery";
+import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
+import { BusinessSection } from "./BusinessSection";
+import { ProjectSection } from "./ProjectSection";
+import { getProjectCardData } from "@/lib/data/projectQuery";
 import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getBusinessAndProject } from "@/lib/data/businessQuery";
 
-function FindContent() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query");
+export default async function FindContent({ searchParams }: { searchParams: { query: string } }) {
+  const query = searchParams.query;
 
-  let supabase = createSupabaseClient();
+  const supabase = createSupabaseClient();
 
-  const {
-    data: businesses,
-    isLoading: isLoadingBusinesses,
-    error: businessError,
-  } = useQuery(getBusinessAndProject(supabase, { businessName: query }));
+  const { data: projectIds, error: projectIdsError } = await supabase
+    .from("project")
+    .select(`id`)
+    .ilike("project_name", `%${query}%`);
 
-  const isLoading = isLoadingBusinesses;
-  const error = businessError;
+  const { data: businessData, error: businessDataError } = await getBusinessByName(supabase, { businessName: query });
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error fetching data: {error.message}</p>;
+  if (businessDataError || projectIdsError) {
+    throw new Error(businessDataError?.message || projectIdsError?.message || "Unknown error");
+  }
+
+  const projectIdList: string[] = projectIds.map((item) => item.id);
+  const { data: projectsData, error: projectsDataError } = await getProjectCardData(supabase, projectIdList);
+
+  if (projectsDataError) {
+    throw new Error(projectsDataError || "Unknown error");
+  }
 
   return (
-    <div className="container max-w-screen-xl">
-      <div className="mt-4">
-        <h1 className="text-4xl font-bold">Result</h1>
-
-        <Separator className="my-4" />
-
-        <Card className="w-full">
-          <CardContent className="my-2">
-            {businesses!.length === 0 && <p>No results found.</p>}
-            {businesses!.length > 0 && (
-              <ul>
-                {businesses!.map((business) => (
-                  <li key={business.business_id}>
-                    <Card className="w-full">
-                      <CardHeader>
-                        <CardTitle>{business.business_name}</CardTitle>
-                        <CardDescription>
-                          Joined Date: {new Date(business.joined_date).toLocaleDateString()}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="grid grid-cols-4 gap-4">
-                        {business?.projects && business.projects.length > 0 ? (
-                          business.projects.map((project) => (
-                            <ProjectCard
-                              key={project.id}
-                              name={project.project_name}
-                              description={project.project_short_description}
-                              joinDate={project.published_time}
-                              location={business.location}
-                              minInvestment={project.min_investment}
-                              totalInvestor={project.total_investment}
-                              totalRaised={project.target_investment}
-                              tags={project.tags?.map((tag) => String(tag.tag_value)) || []}
-                              imageUri={project.card_image_url}
-                            />
-                          ))
-                        ) : (
-                          <p>No Projects</p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+    <div className="container max-w-screen-xl my-5 space-y-5">
+      <Suspense fallback={<div>Loading Business and Projects...</div>}>
+        <BusinessSection businessData={businessData} />
+      </Suspense>
+      <Separator className="my-3" />
+      <Suspense fallback={<div>Loading Projects...</div>}>
+        <ProjectSection projectsData={projectsData} />
+      </Suspense>
     </div>
-  );
-}
-
-export default function Find() {
-  return (
-    <Suspense fallback={<p>Loading search parameters...</p>}>
-      <FindContent />
-    </Suspense>
   );
 }

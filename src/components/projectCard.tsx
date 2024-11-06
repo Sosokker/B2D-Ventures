@@ -22,6 +22,18 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard(props: ProjectCardProps) {
+  if (props.minInvestment === null) {
+    props.minInvestment = 0;
+  }
+
+  if (props.totalInvestor === null) {
+    props.minInvestment = 0;
+  }
+
+  if (props.totalRaised === null) {
+    props.minInvestment = 0;
+  }
+
   return (
     <div
       className={cn(

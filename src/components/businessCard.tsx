@@ -1,53 +1,34 @@
-import Image from "next/image";
-import {
-  Card,
-  CardFooter,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardFooter, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDaysIcon } from "lucide-react";
-
-interface XMap {
-  // tagName: colorCode
-  [tag: string]: string;
-}
-
-interface BusinessCardProps {
-  name: string;
-  description: string;
-  joinDate: string;
-  location: string;
-  tags: XMap | null;
-}
+import { BusinessCardProps } from "@/types/BusinessCard";
+import Image from "next/image";
 
 export function BusinessCard(props: BusinessCardProps) {
   return (
-    <Card>
-      <CardHeader>
-        <div className="h-[200px] hover:h-[100px] duration-75 pb-2">
+    <Card className="rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow h-full">
+      <CardHeader className="flex flex-row items-center gap-4 pb-4 border-b border-gray-100 dark:border-gray-800">
+        <div className="relative w-14 h-14 flex-shrink-0">
           <Image
-            src={"/money.png"}
-            width={0}
-            height={0}
-            sizes="100vw"
-            style={{ width: "100%", height: "100%" }}
-            alt="nvidia"
+            src="/money.png"
+            alt="Business logo"
+            fill
+            className="rounded-full object-cover bg-white dark:bg-sky-900"
           />
         </div>
-        <CardTitle>{props.name}</CardTitle>
-        <CardDescription>
-          {props.description}
-          <span className="flex items-center pt-2 gap-1">
-            <CalendarDaysIcon width={20} />
-            Joined {props.joinDate}
-          </span>
-        </CardDescription>
+        <div>
+          <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">{props.business_name}</CardTitle>
+          <CardDescription className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <span className="flex items-center gap-1">
+              <CalendarDaysIcon width={16} />
+              Joined {props.joined_date}
+            </span>
+          </CardDescription>
+        </div>
       </CardHeader>
-      <CardFooter className="flex-col items-start">
-        {props.location}
-        <span className="text-xs rounded-md bg-slate-200 dark:bg-slate-700 p-1">
-          Technology
+      <CardFooter className="flex flex-col gap-2 pt-4">
+        <span className="text-sm text-gray-700 dark:text-gray-300">{props.location}</span>
+        <span className="text-xs font-medium rounded-md bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1">
+          {props.business_type}
         </span>
       </CardFooter>
     </Card>

@@ -1,4 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import { ProjectCardProps } from "@/types/ProjectCard";
 
 async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 4) {
   try {
@@ -241,6 +242,62 @@ const getProjectByUserId = (client: SupabaseClient, userId: string) => {
     .eq("business.user_id", userId);
 };
 
+function getProjectByName(client: SupabaseClient, searchTerm: string) {
+  return client
+    .from("project")
+    .select(
+      `
+          id,
+          project_name,
+          business_id,
+          published_time,
+          project_short_description,
+          card_image_url,
+          project_investment_detail (
+            min_investment,
+            total_investment,
+            target_investment,
+            investment_deadline
+          ),
+          project_tag (
+            tag (
+              id,
+              value
+            )
+          ),
+          business (
+            location
+          )
+        `
+    )
+    .ilike("project_name", `%${searchTerm}%`);
+}
+
+const getProjectCardData = async (client: SupabaseClient, projectIds: string[]) => {
+  const { data, error } = await client.from("project_card").select("*").in("project_id", projectIds);
+
+  if (error) {
+    return { data: null, error: error.message };
+  }
+
+  const projectSections = data.map((project) => {
+    const projectSection: ProjectCardProps = {
+      id: project.project_id,
+      project_name: project.project_name,
+      short_description: project.short_description,
+      image_url: project.image_url,
+      join_date: project.join_date,
+      location: project.location,
+      tags: project.tags || [],
+      min_investment: project.min_investment,
+      total_investor: project.total_investor,
+      total_raise: project.total_raise,
+    };
+    return projectSection;
+  });
+
+  return { data: projectSections, error: null };
+};
 export {
   getProjectData,
   getProjectDataQuery,
@@ -248,4 +305,6 @@ export {
   searchProjectsQuery,
   getProjectByBusinessId,
   getProjectByUserId,
+  getProjectByName,
+  getProjectCardData,
 };
