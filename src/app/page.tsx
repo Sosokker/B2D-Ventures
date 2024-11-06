@@ -19,6 +19,12 @@ export default async function Home() {
   const supabase = createSupabaseClient();
   const { data: topProjectsData, error: topProjectsError } = await getTopProjects(supabase);
 
+  const formattedProjects =
+    topProjectsData?.map((project) => ({
+      ...project,
+      id: project.project_id,
+    })) || [];
+
   return (
     <main>
       <div className="relative mx-auto">
@@ -100,7 +106,7 @@ export default async function Home() {
             </div>
           ) : (
             <Suspense fallback={<ProjectsLoader />}>
-              <ProjectSection projectsData={topProjectsData} />
+              <ProjectSection projectsData={formattedProjects} />
             </Suspense>
           )}
           <div className="self-center py-5 scale-75 md:scale-100">

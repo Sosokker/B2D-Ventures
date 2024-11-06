@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { ProjectSection } from "@/components/ProjectSection";
 import { ShowFilter } from "./ShowFilter";
 import { Button } from "@/components/ui/button";
+import { sumByKey } from "@/lib/utils";
 
 export default function Deals() {
   const supabase = createSupabaseClient();
@@ -71,8 +72,8 @@ export default function Deals() {
       location: project.business_location,
       tags: project.tags.map((tag) => tag.tag_name),
       min_investment: project.min_investment || 0,
-      total_investor: project.total_investment || 0,
-      total_raise: project.total_investment || 0,
+      total_investor: new Set(project.investment_deal.map((deal) => deal.investor_id)).size || 0,
+      total_raise: sumByKey(project.investment_deal, "deal_amount") || 0,
     })) || [];
 
   const clearAll = () => {

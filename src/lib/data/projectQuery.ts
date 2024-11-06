@@ -151,6 +151,10 @@ function searchProjectsQuery(
         business_type:value
       ),
       business_location:location
+    ),
+    investment_deal (
+      deal_amount,
+      investor_id
     )
     `
     )
@@ -207,6 +211,7 @@ const getProjectByUserId = (client: SupabaseClient, userId: string) => {
       `
       id,
       project_name,
+      project_short_description,
       business_id:business!inner (
         user_id
       ),
