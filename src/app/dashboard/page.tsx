@@ -4,9 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { getBusinessByUserId } from "@/lib/data/businessQuery";
 import { useDealList } from "./hook";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import useSession from "@/lib/supabase/useSession";
+import { getProjectByUserId } from "@/lib/data/projectQuery";
 
 const data = [
   {
@@ -60,19 +64,35 @@ const data = [
 ];
 
 export default function Dashboard() {
+  let supabase = createSupabaseClient();
+  const userId = useSession().session?.user.id;
+  const [projects, setProjects] = useState<
+    { id: number; project_name: string; business_id: { user_id: number }[]; dataroom_id: number }[]
+  >([]);
   const [graphType, setGraphType] = useState("line");
   const dealList = useDealList();
   const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
+  useEffect(() => {
+    const fetchProjects = async () => {
+      if (userId) {
+        const { data, error } = await getProjectByUserId(supabase, userId);
+        // alert(JSON.stringify(data));
+        if (error) {
+          console.error("Error while fetching projects");
+        }
+        if (data) {
+          setProjects(data);
+          console.table(data);
+        }
+      } else {
+        console.error("Error with UserId while fetching projects");
+      }
+    };
+    fetchProjects();
+  }, [supabase, userId]);
 
   return (
     <>
-      {dealList?.map((deal, index) => (
-        <div key={index} className="deal-item">
-          <p>Deal Amount: {deal.deal_amount}</p>
-          <p>Created Time: {new Date(deal.created_time).toUTCString()}</p>
-          <p>Investor ID: {deal.investor_id}</p>
-        </div>
-      ))}
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
@@ -94,12 +114,13 @@ export default function Dashboard() {
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Business Dashboard</h2>
           </div>
-          <Tabs defaultValue="overview" className="space-y-4">
+          <Tabs defaultValue={projects[0].project_name} className="space-y-4">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              {projects.map((project) => (
+                <TabsTrigger value={project.project_name}>{project.project_name}</TabsTrigger>
+              ))}
             </TabsList>
-            <TabsContent value="overview" className="space-y-4">
+            <TabsContent value={projects[0].project_name} className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

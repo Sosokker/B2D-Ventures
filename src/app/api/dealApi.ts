@@ -35,7 +35,7 @@ export async function getDealList(userId: string | undefined) {
   }
 
   if (!dealData || !dealData.project.length) {
-    alert("No project available");
+    // alert("No project available");
     return []; // Exit if there's no data
   }
 
