@@ -3,45 +3,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ProjectCard } from "@/components/projectCard";
 import { getTopProjects } from "@/lib/data/projectQuery";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { Suspense } from "react";
-import { FC } from "react";
-import { ProjectCardProps } from "@/types/ProjectCard";
 import { ProjectSection } from "@/components/ProjectSection";
-
-interface TopProjectsProps {
-  projects: ProjectCardProps[] | null;
-}
-
-const TopProjects: FC<TopProjectsProps> = ({ projects }) => {
-  if (!projects || projects.length === 0) {
-    return <div>No top projects available.</div>;
-  }
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {projects.map((project) => (
-        <div key={project.id}>
-          <Link href={`/deals/${project.id}`}>
-            <ProjectCard
-              name={project.project_name}
-              description={project.short_description}
-              imageUri={project.image_url}
-              joinDate={new Date(project.join_date).toLocaleDateString()}
-              location={project.location}
-              tags={project.tags}
-              minInvestment={project.min_investment}
-              totalInvestor={project.total_investor}
-              totalRaised={project.total_raise}
-            />
-          </Link>
-          <Separator />
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const ProjectsLoader = () => (
   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

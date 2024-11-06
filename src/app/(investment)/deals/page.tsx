@@ -1,8 +1,8 @@
 "use client";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState } from "react";
-import { Clock3Icon, UserIcon, UsersIcon } from "lucide-react";
+import { useState } from "react";
+import { UserIcon, UsersIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { getAllBusinessTypeQuery, getAllTagsQuery, getAllProjectStatusQuery } from "@/lib/data/dropdownQuery";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";

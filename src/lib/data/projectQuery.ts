@@ -115,7 +115,7 @@ function searchProjectsQuery(
     tagFilter,
     projectStatusFilter,
     businessTypeFilter,
-    sortByTimeFilter,
+    // sortByTimeFilter,
     page = 1,
     pageSize = 4,
   }: FilterProjectQueryParams

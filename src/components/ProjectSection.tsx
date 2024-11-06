@@ -1,7 +1,7 @@
 import React from "react";
 import { ProjectCard } from "@/components/projectCard";
 import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProjectCardProps } from "@/types/ProjectCard";
 import Link from "next/link";
 
