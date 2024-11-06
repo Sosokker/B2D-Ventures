@@ -5,12 +5,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
 import { useEffect, useState } from "react";
-import { getBusinessByUserId } from "@/lib/data/businessQuery";
 import { useDealList } from "./hook";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import useSession from "@/lib/supabase/useSession";
 import { getProjectByUserId } from "@/lib/data/projectQuery";
+import { Loader } from "@/components/loading/loader";
 
 const data = [
   {
@@ -69,7 +68,9 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<
     { id: number; project_name: string; business_id: { user_id: number }[]; dataroom_id: number }[]
   >([]);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
+  const [currentTab, setCurrentTab] = useState();
   const dealList = useDealList();
   const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
   useEffect(() => {
@@ -82,17 +83,19 @@ export default function Dashboard() {
         }
         if (data) {
           setProjects(data);
-          console.table(data);
+          // console.table(data);
         }
       } else {
         console.error("Error with UserId while fetching projects");
       }
+      setIsSuccess(true);
     };
     fetchProjects();
   }, [supabase, userId]);
 
   return (
     <>
+      <Loader isSuccess={isSuccess} />
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
