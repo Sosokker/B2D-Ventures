@@ -87,7 +87,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                 <CarouselNext />
               </Carousel>
 
-              <Carousel className="w-full ml-1 h-[100px]">
+              <Carousel className="w-full ml-1 h-[100px] mt-5">
                 <CarouselContent className="flex space-x-1">
                   {carouselData.map((item, index) => (
                     <CarouselItem key={index} className="flex">
@@ -153,7 +153,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </CardHeader>
                   <CardContent>
                     <div className="prose prose-sm max-w-none">
-                      <ReactMarkdown className="text-black dark:text-white">
+                      <ReactMarkdown className="text-black dark:text-white [&_*]:text-inherit">
                         {projectData?.project_description || "No pitch available."}
                       </ReactMarkdown>
                     </div>
