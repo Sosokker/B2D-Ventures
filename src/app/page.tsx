@@ -123,7 +123,9 @@ export default async function Home() {
             <CardContent className="flex gap-2">
               <Link href="https://github.com/Sosokker/B2D-Ventures" passHref>
                 <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-                  <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100" />
+                  <div className="dark:bg-white rounded-full">
+                    <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100" />
+                  </div>
                   Github
                 </Button>
               </Link>
