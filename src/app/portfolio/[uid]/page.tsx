@@ -78,7 +78,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
 
   // console.log(tagCount);
   return (
-    <div className="p-5">
+    <div className="container max-w-screen-xl">
       {/* {JSON.stringify(params.uid)} */}
       {/* {JSON.stringify(tagCount)} */}
       {/* {JSON.stringify(deals)} */}
