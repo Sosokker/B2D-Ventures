@@ -96,7 +96,7 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
 
 export interface FilterParams {
   searchTerm?: string;
-  tagsFilter?: string[];
+  tagFilter?: string;
   projectStatus?: string;
   projectStatusFilter?: string;
   businessTypeFilter?: string;
@@ -112,8 +112,8 @@ function searchProjectsQuery(
   client: SupabaseClient,
   {
     searchTerm,
-    tagsFilter,
-    projectStatus,
+    tagFilter,
+    projectStatusFilter,
     businessTypeFilter,
     sortByTimeFilter,
     page = 1,
@@ -121,7 +121,7 @@ function searchProjectsQuery(
   }: FilterProjectQueryParams
 ) {
   const start = (page - 1) * pageSize;
-  const end = start + pageSize;
+  const end = start + pageSize - 1;
 
   let query = client
     .from("project")
@@ -132,8 +132,8 @@ function searchProjectsQuery(
     published_time,
     project_short_description,
     card_image_url,
-    ...project_status!inner (
-      project_status:value
+    project_status!inner (
+      value
     ),
     ...project_investment_detail!inner (
       min_investment,
@@ -154,42 +154,29 @@ function searchProjectsQuery(
     )
     `
     )
-    .order("published_time", { ascending: false })
     .range(start, end);
 
-  if (sortByTimeFilter === "all") {
-    sortByTimeFilter = undefined;
+  // if (sortByTimeFilter && sortByTimeFilter !== "all") {
+  //   query = query.eq("published_time", sortByTimeFilter);
+  // }
+
+  if (projectStatusFilter && projectStatusFilter !== "all") {
+    query = query.eq("project_status.value", projectStatusFilter);
   }
 
-  if (projectStatus === "all") {
-    projectStatus = undefined;
+  if (businessTypeFilter && businessTypeFilter !== "all") {
+    query = query.eq("business.business_type.value", businessTypeFilter);
   }
 
-  if (businessTypeFilter === "all") {
-    businessTypeFilter = undefined;
-  }
-
-  if (tagsFilter?.length === 0) {
-    tagsFilter = undefined;
+  if (tagFilter && tagFilter !== "all") {
+    query = query.in("tags.tag_name", [tagFilter]);
   }
 
   if (searchTerm) {
     query = query.ilike("project_name", `%${searchTerm}%`);
   }
 
-  if (tagsFilter) {
-    query = query.in("project_tag.tag.value", tagsFilter);
-  }
-
-  if (projectStatus) {
-    query = query.eq("project_status.value", projectStatus);
-  }
-
-  if (businessTypeFilter) {
-    query = query.eq("business.business_type.value", businessTypeFilter);
-  }
-
-  return query;
+  return query.order("published_time", { ascending: false });
 }
 
 const getProjectByBusinessId = (client: SupabaseClient, businessIds: string[]) => {
