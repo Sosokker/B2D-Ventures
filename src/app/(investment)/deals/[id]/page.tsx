@@ -99,6 +99,8 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </CarouselItem>
                 ))}
               </CarouselContent>
+              <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 text-white bg-black opacity-50 hover:opacity-100" />
+              <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 text-white bg-black opacity-50 hover:opacity-100" />
             </Carousel>
             {/* second carousel */}
             <Carousel className="w-full ml-1 h-[100px] mt-5 overflow-hidden">
