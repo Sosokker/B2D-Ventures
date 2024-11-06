@@ -13,7 +13,7 @@ import {
   checkForInvest,
   getLatestInvestment,
   getTotalInvestment,
-} from "./hook";
+} from "./query";
 import CountUpComponent from "@/components/countUp";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
