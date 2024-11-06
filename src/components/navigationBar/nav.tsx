@@ -115,7 +115,9 @@ export async function NavigationBar() {
             </NavigationMenu>
 
             <div className="flex gap-2 pl-2">
-              <ThemeToggle />
+              <div className="mt-1">
+                <ThemeToggle />
+              </div>
               <Separator orientation="vertical" className="mx-3" />
               {userId ? <AuthenticatedComponents uid={userId} /> : <UnAuthenticatedComponents />}
             </div>

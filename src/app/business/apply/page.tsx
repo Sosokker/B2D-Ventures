@@ -15,7 +15,6 @@ const BUCKET_PITCH_NAME = "business-application";
 let supabase = createSupabaseClient();
 
 export default function ApplyBusiness() {
-  const [applyProject, setApplyProject] = useState(false);
   const alertShownRef = useRef(false);
   const [success, setSucess] = useState(false);
 
@@ -49,7 +48,7 @@ export default function ApplyBusiness() {
       }
     }
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("business_application")
       .insert([
         {
@@ -67,28 +66,29 @@ export default function ApplyBusiness() {
       ])
       .select();
     setSucess(true);
-
+    // console.table(data);
     Swal.fire({
       icon: error == null ? "success" : "error",
       title: error == null ? "success" : "Error: " + error.code,
       text: error == null ? "Your application has been submitted" : error.message,
       confirmButtonColor: error == null ? "green" : "red",
-    }).then((result) => {
-      if (result.isConfirmed && applyProject) {
-        window.location.href = "/project/apply";
-      } else {
-        window.location.href = "/";
-      }
+    }).then(() => {
+      window.location.href = "/";
     });
   };
 
   const hasUserApplied = async (userID: string) => {
     let { data: business, error } = await supabase.from("business").select("*").eq("user_id", userID);
-    console.table(business);
-    if (error) {
+    let { data: businessApplication, error: applicationError } = await supabase
+      .from("business_application")
+      .select("*")
+      .eq("user_id", userID);
+    // console.table(business);
+    if (error || applicationError) {
       console.error(error);
+      console.error(applicationError);
     }
-    if (business) {
+    if ((business && business.length != 0) || (businessApplication && businessApplication.length != 0)) {
       return true;
     }
     return false;
@@ -165,7 +165,7 @@ export default function ApplyBusiness() {
       </div>
       {/* form */}
       {/* <form action="" onSubmit={handleSubmit(handleSubmitForms)}> */}
-      <BusinessForm onSubmit={onSubmit} applyProject={applyProject} setApplyProject={setApplyProject} />
+      <BusinessForm onSubmit={onSubmit} />
     </div>
   );
 }

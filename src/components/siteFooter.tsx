@@ -21,7 +21,10 @@ export function SiteFooter() {
             <Link href="/services" className="hover:underline">
               Services
             </Link>
-            <Link href="/contact" className="hover:underline">
+            <Link
+              href="mailto:b2d.ventures.contact@gmail.com"
+              className="hover:underline"
+            >
               Contact
             </Link>
           </div>

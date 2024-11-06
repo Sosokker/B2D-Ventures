@@ -18,6 +18,17 @@ export const getAllBusinesses = (client: SupabaseClient) => {
     `);
 };
 
+export async function getBusinessByUserId(client: SupabaseClient, userId: string) {
+  const { data, error } = await client.from("business").select("*").eq("user_id", userId);
+
+  if (error) {
+    console.error("Error fetching business ID:", error);
+    return null;
+  }
+
+  return data;
+}
+
 export const getBusinessByName = (
   client: SupabaseClient,
   params: { businessName?: string | null; single?: boolean } = { single: false }

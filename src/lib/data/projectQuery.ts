@@ -25,7 +25,7 @@ async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 
     if (error) {
       return { data: null, error: error.message };
     }
-
+    // console.log(data);
     return { data, error: null };
   } catch (err) {
     return { data: null, error: "An unexpected error occurred." };

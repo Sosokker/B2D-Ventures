@@ -1,29 +1,101 @@
 "use client";
 import Image from "next/image";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDealList } from "./hook";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
+import useSession from "@/lib/supabase/useSession";
+import { getProjectByUserId } from "@/lib/data/projectQuery";
+import { Loader } from "@/components/loading/loader";
 
-import { useDealList, useGraphData, useRecentDealData } from "./hook";
-import { sumByKey } from "@/lib/utils";
+const data = [
+  {
+    name: "Jan",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Feb",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Mar",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Apr",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "May",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Jun",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Jul",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Aug",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Sep",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Oct",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Nov",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+  {
+    name: "Dec",
+    value: Math.floor(Math.random() * 5000) + 1000,
+  },
+];
 
 export default function Dashboard() {
+  let supabase = createSupabaseClient();
+  const userId = useSession().session?.user.id;
+  const [projects, setProjects] = useState<
+    { id: number; project_name: string; business_id: { user_id: number }[]; dataroom_id: number }[]
+  >([]);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
-  const graphData = useGraphData();
+  const [currentTab, setCurrentTab] = useState();
   const dealList = useDealList();
-  // #TODO dependency injection refactor + define default value inside function (and not here)
-  const recentDealData = useRecentDealData() || [];
+  const totalDealAmount = dealList?.reduce((sum, deal) => sum + deal.deal_amount, 0) || 0;
+  useEffect(() => {
+    const fetchProjects = async () => {
+      if (userId) {
+        const { data, error } = await getProjectByUserId(supabase, userId);
+        // alert(JSON.stringify(data));
+        if (error) {
+          console.error("Error while fetching projects");
+        }
+        if (data) {
+          setProjects(data);
+          // console.table(data);
+        }
+      } else {
+        console.error("Error with UserId while fetching projects");
+      }
+      setIsSuccess(true);
+    };
+    fetchProjects();
+  }, [supabase, userId]);
 
   return (
     <>
+      <Loader isSuccess={isSuccess} />
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
@@ -45,18 +117,17 @@ export default function Dashboard() {
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Business Dashboard</h2>
           </div>
-          <Tabs defaultValue="overview" className="space-y-4">
+          <Tabs defaultValue={projects[0].project_name} className="space-y-4">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              {projects.map((project) => (
+                <TabsTrigger value={project.project_name}>{project.project_name}</TabsTrigger>
+              ))}
             </TabsList>
-            <TabsContent value="overview" className="space-y-4">
+            <TabsContent value={projects[0].project_name} className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Funds Raised
-                    </CardTitle>
+                    <CardTitle className="text-sm font-medium">Total Funds Raised</CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -71,7 +142,7 @@ export default function Dashboard() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">${sumByKey(dealList, "deal_amount")}</div>
+                    <div className="text-2xl font-bold">${totalDealAmount}</div>
                     {/* <p className="text-xs text-muted-foreground">
                       +20.1% from last month
                     </p> */}
@@ -79,9 +150,7 @@ export default function Dashboard() {
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Profile Views
-                    </CardTitle>
+                    <CardTitle className="text-sm font-medium">Profile Views</CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -105,9 +174,7 @@ export default function Dashboard() {
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Followers
-                    </CardTitle>
+                    <CardTitle className="text-sm font-medium">Total Followers</CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -162,23 +229,14 @@ export default function Dashboard() {
                     <CardTitle>Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
-                    <Overview graphType={graphType} graphData={graphData} />
+                    <Overview graphType={graphType} data={data} />
                     {/* tab to switch between line and bar graph */}
-                    <Tabs
-                      defaultValue="line"
-                      className="space-y-4 ml-[50%] mt-2"
-                    >
+                    <Tabs defaultValue="line" className="space-y-4 ml-[50%] mt-2">
                       <TabsList>
-                        <TabsTrigger
-                          value="line"
-                          onClick={() => setGraphType("line")}
-                        >
+                        <TabsTrigger value="line" onClick={() => setGraphType("line")}>
                           Line
                         </TabsTrigger>
-                        <TabsTrigger
-                          value="bar"
-                          onClick={() => setGraphType("bar")}
-                        >
+                        <TabsTrigger value="bar" onClick={() => setGraphType("bar")}>
                           Bar
                         </TabsTrigger>
                       </TabsList>
@@ -188,13 +246,10 @@ export default function Dashboard() {
                 <Card className="col-span-3">
                   <CardHeader>
                     <CardTitle>Recent Funds</CardTitle>
-                    <CardDescription>
-                      You made {dealList?.length || 0} sales this month.
-                    </CardDescription>
+                    <CardDescription>You made {dealList?.length || 0} sales this month.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentFunds recentDealData={recentDealData}>
-                    </RecentFunds>
+                    <RecentFunds></RecentFunds>
                   </CardContent>
                 </Card>
               </div>
