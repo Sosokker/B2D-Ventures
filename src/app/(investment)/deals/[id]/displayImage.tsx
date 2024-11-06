@@ -16,26 +16,27 @@ interface ItemProps {
   alt: string;
   width: number;
   height: number;
+  className?: string;
 }
 
-const ImageModal = ({ src, alt, width, height }: ItemProps) => {
+const ImageModal = ({ src, alt, width, height, className }: ItemProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Image src={src} alt={alt} width={width} height={height} className="rounded-lg basis-0" />
+        <Image src={src} alt={alt} width={width} height={height} className={className} />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Image Preview</DialogTitle>
           <DialogDescription>Click outside to close the image preview.</DialogDescription>
         </DialogHeader>
-        <Image src={src} alt={alt} width={700} height={400} />
+        <Image src={src} alt={alt} width={700} height={400} className={className} />
         <DialogFooter />
       </DialogContent>
     </Dialog>
   );
 };
 
-export function DisplayFullImage({ src, alt, width, height }: ItemProps) {
-  return <ImageModal src={src} alt={alt} width={width} height={height} />;
+export function DisplayFullImage({ src, alt, width, height, className }: ItemProps) {
+  return <ImageModal src={src} alt={alt} width={width} height={height} className={className} />;
 }
