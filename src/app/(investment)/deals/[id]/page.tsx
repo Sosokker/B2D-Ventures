@@ -49,7 +49,6 @@ export default async function ProjectDealPage({ params }: { params: { id: number
     alt: `${projectData.project_name} Image`,
   });
 
-
   return (
     <div className="container max-w-screen-xl my-5">
       <div className="flex flex-col gap-y-10">
@@ -92,7 +91,9 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                 <CarouselContent className="flex space-x-1">
                   {carouselData.map((item, index) => (
                     <CarouselItem key={index} className="flex">
-                      <DisplayFullImage item={item} width={200} height={100}/>
+                      <CarouselItem key={index} className="flex">
+                        <DisplayFullImage src="/path/to/image.jpg" alt="Image description" width={300} height={200} />
+                      </CarouselItem>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
