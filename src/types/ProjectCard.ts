@@ -5,7 +5,7 @@ export interface ProjectCardProps {
   image_url: string;
   join_date: string;
   location: string;
-  tags: string[] | null;
+  tags?: string[] | null;
   min_investment: number;
   total_investor: number;
   total_raise: number;

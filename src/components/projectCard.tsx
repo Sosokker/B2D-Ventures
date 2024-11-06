@@ -3,6 +3,7 @@
 import { CalendarDaysIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { Separator } from "./ui/separator";
 
 interface XMap {
   [tag: string]: string;
@@ -13,7 +14,7 @@ interface ProjectCardProps {
   description: string;
   joinDate: string;
   location: string;
-  tags: XMap | null | never[] | string[];
+  tags?: XMap | null | never[] | string[];
   imageUri: string | null;
   minInvestment: number;
   totalInvestor: number;
@@ -22,18 +23,6 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard(props: ProjectCardProps) {
-  if (props.minInvestment === null) {
-    props.minInvestment = 0;
-  }
-
-  if (props.totalInvestor === null) {
-    props.minInvestment = 0;
-  }
-
-  if (props.totalRaised === null) {
-    props.minInvestment = 0;
-  }
-
   return (
     <div
       className={cn(
@@ -98,18 +87,32 @@ export function ProjectCard(props: ProjectCardProps) {
           {/* Info 2 */}
           <div className="hidden group-hover:flex group-hover:absolute group-hover:bottom-4 p-4 ">
             {/* Info 2 (Visible on hover) */}
-            <div className="transition-transform duration-500 transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
-              <hr className="-ml-4 mb-2" />
+            <div className="transition-transform duration-500 transform translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 w-full">
+              <Separator className="-ml-4 mb-2" />
               <p className="text-base">
-                <strong>${props.totalRaised.toLocaleString()}</strong> committed and reserved
+                <strong>
+                  ${isNaN(props.totalRaised) || props.totalRaised == null ? "N/A" : props.totalRaised.toLocaleString()}
+                </strong>{" "}
+                committed and reserved
               </p>
-              <hr className="-ml-4 mb-2 mt-2" />
+              <Separator className="-ml-4 mb-2 mt-2" />
               <p className="mb-2 text-base">
-                <strong>{props.totalInvestor.toLocaleString()}</strong> investors
+                <strong>
+                  {isNaN(props.totalInvestor) || props.totalInvestor == null
+                    ? "N/A "
+                    : props.totalInvestor.toLocaleString()}
+                </strong>{" "}
+                investors
               </p>
-              <hr className="-ml-4 mb-2" />
+              <Separator className="-ml-4 mb-2" />
               <p className="text-base">
-                <strong>${props.minInvestment.toLocaleString()}</strong> min. investment
+                <strong>
+                  $
+                  {isNaN(props.minInvestment) || props.minInvestment == null
+                    ? "N/A"
+                    : props.minInvestment.toLocaleString()}
+                </strong>{" "}
+                min. investment
               </p>
             </div>
           </div>

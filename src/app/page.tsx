@@ -9,6 +9,7 @@ import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { Suspense } from "react";
 import { FC } from "react";
 import { ProjectCardProps } from "@/types/ProjectCard";
+import { ProjectSection } from "@/components/ProjectSection";
 
 interface TopProjectsProps {
   projects: ProjectCardProps[] | null;
@@ -134,7 +135,7 @@ export default async function Home() {
             </div>
           ) : (
             <Suspense fallback={<ProjectsLoader />}>
-              <TopProjects projects={topProjectsData} />
+              <ProjectSection projectsData={topProjectsData} />
             </Suspense>
           )}
           <div className="self-center py-5 scale-75 md:scale-100">

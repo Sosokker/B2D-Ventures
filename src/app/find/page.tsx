@@ -2,9 +2,10 @@ import React, { Suspense } from "react";
 import { getBusinessByName } from "@/lib/data/businessQuery";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { BusinessSection } from "./BusinessSection";
-import { ProjectSection } from "./ProjectSection";
+import { ProjectSection } from "@/components/ProjectSection";
 import { getProjectCardData } from "@/lib/data/projectQuery";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function FindContent({ searchParams }: { searchParams: { query: string } }) {
   const query = searchParams.query;
@@ -36,7 +37,20 @@ export default async function FindContent({ searchParams }: { searchParams: { qu
       </Suspense>
       <Separator className="my-3" />
       <Suspense fallback={<div>Loading Projects...</div>}>
-        <ProjectSection projectsData={projectsData} />
+        <div className="space-y-6">
+          <div id="project-card">
+            <Card>
+              <CardHeader>
+                <CardTitle>Projects</CardTitle>
+                <CardDescription>Found {projectsData?.length ?? 0} projects!</CardDescription>
+              </CardHeader>
+              <Separator className="my-3" />
+              <CardContent>
+                <ProjectSection projectsData={projectsData} />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </Suspense>
     </div>
   );
