@@ -53,16 +53,17 @@ export default async function ProjectDealPage({ params }: { params: { id: number
   const timeDiff = Math.max(new Date(projectData.investment_deadline).getTime() - new Date().getTime(), 0);
   const hourLeft = Math.floor(timeDiff / (1000 * 60 * 60));
 
-  const carouselData = projectMaterial
-    ? projectMaterial.flatMap((item) =>
-        (item.material_url || ["/boiler1.jpg"]).map((url: string) => ({
-          src: url,
-          alt: "Image",
-        }))
-      )
-    : [];
+  const carouselData =
+    projectMaterial && projectMaterial.length > 0
+      ? projectMaterial.flatMap((item) =>
+          (item.material_url || ["/boiler1.jpg"]).map((url: string) => ({
+            src: url,
+            alt: "Image",
+          }))
+        )
+      : [{ src: "/boiler1.jpg", alt: "Default Boiler Image" }];
 
-  console.log(carouselData);
+  // console.log(carouselData);
 
   return (
     <div className="container max-w-screen-xl my-5">
@@ -98,8 +99,6 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
             </Carousel>
             {/* second carousel */}
             <Carousel className="w-full ml-1 h-[100px] mt-5 overflow-hidden">
@@ -161,9 +160,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
           <div className="flex w-fit">
             <Tabs.Root defaultValue="pitch">
               <Tabs.List className="list-none flex gap-10 text-lg md:text-xl">
-                <Tabs.Trigger value="pitch" className="text-yellow-300">
-                  Pitch
-                </Tabs.Trigger>
+                <Tabs.Trigger value="pitch">Pitch</Tabs.Trigger>
                 <Tabs.Trigger value="general">General Data</Tabs.Trigger>
                 <Tabs.Trigger value="update">Updates</Tabs.Trigger>
               </Tabs.List>
