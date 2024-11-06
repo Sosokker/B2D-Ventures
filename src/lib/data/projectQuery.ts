@@ -53,6 +53,9 @@ function getProjectDataQuery(client: SupabaseClient, projectId: number) {
       project_short_description,
       project_description,
       published_time,
+      project_status_id,
+      project_type_id,
+      deadline,
       ...project_investment_detail!inner (
         min_investment,
         total_investment,
