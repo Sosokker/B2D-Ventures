@@ -8,6 +8,7 @@ import { ProjectCard } from "@/components/projectCard";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getBusinessAndProject } from "@/lib/data/businessQuery";
+import Link from "next/link";
 
 function FindContent() {
   const searchParams = useSearchParams();
@@ -43,7 +44,11 @@ function FindContent() {
                   <li key={business.business_id}>
                     <Card className="w-full">
                       <CardHeader>
-                        <CardTitle>{business.business_name}</CardTitle>
+                        <CardTitle>
+                          {/* <Link href={`/deals/${business.business_id}`}> */}
+                            {business.business_name}
+                          {/* </Link> */}
+                        </CardTitle>
                         <CardDescription>
                           Joined Date: {new Date(business.joined_date).toLocaleDateString()}
                         </CardDescription>
@@ -51,18 +56,20 @@ function FindContent() {
                       <CardContent className="grid grid-cols-4 gap-4">
                         {business?.projects && business.projects.length > 0 ? (
                           business.projects.map((project) => (
-                            <ProjectCard
-                              key={project.id}
-                              name={project.project_name}
-                              description={project.project_short_description}
-                              joinDate={project.published_time}
-                              location={business.location}
-                              minInvestment={project.min_investment}
-                              totalInvestor={project.total_investment}
-                              totalRaised={project.target_investment}
-                              tags={project.tags?.map((tag) => String(tag.tag_value)) || []}
-                              imageUri={project.card_image_url}
-                            />
+                            <Link key={project.id} href={`/deals/${project.id}`}>
+                              <ProjectCard
+                                key={project.id}
+                                name={project.project_name}
+                                description={project.project_short_description}
+                                joinDate={project.published_time}
+                                location={business.location}
+                                minInvestment={project.min_investment}
+                                totalInvestor={project.total_investment}
+                                totalRaised={project.target_investment}
+                                tags={project.tags?.map((tag) => String(tag.tag_value)) || []}
+                                imageUri={project.card_image_url}
+                              />
+                            </Link>
                           ))
                         ) : (
                           <p>No Projects</p>

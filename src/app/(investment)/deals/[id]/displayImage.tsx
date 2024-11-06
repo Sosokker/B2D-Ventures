@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
-import { it } from "node:test";
+
 
 const ImageModal = ({ item, width }: { item: { src: string | StaticImport; alt: string;} }, number ) => {
   return (
