@@ -39,29 +39,56 @@ export default function EditProfilePage({ params }: { params: { uid: string } })
 
   const onProfileSubmit = async (updates: z.infer<typeof profileSchema>) => {
     const { avatars, username, full_name } = updates;
+    let avatarUrl = null;
 
     try {
-      let avatarUrl = null;
-
       if (avatars instanceof File) {
+        const { data: currentProfile, error: fetchError } = await client
+          .from("profiles")
+          .select("avatar_url")
+          .eq("id", uid)
+          .single();
+
+        if (fetchError) {
+          throw new Error("Failed to fetch existing profile data");
+        }
+
+        if (currentProfile?.avatar_url) {
+          const oldAvatarPath = currentProfile.avatar_url.split("/").pop();
+          const { error: deleteError } = await client.storage.from("avatars").remove([oldAvatarPath]);
+
+          if (deleteError) {
+            console.warn("Failed to delete old avatar:", deleteError.message);
+          }
+        }
+
         const avatarData = await uploadAvatar(client, avatars, uid);
         avatarUrl = avatarData?.path
           ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${avatarData.path}`
           : null;
       }
 
-      const result = await updateProfile(client, uid, {
+      const updateData = {
         username,
         full_name,
         bio: bioContent,
         ...(avatarUrl && { avatar_url: avatarUrl }),
-      });
+      };
+
+      const hasChanges = Object.values(updateData).some((value) => value !== undefined && value !== null);
+
+      if (!hasChanges) {
+        toast.error("No fields to update!");
+        return;
+      }
+
+      const result = await updateProfile(client, uid, updateData);
 
       if (result) {
         toast.success("Profile updated successfully!");
         router.push(`/profile/${uid}`);
       } else {
-        toast.error("No fields to update!");
+        toast.error("Failed to update profile!");
       }
     } catch (error) {
       toast.error("Error updating profile!");

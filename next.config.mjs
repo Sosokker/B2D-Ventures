@@ -12,6 +12,12 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: SUPABASE_URL,
+        port: "",
+        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
         hostname: "upload.wikimedia.org",
         pathname: "/wikipedia/**",
       },
@@ -19,7 +25,7 @@ const nextConfig = {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
         pathname: "/**",
-      }
+      },
     ],
   },
 };
