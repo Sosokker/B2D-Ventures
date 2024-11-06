@@ -173,7 +173,7 @@ function searchProjectsQuery(
   }
 
   if (tagFilter && tagFilter !== "all") {
-    query = query.in("tags.tag_name", [tagFilter]);
+    query = query.in("project_tag.tag.value", [tagFilter]);
   }
 
   if (searchTerm) {
