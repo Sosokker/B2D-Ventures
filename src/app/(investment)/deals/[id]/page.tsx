@@ -16,6 +16,8 @@ import { getProjectData } from "@/lib/data/projectQuery";
 import { getDealList } from "@/app/api/dealApi";
 import { sumByKey, toPercentage } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import remarkGfm from "remark-gfm";
+
 const PHOTO_MATERIAL_ID = 2;
 
 export default async function ProjectDealPage({ params }: { params: { id: number } }) {
@@ -175,7 +177,9 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </CardHeader>
                   <CardContent>
                     <div className="prose dark:prose-invert prose-sm max-w-none ">
-                      <ReactMarkdown>{projectData?.project_description || "No pitch available."}</ReactMarkdown>
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {projectData?.project_description || "No pitch available."}
+                      </ReactMarkdown>
                     </div>
                   </CardContent>
                 </Card>

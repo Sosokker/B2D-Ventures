@@ -8,6 +8,7 @@ import Link from "next/link";
 import { getUserRole } from "@/lib/data/userQuery";
 import { BusinessProfile } from "./BusinessProfile";
 import { ProjectProfileSection } from "./ProjectProfile";
+import remarkGfm from "remark-gfm";
 
 export default async function ProfilePage({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
@@ -99,7 +100,7 @@ export default async function ProfilePage({ params }: { params: { uid: string } 
               {/* <h2 className="text-4xl font-bold mb-2">Bio</h2> */}
               <div className="border-[1px] mx-4 p-6 rounded-md">
                 <div className="prose prose-sm max-w-none dark:prose-invert">
-                  <ReactMarkdown>{profileData.bio || "No bio available."}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{profileData.bio || "No bio available."}</ReactMarkdown>
                 </div>
               </div>
             </div>
