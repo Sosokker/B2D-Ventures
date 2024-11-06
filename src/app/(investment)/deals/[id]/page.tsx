@@ -53,10 +53,6 @@ export default async function ProjectDealPage({ params }: { params: { id: number
   const timeDiff = Math.max(new Date(projectData.investment_deadline).getTime() - new Date().getTime(), 0);
   const hourLeft = Math.floor(timeDiff / (1000 * 60 * 60));
 
-  // const carouselData = Array(5).fill({
-  //   src: projectData.card_image_url || "/boiler1.jpg",
-  //   alt: `${projectData.project_name} Image`,
-  // });
   const carouselData = projectMaterial
     ? projectMaterial.flatMap((item) =>
         (item.material_url || ["/boiler1.jpg"]).map((url: string) => ({
@@ -106,8 +102,8 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <CarouselNext />
             </Carousel>
             {/* second carousel */}
-            <Carousel className="w-full ml-1 h-[100px] mt-5">
-              <CarouselContent className="flex space-x-1">
+            <Carousel className="w-full ml-1 h-[100px] mt-5 overflow-hidden">
+              <CarouselContent className="flex space-x-1 h-[100px]">
                 {carouselData.map((item, index) => (
                   <CarouselItem key={index} className="flex">
                     <DisplayFullImage
@@ -115,7 +111,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                       alt={item.alt}
                       width={200}
                       height={100}
-                      className="rounded-lg object-cover basis-0"
+                      className="rounded-lg object-cover h-[100px] w-[200px]"
                     />
                   </CarouselItem>
                 ))}

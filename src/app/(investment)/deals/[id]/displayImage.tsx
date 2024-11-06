@@ -30,7 +30,7 @@ const ImageModal = ({ src, alt, width, height, className }: ItemProps) => {
           <DialogTitle>Image Preview</DialogTitle>
           <DialogDescription>Click outside to close the image preview.</DialogDescription>
         </DialogHeader>
-        <Image src={src} alt={alt} width={700} height={400} className={className} />
+        <Image src={src} alt={alt} width={700} height={400} />
         <DialogFooter />
       </DialogContent>
     </Dialog>
