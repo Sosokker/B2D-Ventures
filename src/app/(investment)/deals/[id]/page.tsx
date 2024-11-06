@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import FollowShareButtons from "./followShareButton";
+import { DisplayFullImage } from "./displayImage";
 
 import { getProjectData } from "@/lib/data/projectQuery";
 import { getDealList } from "@/app/api/dealApi";
@@ -19,7 +20,6 @@ import { redirect } from "next/navigation";
 
 export default async function ProjectDealPage({ params }: { params: { id: number } }) {
   const supabase = createSupabaseClient();
-
   const { data: projectData, error: projectDataError } = await getProjectData(supabase, params.id);
 
   if (!projectData) {
@@ -48,6 +48,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
     src: projectData.card_image_url || "/boiler1.jpg",
     alt: `${projectData.project_name} Image`,
   });
+
 
   return (
     <div className="container max-w-screen-xl my-5">
@@ -91,7 +92,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                 <CarouselContent className="flex space-x-1">
                   {carouselData.map((item, index) => (
                     <CarouselItem key={index} className="flex">
-                      <Image src={item.src} alt={item.alt} width={200} height={100} className="rounded-lg basis-0" />
+                      <DisplayFullImage item={item} width={200} height={100}/>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
@@ -140,7 +141,9 @@ export default async function ProjectDealPage({ params }: { params: { id: number
           <div className="flex w-fit">
             <Tabs.Root defaultValue="pitch">
               <Tabs.List className="list-none flex gap-10 text-lg md:text-xl">
-                <Tabs.Trigger value="pitch">Pitch</Tabs.Trigger>
+                <Tabs.Trigger value="pitch" className="text-yellow-300">
+                  Pitch
+                </Tabs.Trigger>
                 <Tabs.Trigger value="general">General Data</Tabs.Trigger>
                 <Tabs.Trigger value="update">Updates</Tabs.Trigger>
               </Tabs.List>

@@ -10,8 +10,6 @@ import useSession from "@/lib/supabase/useSession";
 import toast from "react-hot-toast";
 
 const FollowShareButtons = () => {
-  const [progress, setProgress] = useState(0);
-  const [tab, setTab] = useState("Pitch");
   const { session, loading } = useSession();
   const user = session?.user;
   const [sessionLoaded, setSessionLoaded] = useState(false);
