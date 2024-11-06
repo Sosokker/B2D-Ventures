@@ -45,6 +45,28 @@ export const getBusinessByName = (
   return query;
 };
 
+export const getBusinessByUserId = (client: SupabaseClient, userId: string) => {
+  const query = client
+    .from("business")
+    .select(
+      `
+    business_id:id,
+    location,
+    business_name,
+    ...business_type (
+      business_type_id: id,
+      business_type: value
+    ),
+    joined_date,
+    user_id
+  `
+    )
+    .eq("user_id", userId)
+    .single();
+
+  return query;
+};
+
 export const getBusinessAndProject = (
   client: SupabaseClient,
   params: { businessName?: String | null; businessId?: number | null; single?: boolean } = { single: false }
