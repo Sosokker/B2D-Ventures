@@ -8,23 +8,10 @@ import { getTopProjects } from "@/lib/data/projectQuery";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { Suspense } from "react";
 import { FC } from "react";
-
-interface Project {
-  id: number;
-  project_name: string;
-  project_short_description: string;
-  card_image_url: string;
-  published_time: string;
-  business: { location: string }[];
-  project_tag: { tag: { id: number; value: string }[] }[];
-  project_investment_detail: {
-    min_investment: number;
-    total_investment: number;
-  }[];
-}
+import { ProjectCardProps } from "@/types/ProjectCard";
 
 interface TopProjectsProps {
-  projects: Project[];
+  projects: ProjectCardProps[] | null;
 }
 
 const TopProjects: FC<TopProjectsProps> = ({ projects }) => {
@@ -34,21 +21,22 @@ const TopProjects: FC<TopProjectsProps> = ({ projects }) => {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {projects.map((project) => (
-        <Link href={`/deals/${project.id}`} key={project.id}>
-          <ProjectCard
-            name={project.project_name}
-            description={project.project_short_description}
-            imageUri={project.card_image_url}
-            joinDate={new Date(project.published_time).toLocaleDateString()}
-            location={project.business[0]?.location || ""}
-            tags={project.project_tag.flatMap((item: { tag: { id: number; value: string }[] }) =>
-              Array.isArray(item.tag) ? item.tag.map((tag) => tag.value) : []
-            )}
-            minInvestment={project.project_investment_detail[0]?.min_investment || 0}
-            totalInvestor={0}
-            totalRaised={project.project_investment_detail[0]?.total_investment || 0}
-          />
-        </Link>
+        <div key={project.id}>
+          <Link href={`/deals/${project.id}`}>
+            <ProjectCard
+              name={project.project_name}
+              description={project.short_description}
+              imageUri={project.image_url}
+              joinDate={new Date(project.join_date).toLocaleDateString()}
+              location={project.location}
+              tags={project.tags}
+              minInvestment={project.min_investment}
+              totalInvestor={project.total_investor}
+              totalRaised={project.total_raise}
+            />
+          </Link>
+          <Separator />
+        </div>
       ))}
     </div>
   );
@@ -141,10 +129,12 @@ export default async function Home() {
             <p className="text-md md:text-lg">The deals attracting the most interest right now</p>
           </span>
           {topProjectsError ? (
-            <div className="text-red-500">Error fetching projects: {topProjectsError}</div>
+            <div className="text-center text-red-600">
+              <p>Failed to load top projects. Please try again later.</p>
+            </div>
           ) : (
             <Suspense fallback={<ProjectsLoader />}>
-              <TopProjects projects={topProjectsData || []} />
+              <TopProjects projects={topProjectsData} />
             </Suspense>
           )}
           <div className="self-center py-5 scale-75 md:scale-100">

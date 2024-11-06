@@ -4,43 +4,30 @@ import { ProjectCardProps } from "@/types/ProjectCard";
 async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 4) {
   try {
     const { data, error } = await client
-      .from("project")
+      .from("project_card")
       .select(
         `
-          id,
+          project_id,
           project_name,
-          business_id,
-          published_time,
-          project_short_description,
-          card_image_url,
-          project_investment_detail (
-            min_investment,
-            total_investment,
-            target_investment,
-            investment_deadline
-          ),
-          project_tag (
-            tag (
-              id,
-              value
-            )
-          ),
-          business (
-            location
-          )
+          short_description,
+          image_url,
+          join_date,
+          location,
+          total_investor,
+          total_raise,
+          min_investment,
+          tags
         `
       )
-      .order("published_time", { ascending: false })
+      .order("total_raise", { ascending: false })
       .limit(numberOfRecords);
 
     if (error) {
-      console.error("Error fetching top projects:", error.message);
       return { data: null, error: error.message };
     }
 
     return { data, error: null };
   } catch (err) {
-    console.error("Unexpected error:", err);
     return { data: null, error: "An unexpected error occurred." };
   }
 }
