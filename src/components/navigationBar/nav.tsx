@@ -17,6 +17,7 @@ import { SearchBar } from "./serchBar";
 import { AuthenticatedComponents } from "./AuthenticatedComponents";
 import { UnAuthenticatedComponents } from "./UnAuthenticatedComponents";
 
+import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { getUserId } from "@/lib/supabase/actions/getUserId";
 
 const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
@@ -44,8 +45,9 @@ const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWit
 ListItem.displayName = "ListItem";
 
 export async function NavigationBar() {
+  const client = createSupabaseClient();
   const userId = await getUserId();
-
+  const { data: avatarUrl } = await client.from("profiles").select("avatar_url").eq("id", userId).single();
   const businessComponents = [
     {
       title: "Business",
@@ -119,7 +121,11 @@ export async function NavigationBar() {
                 <ThemeToggle />
               </div>
               <Separator orientation="vertical" className="mx-3" />
-              {userId ? <AuthenticatedComponents uid={userId} /> : <UnAuthenticatedComponents />}
+              {userId ? (
+                <AuthenticatedComponents uid={userId} avatarUrl={avatarUrl?.avatar_url} />
+              ) : (
+                <UnAuthenticatedComponents />
+              )}
             </div>
           </div>
         </div>

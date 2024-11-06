@@ -16,9 +16,10 @@ import { useUserRole } from "@/hooks/useUserRole";
 
 interface AuthenticatedComponentsProps {
   uid: string;
+  avatarUrl?: string | null;
 }
 
-export const AuthenticatedComponents = ({ uid }: AuthenticatedComponentsProps) => {
+export const AuthenticatedComponents = ({ uid, avatarUrl }: AuthenticatedComponentsProps) => {
   const notifications = 100;
   const displayValue = notifications >= 100 ? "..." : notifications;
   const { data } = useUserRole();
@@ -44,7 +45,12 @@ export const AuthenticatedComponents = ({ uid }: AuthenticatedComponentsProps) =
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
             <Avatar>
-              <AvatarImage src="https://api.dicebear.com/9.x/pixel-art/svg" />
+              {avatarUrl ? (
+                <AvatarImage src={avatarUrl} alt="profile" />
+              ) : (
+                <AvatarImage src="https://api.dicebear.com/9.x/pixel-art/svg" alt="profile" />
+              )}
+
               <AvatarFallback>1</AvatarFallback>
             </Avatar>
           </Button>
