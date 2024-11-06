@@ -11,25 +11,31 @@ import {
 import Image from "next/image";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
+interface ItemProps {
+  src: string | StaticImport;
+  alt: string;
+  width: number;
+  height: number;
+}
 
-const ImageModal = ({ item, width }: { item: { src: string | StaticImport; alt: string;} }, number ) => {
+const ImageModal = ({ src, alt, width, height }: ItemProps) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Image src={item.src} alt={item.alt} width={item.width} height={item.height} className="rounded-lg basis-0" />
+        <Image src={src} alt={alt} width={width} height={height} className="rounded-lg basis-0" />
       </DialogTrigger>
-      <DialogContent className="">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Image Preview</DialogTitle>
           <DialogDescription>Click outside to close the image preview.</DialogDescription>
         </DialogHeader>
-        <Image src={item.src} alt={item.alt} width={700} height={400} />
+        <Image src={src} alt={alt} width={700} height={400} />
         <DialogFooter />
       </DialogContent>
     </Dialog>
   );
 };
 
-export function DisplayFullImage({ item }: { item: { src: string | StaticImport; alt: string; width: number; height: number } }) {
-  return <ImageModal item={item} />;
+export function DisplayFullImage({ src, alt, width, height }: ItemProps) {
+  return <ImageModal src={src} alt={alt} width={width} height={height} />;
 }
