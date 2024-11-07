@@ -11,7 +11,7 @@ import { getProjectByUserId } from "@/lib/data/projectQuery";
 import { Loader } from "@/components/loading/loader";
 import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { getLatestInvestment } from "../portfolio/[uid]/query";
+import { getLatestInvestment, overAllGraphData, Deal } from "../portfolio/[uid]/query";
 
 const data = [
   {
@@ -174,7 +174,6 @@ export default function Dashboard() {
                 </TabsTrigger>
               ))}
             </TabsList>
-            {currentProjectId}
             {projects.map((project) => (
               <TabsContent value={project.project_name} className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -282,7 +281,22 @@ export default function Dashboard() {
                       <CardTitle>Overview</CardTitle>
                     </CardHeader>
                     <CardContent className="pl-2">
-                      <Overview graphType={graphType} data={data} />
+                      <Overview
+                        graphType={graphType}
+                        data={overAllGraphData(
+                          investmentDetail?.data
+                            ?.map((deal) => {
+                              if (deal.project_id === currentProjectId) {
+                                return {
+                                  deal_amount: deal.deal_amount,
+                                  created_time: deal.created_time,
+                                };
+                              }
+                              return undefined;
+                            })
+                            .filter((deal) => deal !== undefined) as Deal[]
+                        )}
+                      />
                       {/* tab to switch between line and bar graph */}
                       <Tabs defaultValue="line" className="space-y-4 ml-[50%] mt-2">
                         <TabsList>

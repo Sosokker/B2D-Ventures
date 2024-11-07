@@ -105,7 +105,7 @@ async function getBusinessTypeName(supabase: SupabaseClient, projectId: number) 
 }
 
 // only use deal that were made at most year ago
-interface Deal {
+export interface Deal {
   created_time: string | number | Date;
   deal_amount: any;
 }
