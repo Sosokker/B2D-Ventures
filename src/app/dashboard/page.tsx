@@ -20,7 +20,7 @@ export default function Dashboard() {
     { id: number; project_name: string; business_id: { user_id: number }[]; dataroom_id: number }[]
   >([]);
   const [latestInvestment, setLatestInvestment] = useState<
-    { projectId: number; name: any; amount: number; date: Date; logo_url: string }[]
+    { projectId: number; name: any; amount: number; date: Date; logo_url: string; status: string }[]
   >([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
@@ -58,9 +58,10 @@ export default function Dashboard() {
           amount: investment.amount,
           date: investment.date,
           logo_url: investment.logo_url,
+          status: investmentDetail?.data?.find((deal) => deal.project_id === investment.projectId)?.deal_status.value,
         }))
       );
-      // console.table(resolvedLatest);
+      // console.table(investmentDetail);
     };
     fetchLatestInvestment();
   }, [supabase, investmentDetail]);
@@ -230,7 +231,7 @@ export default function Dashboard() {
                       <CardTitle>Overview</CardTitle>
                     </CardHeader>
                     <CardContent className="pl-2">
-                      <Overview
+                      {/* <Overview
                         graphType={graphType}
                         data={overAllGraphData(
                           investmentDetail?.data
@@ -245,7 +246,7 @@ export default function Dashboard() {
                             })
                             .filter((deal) => deal !== undefined) as Deal[]
                         )}
-                      />
+                      /> */}
                       {/* tab to switch between line and bar graph */}
                       <Tabs defaultValue="line" className="space-y-4 ml-[50%] mt-2">
                         <TabsList>
@@ -262,7 +263,6 @@ export default function Dashboard() {
                   <Card className="col-span-3">
                     <CardHeader>
                       <CardTitle>Recent Funds</CardTitle>
-                      <CardDescription>You had {} investors invest this month.</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <RecentFunds
@@ -274,6 +274,7 @@ export default function Dashboard() {
                                 amount: item.amount,
                                 avatar: item.logo_url,
                                 date: item.date,
+                                status: item.status,
                               };
                             }
                             return undefined;

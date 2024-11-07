@@ -30,7 +30,7 @@ async function getLatestInvestment(
 ) {
   const llist = [];
   const count = 8;
-
+  // select project name from the given id
   for (let i = deals.length - 1; i >= 0 && llist.length < count; --i) {
     let { data: project, error } = await supabase.from("project").select("project_name").eq("id", deals[i].project_id);
     if (error) {
