@@ -71,6 +71,7 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
       project_description,
       published_time,
       card_image_url,
+      deadline,
       ...project_investment_detail!inner (
         min_investment,
         total_investment,

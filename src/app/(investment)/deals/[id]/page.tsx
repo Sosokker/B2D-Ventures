@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
@@ -16,6 +16,7 @@ import { getProjectData } from "@/lib/data/projectQuery";
 import { getDealList } from "@/app/api/dealApi";
 import { sumByKey, toPercentage } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import { isOwnerOfProject } from "./query";
 import remarkGfm from "remark-gfm";
 
 const PHOTO_MATERIAL_ID = 2;
@@ -23,6 +24,7 @@ const PHOTO_MATERIAL_ID = 2;
 export default async function ProjectDealPage({ params }: { params: { id: number } }) {
   const supabase = createSupabaseClient();
   const { data: projectData, error: projectDataError } = await getProjectData(supabase, params.id);
+  const { data: user, error: userError } = await supabase.auth.getUser();
 
   const { data: projectMaterial, error: projectMaterialError } = await supabase
     .from("project_material")
@@ -47,6 +49,19 @@ export default async function ProjectDealPage({ params }: { params: { id: number
       </div>
     );
   }
+
+  if (userError || !user) {
+    return (
+      <div className="container max-w-screen-xl my-5">
+        <p className="text-red-600">Error fetching data. Please try again.</p>
+        <Button className="mt-4" onClick={() => window.location.reload()}>
+          Refresh
+        </Button>
+      </div>
+    );
+  }
+
+  const isOwner = await isOwnerOfProject(supabase, params.id, user.user?.id);
 
   const projectBusinessOwnerId = projectData.user_id;
   const dealList = await getDealList(projectBusinessOwnerId);
@@ -122,7 +137,66 @@ export default async function ProjectDealPage({ params }: { params: { id: number
             </Carousel>
           </div>
 
-          <div id="stats" className="flex flex-col w-full mt-4 pl-12">
+          <Card className="w-[80%] ml-10 shadow-sm">
+            <CardContent>
+              <div id="stats" className="flex flex-col w-full mt-4">
+                <div className="pl-5">
+                  <span>
+                    <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
+                    <p className="text-sm md:text-lg">
+                      {toPercentage(totalDealAmount, projectData?.target_investment)}% raised of $
+                      {projectData?.target_investment} max goal
+                    </p>
+                    <Progress
+                      value={toPercentage(totalDealAmount, projectData?.target_investment)}
+                      className="w-4/5 h-3 mt-3 border-2"
+                    />
+                  </span>
+                  <span>
+                    <h1 className="font-semibold text-4xl md:mt-8">
+                      <p className="text-xl md:text-4xl">{dealList.length}</p>
+                    </h1>
+                    <p className="text-sm md:text-lg">Investors</p>
+                  </span>
+                  <Separator decorative className="mt-3 w-3/4 ml-5" />
+                  <span>
+                    <h1 className="font-semibold text-xl md:text-4xl mt-8 ml-5"></h1>
+                    {projectData?.investment_deadline ? (
+                      <>
+                        <p className="text-xl md:text-4xl">{Math.floor(hourLeft)} hours</p>
+                        <p>Left to invest</p>
+                      </>
+                    ) : (
+                      <p className="text-xl md:text-4xl">No deadline</p>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+            <Separator />
+            <CardFooter className="flex flex-col space-y-4 mt-3">
+              <div className="flex justify-between w-full">
+                <Button className="w-full h-12 dark:text-white truncate">
+                  <Link href={`/invest/${params.id}`}>Invest in {projectData?.project_name}</Link>
+                </Button>
+                {isOwner && (
+                  <Button className="w-[48%] ml-4 h-12 dark:text-white" variant={"outline"}>
+                    <Link href={`/project/${params.id}/edit`}>Edit</Link>
+                  </Button>
+                )}
+              </div>
+              <div className="flex justify-between w-full">
+                <Button className="w-[48%] h-12 dark:text-white" variant={"outline"}>
+                  <Link href={`/dataroom/${params.id}/files`}>Access Dataroom</Link>
+                </Button>
+                <Button className="w-[48%] h-12 dark:text-white" variant={"outline"}>
+                  <Link href={`/dataroom/overview`}>Request Dataroom Access</Link>
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
+
+          {/* <div id="stats" className="flex flex-col w-full mt-4 pl-12">
             <div className="pl-5">
               <span>
                 <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
@@ -153,11 +227,20 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   <p className="text-xl md:text-4xl">No deadline</p>
                 )}
               </span>
-              <Button className="mt-5 w-3/4 h-12">
+              <Button className="mt-5 w-3/4 h-12 dark:text-white">
                 <Link href={`/invest/${params.id}`}>Invest in {projectData?.project_name}</Link>
               </Button>
+              <div className="flex flex-col space-y-2 py-4 mt-5 w-3/4 h-12 border-2 border-border rounded-md">
+                <p className="text-md font-bold">Dataroom</p>
+                <Button className=" dark:text-white">
+                  <Link href={`/invest/${params.id}`}>Access Dataroom</Link>
+                </Button>
+                <Button className=" dark:text-white">
+                  <Link href={`/invest/${params.id}`}>Manage Dataroom</Link>
+                </Button>
+              </div>
             </div>
-          </div>
+          </div> */}
         </div>
         {/* menu */}
         <div id="deck">
