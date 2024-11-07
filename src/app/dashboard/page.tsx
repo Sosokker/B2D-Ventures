@@ -13,57 +13,6 @@ import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { getLatestInvestment, overAllGraphData, Deal } from "../portfolio/[uid]/query";
 
-const data = [
-  {
-    name: "Jan",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Apr",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jul",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Aug",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Sep",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Oct",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Nov",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Dec",
-    value: Math.floor(Math.random() * 5000) + 1000,
-  },
-];
-
 export default function Dashboard() {
   let supabase = createSupabaseClient();
   const userId = useSession().session?.user.id;
