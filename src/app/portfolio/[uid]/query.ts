@@ -38,6 +38,7 @@ async function getLatestInvestment(
     }
     let url = fetchLogoURL(supabase, deals[i].project_id);
     llist.push({
+      projectId: deals[i].project_id,
       name: project?.[0]?.project_name,
       amount: deals[i].deal_amount,
       date: new Date(deals[i].created_time),

@@ -11,6 +11,7 @@ import { getProjectByUserId } from "@/lib/data/projectQuery";
 import { Loader } from "@/components/loading/loader";
 import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
+import { getLatestInvestment } from "../portfolio/[uid]/query";
 
 const data = [
   {
@@ -69,8 +70,12 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<
     { id: number; project_name: string; business_id: { user_id: number }[]; dataroom_id: number }[]
   >([]);
+  const [latestInvestment, setLatestInvestment] = useState<
+    { projectId: number; name: any; amount: number; date: Date; logo_url: string }[]
+  >([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
+  const [currentProjectId, setCurrentProjectId] = useState<number>(projects[0]?.id);
   const investmentDetail = useQuery(
     getInvestmentByProjectsIds(
       supabase,
@@ -79,6 +84,37 @@ export default function Dashboard() {
       })
     )
   );
+  useEffect(() => {
+    const fetchLatestInvestment = async () => {
+      const latest = await getLatestInvestment(
+        supabase,
+        investmentDetail?.data?.map((deal) => {
+          return {
+            project_id: deal.project_id,
+            deal_amount: deal.deal_amount,
+            created_time: deal.created_time,
+          };
+        }) || []
+      );
+      const resolvedLatest = await Promise.all(
+        latest.map(async (investment) => ({
+          ...investment,
+          logo_url: await investment.logo_url,
+        }))
+      );
+      setLatestInvestment(
+        resolvedLatest.map((investment) => ({
+          projectId: investment.projectId,
+          name: investment.name,
+          amount: investment.amount,
+          date: investment.date,
+          logo_url: investment.logo_url,
+        }))
+      );
+      // console.table(resolvedLatest);
+    };
+    fetchLatestInvestment();
+  }, [supabase, investmentDetail]);
   useEffect(() => {
     const fetchProjects = async () => {
       if (userId) {
@@ -99,6 +135,7 @@ export default function Dashboard() {
     fetchProjects();
   }, [supabase, userId]);
   // console.table(projects);
+  // console.table(latestInvestment);
 
   return (
     <>
@@ -124,14 +161,20 @@ export default function Dashboard() {
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Business Dashboard</h2>
           </div>
+
           <Tabs className="space-y-4">
             <TabsList>
               {projects.map((project) => (
-                <TabsTrigger key={project.id} value={project.project_name}>
+                <TabsTrigger
+                  key={project.id}
+                  value={project.project_name}
+                  onClick={() => setCurrentProjectId(project.id)}
+                >
                   {project.project_name}
                 </TabsTrigger>
               ))}
             </TabsList>
+            {currentProjectId}
             {projects.map((project) => (
               <TabsContent value={project.project_name} className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -259,7 +302,21 @@ export default function Dashboard() {
                       <CardDescription>You had {} investors invest this month.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <RecentFunds></RecentFunds>
+                      <RecentFunds
+                        data={latestInvestment
+                          .map((item) => {
+                            if (item.projectId === currentProjectId) {
+                              return {
+                                name: item.name,
+                                amount: item.amount,
+                                avatar: item.logo_url,
+                                date: item.date,
+                              };
+                            }
+                            return undefined;
+                          })
+                          .filter((item) => item !== undefined)}
+                      />
                     </CardContent>
                   </Card>
                 </div>
