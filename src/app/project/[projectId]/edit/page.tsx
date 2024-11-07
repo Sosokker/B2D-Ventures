@@ -4,10 +4,25 @@ import { Separator } from "@/components/ui/separator";
 import { getProjectDataQuery } from "@/lib/data/projectQuery";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { ProjectEditSchema } from "@/types/schemas/project.schema";
+import { redirect } from "next/navigation";
 
 export default async function EditProjectPage({ params }: { params: { projectId: string } }) {
   const client = createSupabaseClient();
   const projectId = Number(params.projectId);
+
+  // Check permission
+  const { data: user, error: userError } = await client.auth.getUser();
+  const uuid = user.user?.id;
+  const { data, error } = await client.from("project").select("...business(user_id)").eq("id", projectId).single();
+  console.log(uuid);
+  console.log(data);
+  if (userError || error) {
+    redirect("/");
+  }
+
+  if (data.user_id != uuid || data == null) {
+    redirect("/");
+  }
 
   const { data: projectData, error: projectDataError } = await getProjectDataQuery(client, projectId);
 
