@@ -10,6 +10,10 @@ export const getInvestmentCountsByProjectsIds = (client: SupabaseClient, project
     .in("project_id", projectIds);
 };
 
+export const getInvestmentByProjectsIds = (client: SupabaseClient, projectIds: string[]) => {
+  return client.from("investment_deal").select("*").in("project_id", projectIds);
+};
+
 export const getInvestmentByUserId = (client: SupabaseClient, userId: string) => {
   return client
     .from("investment_deal")

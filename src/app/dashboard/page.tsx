@@ -9,6 +9,8 @@ import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import useSession from "@/lib/supabase/useSession";
 import { getProjectByUserId } from "@/lib/data/projectQuery";
 import { Loader } from "@/components/loading/loader";
+import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 
 const data = [
   {
@@ -69,6 +71,14 @@ export default function Dashboard() {
   >([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
+  const investmentDetail = useQuery(
+    getInvestmentByProjectsIds(
+      supabase,
+      projects.map((item) => {
+        return item.id.toString();
+      })
+    )
+  );
   useEffect(() => {
     const fetchProjects = async () => {
       if (userId) {
