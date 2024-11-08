@@ -71,15 +71,19 @@ export function ProjectCard(props: ProjectCardProps) {
                 <span className="text-xs">{props.location}</span>
               </div>
               <div className="flex flex-wrap mt-1 items-center text-muted-foreground">
-                {props.tags && Array.isArray(props.tags) ? (
-                  props.tags.map((tag) => (
-                    <span id="tag" key={tag} className="text-[10px] rounded-md bg-slate-200 dark:bg-slate-700 p-1 mr-1">
-                      {tag}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-xs text-muted-foreground">No tags available</span>
-                )}
+                {props.tags?.length !== 0 && Array.isArray(props.tags)
+                  ? props.tags
+                      .filter((tag) => tag && tag.trim() !== "") // Filters out null or blank tags
+                      .map((tag) => (
+                        <span
+                          id="tag"
+                          key={tag}
+                          className="text-[10px] rounded-md bg-slate-200 dark:bg-slate-700 p-1 mr-1"
+                        >
+                          {tag}
+                        </span>
+                      ))
+                  : null}
               </div>
             </div>
           </div>
