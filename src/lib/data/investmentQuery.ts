@@ -16,14 +16,21 @@ export const getInvestmentByProjectsIds = (client: SupabaseClient, projectIds: s
     .select(
       `
     id, 
-    deal_status:deal_status_id(value),
+    ...deal_status_id(
+      deal_status:value
+      ),
     project_id,
     deal_amount,
-    investor:users_id(email),
-    created_time
+    created_time,
+    ...profiles (
+      investor_id:id,
+      username,
+      avatar_url
+    )
     `
     )
-    .in("project_id", projectIds);
+    .in("project_id", projectIds)
+    .order("created_time", { ascending: false });
 };
 
 export const getInvestmentByUserId = (client: SupabaseClient, userId: string) => {

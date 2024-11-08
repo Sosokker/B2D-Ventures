@@ -26,7 +26,7 @@ function getTotalInvestment(deals: { deal_amount: number }[]) {
 }
 async function getLatestInvestment(
   supabase: SupabaseClient,
-  deals: { project_id: number; deal_amount: number; created_time: Date }[]
+  deals: { project_id: number; deal_amount: number; created_time: Date;}[]
 ) {
   const llist = [];
   const count = 8;

@@ -117,7 +117,7 @@ export default function ApplyProject() {
       confirmButtonColor: error == null ? "green" : "red",
     }).then((result) => {
       if (result.isConfirmed) {
-        // window.location.href = "/";
+        window.location.href = "/";
       }
     });
   };

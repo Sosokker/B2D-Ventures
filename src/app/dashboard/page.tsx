@@ -11,16 +11,27 @@ import { getProjectByUserId } from "@/lib/data/projectQuery";
 import { Loader } from "@/components/loading/loader";
 import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { getLatestInvestment, overAllGraphData, Deal } from "../portfolio/[uid]/query";
+import { usePathname } from "next/navigation";
+import { overAllGraphData, Deal } from "../portfolio/[uid]/query";
+import { getUserProfile } from "@/lib/data/userQuery";
+import { Item } from "@radix-ui/react-navigation-menu";
 
 export default function Dashboard() {
-  let supabase = createSupabaseClient();
+  const supabase = createSupabaseClient();
+  const pathname = usePathname();
   const userId = useSession().session?.user.id;
   const [projects, setProjects] = useState<
     { id: number; project_name: string; business_id: { user_id: number }[]; dataroom_id: number }[]
   >([]);
   const [latestInvestment, setLatestInvestment] = useState<
-    { projectId: number; name: any; amount: number; date: Date; logo_url: string; status: string }[]
+    {
+      avatarUrl: string;
+      createdTime: Date;
+      dealAmount: number;
+      dealStatus: string;
+      investorId: string;
+      username: string;
+    }[]
   >([]);
   const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
@@ -34,36 +45,38 @@ export default function Dashboard() {
     )
   );
   useEffect(() => {
-    const fetchLatestInvestment = async () => {
-      const latest = await getLatestInvestment(
-        supabase,
-        investmentDetail?.data?.map((deal) => {
-          return {
-            project_id: deal.project_id,
-            deal_amount: deal.deal_amount,
-            created_time: deal.created_time,
-          };
-        }) || []
-      );
-      const resolvedLatest = await Promise.all(
-        latest.map(async (investment) => ({
-          ...investment,
-          logo_url: await investment.logo_url,
-        }))
-      );
-      setLatestInvestment(
-        resolvedLatest.map((investment) => ({
-          projectId: investment.projectId,
-          name: investment.name,
-          amount: investment.amount,
-          date: investment.date,
-          logo_url: investment.logo_url,
-          status: investmentDetail?.data?.find((deal) => deal.project_id === investment.projectId)?.deal_status.value,
-        }))
-      );
-      // console.table(investmentDetail);
+    const setTopLatestInvestment = () => {
+      if (investmentDetail?.data) {
+        setLatestInvestment(
+          investmentDetail.data
+            .slice(0, 8)
+            .map((item) => {
+              // set the project according to current project id
+              if (item.project_id === currentProjectId) {
+                return {
+                  avatarUrl: item.avatar_url,
+                  createdTime: item.created_time,
+                  dealAmount: item.deal_amount,
+                  dealStatus: item.deal_status,
+                  investorId: item.investor_id,
+                  username: item.username,
+                };
+              }
+              return undefined;
+            })
+            .filter((item) => item !== undefined) as {
+            avatarUrl: string;
+            createdTime: Date;
+            dealAmount: number;
+            dealStatus: string;
+            investorId: string;
+            username: string;
+          }[]
+        );
+        console.table(latestInvestment)
+      }
     };
-    fetchLatestInvestment();
+    setTopLatestInvestment();
   }, [supabase, investmentDetail]);
   useEffect(() => {
     const fetchProjects = async () => {
@@ -88,7 +101,7 @@ export default function Dashboard() {
   // console.table(latestInvestment);
 
   return (
-    <>
+    <div className="container max-w-screen-xl">
       <Loader isSuccess={isSuccess} />
       <div className="md:hidden">
         <Image
@@ -265,22 +278,18 @@ export default function Dashboard() {
                       <CardTitle>Recent Funds</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <RecentFunds
-                        data={latestInvestment
-                          .map((item) => {
-                            if (item.projectId === currentProjectId) {
-                              return {
-                                name: item.name,
-                                amount: item.amount,
-                                avatar: item.logo_url,
-                                date: item.date,
-                                status: item.status,
-                              };
-                            }
-                            return undefined;
-                          })
-                          .filter((item) => item !== undefined)}
-                      />
+                        <RecentFunds
+                          data={latestInvestment.map((item) => {
+                            return {
+                              name: item.username,
+                              amount: item.dealAmount,
+                              avatar: item.avatarUrl,
+                              date: new Date(item.createdTime),
+                              status: item.dealStatus,
+                              profile_url: `/profile/${item.investorId}`,
+                            };
+                          })}
+                        />
                     </CardContent>
                   </Card>
                 </div>
@@ -289,6 +298,6 @@ export default function Dashboard() {
           </Tabs>
         </div>
       </div>
-    </>
+    </div>
   );
 }
