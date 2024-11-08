@@ -11,14 +11,10 @@ import { getProjectByUserId } from "@/lib/data/projectQuery";
 import { Loader } from "@/components/loading/loader";
 import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { usePathname } from "next/navigation";
-import { overAllGraphData, Deal } from "../portfolio/[uid]/query";
-import { getUserProfile } from "@/lib/data/userQuery";
-import { Item } from "@radix-ui/react-navigation-menu";
+import { overAllGraphData, Deal, fourYearGraphData, dayOftheWeekData } from "../portfolio/[uid]/query";
 
 export default function Dashboard() {
   const supabase = createSupabaseClient();
-  const pathname = usePathname();
   const userId = useSession().session?.user.id;
   const [projects, setProjects] = useState<
     { id: number; project_name: string; business_id: { user_id: number }[]; dataroom_id: number }[]
@@ -33,6 +29,8 @@ export default function Dashboard() {
       username: string;
     }[]
   >([]);
+  const tabOptions = ["daily", "monthly", "yearly"];
+  const [activeTab, setActiveTab] = useState("daily");
   const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
   const [currentProjectId, setCurrentProjectId] = useState<number>(projects[0]?.id);
@@ -44,6 +42,19 @@ export default function Dashboard() {
       })
     )
   );
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+  let graphData = [];
+  const filteredData = (investmentDetail?.data || []).filter((deal) => deal.project_id === currentProjectId);
+
+  if (activeTab === "daily") {
+    graphData = dayOftheWeekData(filteredData);
+  } else if (activeTab === "yearly") {
+    graphData = fourYearGraphData(filteredData);
+  } else {
+    graphData = overAllGraphData(filteredData);
+  }
   useEffect(() => {
     const setTopLatestInvestment = () => {
       if (investmentDetail?.data) {
@@ -73,7 +84,7 @@ export default function Dashboard() {
             username: string;
           }[]
         );
-        console.table(latestInvestment)
+        console.table(latestInvestment);
       }
     };
     setTopLatestInvestment();
@@ -243,53 +254,47 @@ export default function Dashboard() {
                     <CardHeader>
                       <CardTitle>Overview</CardTitle>
                     </CardHeader>
-                    <CardContent className="pl-2">
-                      {/* <Overview
-                        graphType={graphType}
-                        data={overAllGraphData(
-                          investmentDetail?.data
-                            ?.map((deal) => {
-                              if (deal.project_id === currentProjectId) {
-                                return {
-                                  deal_amount: deal.deal_amount,
-                                  created_time: deal.created_time,
-                                };
-                              }
-                              return undefined;
-                            })
-                            .filter((deal) => deal !== undefined) as Deal[]
-                        )}
-                      /> */}
-                      {/* tab to switch between line and bar graph */}
-                      <Tabs defaultValue="line" className="space-y-4 ml-[50%] mt-2">
-                        <TabsList>
-                          <TabsTrigger value="line" onClick={() => setGraphType("line")}>
-                            Line
+                    <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+                      <TabsList className="grid w-56 grid-cols-3 ml-5">
+                        {tabOptions.map((tab) => (
+                          <TabsTrigger key={tab} value={tab}>
+                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
                           </TabsTrigger>
-                          <TabsTrigger value="bar" onClick={() => setGraphType("bar")}>
-                            Bar
-                          </TabsTrigger>
-                        </TabsList>
-                      </Tabs>
-                    </CardContent>
+                        ))}
+                      </TabsList>
+                      <CardContent className="pl-2 mt-5">
+                        <Overview graphType={graphType} data={graphData} />
+
+                        <Tabs defaultValue="line" className="space-y-4 ml-[50%] mt-2">
+                          <TabsList>
+                            <TabsTrigger value="line" onClick={() => setGraphType("line")}>
+                              Line
+                            </TabsTrigger>
+                            <TabsTrigger value="bar" onClick={() => setGraphType("bar")}>
+                              Bar
+                            </TabsTrigger>
+                          </TabsList>
+                        </Tabs>
+                      </CardContent>
+                    </Tabs>
                   </Card>
                   <Card className="col-span-3">
                     <CardHeader>
                       <CardTitle>Recent Funds</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <RecentFunds
-                          data={latestInvestment.map((item) => {
-                            return {
-                              name: item.username,
-                              amount: item.dealAmount,
-                              avatar: item.avatarUrl,
-                              date: new Date(item.createdTime),
-                              status: item.dealStatus,
-                              profile_url: `/profile/${item.investorId}`,
-                            };
-                          })}
-                        />
+                      <RecentFunds
+                        data={latestInvestment.map((item) => {
+                          return {
+                            name: item.username,
+                            amount: item.dealAmount,
+                            avatar: item.avatarUrl,
+                            date: new Date(item.createdTime),
+                            status: item.dealStatus,
+                            profile_url: `/profile/${item.investorId}`,
+                          };
+                        })}
+                      />
                     </CardContent>
                   </Card>
                 </div>
