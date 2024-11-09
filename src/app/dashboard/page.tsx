@@ -12,6 +12,7 @@ import { Loader } from "@/components/loading/loader";
 import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { overAllGraphData, Deal, fourYearGraphData, dayOftheWeekData } from "../portfolio/[uid]/query";
+import CountUp from "react-countup";
 
 export default function Dashboard() {
   const supabase = createSupabaseClient();
@@ -34,6 +35,7 @@ export default function Dashboard() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
   const [currentProjectId, setCurrentProjectId] = useState<number>(projects[0]?.id);
+
   const investmentDetail = useQuery(
     getInvestmentByProjectsIds(
       supabase,
@@ -42,11 +44,11 @@ export default function Dashboard() {
       })
     )
   );
+  let graphData = [];
+  const filteredData = (investmentDetail?.data || []).filter((deal) => deal.project_id === currentProjectId);
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
-  let graphData = [];
-  const filteredData = (investmentDetail?.data || []).filter((deal) => deal.project_id === currentProjectId);
 
   if (activeTab === "daily") {
     graphData = dayOftheWeekData(filteredData);
@@ -166,10 +168,15 @@ export default function Dashboard() {
                         </svg>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-2xl font-bold">${}</div>
-                        {/* <p className="text-xs text-muted-foreground">
-                      +20.1% from last month
-                    </p> */}
+                        <div className="text-2xl font-bold">
+                          $
+                          <CountUp
+                            end={filteredData
+                              .filter((project) => project.deal_status === "Completed")
+                              .reduce((sum, current) => sum + current.deal_amount, 0)}
+                            duration={1}
+                          />
+                        </div>
                       </CardContent>
                     </Card>
                     <Card>
