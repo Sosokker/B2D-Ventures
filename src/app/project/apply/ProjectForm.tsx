@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm, ControllerRenderProps } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { MultipleOptionSelector } from "@/components/multipleSelector";
@@ -9,7 +11,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -93,7 +95,9 @@ const ProjectForm = ({ onSubmit }: ProjectFormProps & { onSubmit: SubmitHandler<
   useEffect(() => {
     fetchProjectType();
     fetchTag();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit as SubmitHandler<projectSchema>)} className="space-y-8">
