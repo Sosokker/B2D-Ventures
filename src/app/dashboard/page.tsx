@@ -13,6 +13,7 @@ import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { overAllGraphData, Deal, fourYearGraphData, dayOftheWeekData } from "../portfolio/[uid]/query";
 import CountUp from "react-countup";
+import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
   const supabase = createSupabaseClient();
@@ -228,31 +229,20 @@ export default function Dashboard() {
                     </p> */}
                       </CardContent>
                     </Card>
-                    {/* <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Active Now
-                    </CardTitle>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
+                    <Button
+                      onClick={() => {
+                        window.location.href = `/project/${project.id}/edit`;
+                      }}
+                      className="h-full bg-emerald-500 hover:bg-emerald-800 font-bold text-xl"
                     >
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">+573</div>
-                    <p className="text-xs text-muted-foreground">
-                      +201 since last hour
-                    </p>
-                  </CardContent>
-                </Card> */}
+                      Edit Project
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M3 17.25V21h3.75l11.05-11.05-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 000-1.42l-2.34-2.34a1.003 1.003 0 00-1.42 0L15.13 4.5l3.75 3.75 1.83-1.21z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    </Button>
                   </div>
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                     <Card className="col-span-4">
