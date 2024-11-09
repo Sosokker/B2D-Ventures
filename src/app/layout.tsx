@@ -35,7 +35,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="relative flex min-h-screen flex-col">
               <div>
-                <Toaster position="top-center" reverseOrder={false} toastOptions={{ duration: 1000 }} />
+                <Toaster position="top-center" reverseOrder={false} toastOptions={{ duration: 2000 }} />
               </div>
               <NavigationBar />
               <div className="flex-1 bg-background">{children}</div>
