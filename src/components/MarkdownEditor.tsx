@@ -57,7 +57,7 @@ export const MdxEditor: React.FC<MdxEditorProps> = ({ content, setContentInParen
           setMarkdownContent(markdownContent);
         }}
         markdown={markdownContent}
-        contentEditableClassName="prose dark:prose-invert"
+        contentEditableClassName="prose prose-invert"
         suppressHtmlProcessing={true}
         onError={(error) => {
           console.error("MDXEditor error:", error);
