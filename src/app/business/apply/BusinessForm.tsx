@@ -72,6 +72,7 @@ const BusinessForm = ({ onSubmit }: BusinessFormProps & { onSubmit: SubmitHandle
   useEffect(() => {
     fetchCountries();
     fetchIndustry();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Form {...form}>
@@ -360,7 +361,7 @@ const BusinessForm = ({ onSubmit }: BusinessFormProps & { onSubmit: SubmitHandle
                 <FormItem>
                   <FormControl>
                     <MultipleOptionSelector
-                      header={<>What's the rough size of your community?</>}
+                      header={<>What&apos;s the rough size of your community?</>}
                       fieldName="communitySize"
                       choices={communitySize}
                       handleFunction={(selectedValues: any) => {
