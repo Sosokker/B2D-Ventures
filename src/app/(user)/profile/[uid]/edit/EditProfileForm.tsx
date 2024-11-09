@@ -24,10 +24,9 @@ interface ProfileData {
 type EditProfileFormProps = {
   profileData: ProfileData;
   uid: string;
-  sessionUserId: string;
 };
 
-export default function EditProfileForm({ profileData, uid, sessionUserId }: EditProfileFormProps) {
+export default function EditProfileForm({ profileData, uid }: EditProfileFormProps) {
   const router = useRouter();
   const client = createSupabaseClient();
   const profileForm = useForm<z.infer<typeof profileSchema>>({
@@ -90,6 +89,7 @@ export default function EditProfileForm({ profileData, uid, sessionUserId }: Edi
           <FormField
             control={profileForm.control}
             name="avatars"
+            // eslint-disable-next-line no-unused-vars
             render={({ field: { value, onChange, ...fieldProps } }) => (
               <FormItem>
                 <FormLabel>Avatar</FormLabel>

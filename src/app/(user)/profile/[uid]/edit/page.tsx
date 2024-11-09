@@ -33,7 +33,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       <div className="my-5">
         <span className="text-2xl font-bold">Update Profile</span>
       </div>
-      <EditProfileForm profileData={profileData} uid={uid} sessionUserId={user.id} />
+      <EditProfileForm profileData={profileData} uid={uid} />
     </div>
   );
 }
