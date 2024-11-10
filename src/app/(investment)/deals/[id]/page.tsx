@@ -17,7 +17,6 @@ import { getDealList } from "@/app/api/dealApi";
 import { sumByKey, toPercentage } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { isOwnerOfProject } from "./query";
-import { getFollow } from "@/lib/data/followQuery";
 import remarkGfm from "remark-gfm";
 
 const PHOTO_MATERIAL_ID = 2;
@@ -60,26 +59,6 @@ export default async function ProjectDealPage({ params }: { params: { id: number
       </div>
     );
   }
-  const { data: follow, error: followError } = await getFollow(supabase, user!.user.id, params.id);
-
-  if (followError) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="container max-w-screen-xl text-center">
-          <p className="text-red-600">Error fetching data. Please try again.</p>
-          <p className="text-red-600">{followError.message}</p>
-          <Link href={`/deals/${params.id}`}>
-            <Button className="mt-4">Refresh</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  let isFollow = false;
-  if (follow) {
-    isFollow = true;
-  }
 
   const isOwner = await isOwnerOfProject(supabase, params.id, user.user?.id);
 
@@ -110,7 +89,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <Image src="/logo.svg" alt="logo" width={50} height={50} className="sm:scale-75" />
               <h1 className="mt-3 font-bold  text-lg md:text-3xl">{projectData?.project_name}</h1>
             </span>
-            <FollowShareButtons isFollow={isFollow} userId={user!.user.id} projectId={params.id} />
+            <FollowShareButtons userId={user!.user.id} projectId={params.id} />
           </div>
           {/* end of pack */}
           <p className="mt-2 sm:text-sm">{projectData?.project_short_description}</p>

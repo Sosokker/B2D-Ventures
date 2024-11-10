@@ -2,22 +2,32 @@
 
 /* eslint-disable */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ShareIcon, StarIcon } from "lucide-react";
-import { deleteFollow, insertFollow } from "@/lib/data/followQuery";
+import { deleteFollow, getFollow, insertFollow } from "@/lib/data/followQuery";
 import toast from "react-hot-toast";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 
 interface FollowShareButtons {
-  isFollow: boolean;
   userId: string;
   projectId: number;
 }
 
-const FollowShareButtons = ({ isFollow, userId, projectId }: FollowShareButtons) => {
+const FollowShareButtons = ({ userId, projectId }: FollowShareButtons) => {
   const supabase = createSupabaseClient();
-  const [isFollowState, setIsFollowState] = useState<boolean>(isFollow);
+  const { data: follow, isLoading: followIsLoading } = useQuery(getFollow(supabase, userId, projectId), {
+    staleTime: 0,
+  });
+
+  const [isFollowState, setIsFollowState] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (follow) {
+      setIsFollowState(!!follow);
+    }
+  }, [follow]);
 
   const handleShare = () => {
     const currentUrl = window.location.href;
@@ -27,11 +37,12 @@ const FollowShareButtons = ({ isFollow, userId, projectId }: FollowShareButtons)
       });
     }
   };
+
   const handleFollow = async () => {
     if (!isFollowState) {
       const error = await insertFollow(supabase, userId, projectId);
       if (error) {
-        toast.error("Error occur!");
+        toast.error("Error occurred!");
       } else {
         toast.success("You have followed the project!", { icon: "❤️" });
         setIsFollowState(true);
@@ -39,13 +50,23 @@ const FollowShareButtons = ({ isFollow, userId, projectId }: FollowShareButtons)
     } else {
       const error = await deleteFollow(supabase, userId, projectId);
       if (error) {
-        toast.error("Error occur!");
+        toast.error("Error occurred!");
       } else {
         toast.success("You have unfollowed the project!", { icon: "💔" });
         setIsFollowState(false);
       }
     }
   };
+
+  if (followIsLoading) {
+    return (
+      <div className="grid grid-cols-2 gap-5 justify-self-end">
+        <div onClick={handleShare} className="cursor-pointer mt-2">
+          <ShareIcon />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-2 gap-5 justify-self-end ">
