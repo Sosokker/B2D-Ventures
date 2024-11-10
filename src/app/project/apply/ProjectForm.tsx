@@ -26,7 +26,18 @@ interface ProjectFormProps {
 const ProjectForm = ({ onSubmit }: ProjectFormProps & { onSubmit: SubmitHandler<projectSchema> }) => {
   const form = useForm<projectSchema>({
     resolver: zodResolver(projectFormSchema),
-    defaultValues: {},
+    defaultValues: {
+      projectName: "",
+      projectType: undefined,
+      shortDescription: "",
+      projectPitchDeck: "",
+      projectLogo: undefined,
+      projectPhotos: [],
+      minInvest: undefined,
+      targetInvest: undefined,
+      deadline: new Date(),
+      tag: [],
+    },
   });
   let supabase = createSupabaseClient();
   const [projectType, setProjectType] = useState<{ id: number; name: string }[]>([]);
