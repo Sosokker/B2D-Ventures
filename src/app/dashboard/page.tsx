@@ -87,7 +87,7 @@ export default function Dashboard() {
             username: string;
           }[]
         );
-        console.table(latestInvestment);
+        // console.table(latestInvestment);
       }
     };
     setTopLatestInvestment();
@@ -198,7 +198,9 @@ export default function Dashboard() {
                         </svg>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-2xl font-bold">+2350</div>
+                        <div className="text-2xl font-bold">
+                          +<CountUp end={2350} duration={1} />
+                        </div>
                         {/* <p className="text-xs text-muted-foreground">
                       +180.1% from last month
                     </p> */}
@@ -223,7 +225,9 @@ export default function Dashboard() {
                         </svg>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-2xl font-bold">+12,234</div>
+                        <div className="text-2xl font-bold">
+                          +<CountUp end={12234} duration={1} />
+                        </div>
                         {/* <p className="text-xs text-muted-foreground">
                       +19% from last month
                     </p> */}
