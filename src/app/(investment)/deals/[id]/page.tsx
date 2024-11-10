@@ -5,19 +5,19 @@ import ReactMarkdown from "react-markdown";
 
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import FollowShareButtons from "./followShareButton";
-import { DisplayFullImage } from "./displayImage";
+
 import { getProjectData } from "@/lib/data/projectQuery";
 import { getDealList } from "@/app/api/dealApi";
 import { sumByKey, toPercentage } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { isOwnerOfProject } from "./query";
 import remarkGfm from "remark-gfm";
+import Gallery from "@/components/carousel";
 
 const PHOTO_MATERIAL_ID = 2;
 
@@ -75,7 +75,6 @@ export default async function ProjectDealPage({ params }: { params: { id: number
       ? projectMaterial.flatMap((item) =>
           (item.material_url || ["/boiler1.jpg"]).map((url: string) => ({
             src: url,
-            alt: "Image",
           }))
         )
       : [{ src: "/boiler1.jpg", alt: "Default Boiler Image" }];
@@ -106,35 +105,8 @@ export default async function ProjectDealPage({ params }: { params: { id: number
         </div>
         <div id="sub-content" className="flex flex-row mt-5">
           {/* image carousel */}
-          <div id="image-carousel" className="shrink-0 w-[700px] flex flex-col">
-            {/* first carousel */}
-            <Carousel className="w-full h-[400px] ml-1 overflow-hidden">
-              <CarouselContent className="flex h-full">
-                {carouselData.map((item, index) => (
-                  <CarouselItem key={index}>
-                    <Image src={item.src} alt={item.alt} width={700} height={400} className="rounded-lg object-cover" />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 text-white bg-black opacity-50 hover:opacity-100" />
-              <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 text-white bg-black opacity-50 hover:opacity-100" />
-            </Carousel>
-            {/* second carousel */}
-            <Carousel className="w-full ml-1 h-[100px] mt-5 overflow-hidden">
-              <CarouselContent className="flex space-x-1 h-[100px]">
-                {carouselData.map((item, index) => (
-                  <CarouselItem key={index} className="flex">
-                    <DisplayFullImage
-                      src={item.src}
-                      alt={item.alt}
-                      width={200}
-                      height={100}
-                      className="rounded-lg object-cover h-[100px] w-[200px]"
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+          <div id="image-carousel" className="w-full">
+            <Gallery images={carouselData} />
           </div>
 
           <Card className="w-[80%] ml-10 shadow-sm">
