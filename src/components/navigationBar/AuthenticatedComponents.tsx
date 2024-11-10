@@ -37,7 +37,9 @@ export const AuthenticatedComponents = ({ uid, avatarUrl }: AuthenticatedCompone
           </span>
         </div>
       </Link>
-      <Heart />
+      <Link href="/follow">
+        <Heart />
+      </Link>
       <Link href={"/portfolio/" + uid}>
         <Wallet className="cursor-pointer" />
       </Link>
