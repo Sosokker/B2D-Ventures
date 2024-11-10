@@ -17,6 +17,7 @@ import { getDealList } from "@/app/api/dealApi";
 import { sumByKey, toPercentage } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { isOwnerOfProject } from "./query";
+import { UpdateTab } from "./UpdateTab";
 import remarkGfm from "remark-gfm";
 
 const PHOTO_MATERIAL_ID = 2;
@@ -241,11 +242,11 @@ export default async function ProjectDealPage({ params }: { params: { id: number
         </div>
         {/* menu */}
         <div id="deck">
-          <div className="flex w-fit">
-            <Tabs.Root defaultValue="pitch">
+          <div className="flex w-full">
+            <Tabs.Root defaultValue="pitch" className="w-full">
               <Tabs.List className="list-none flex gap-10 text-lg md:text-xl">
                 <Tabs.Trigger value="pitch">Pitch</Tabs.Trigger>
-                <Tabs.Trigger value="general">General Data</Tabs.Trigger>
+                {/* <Tabs.Trigger value="general">General Data</Tabs.Trigger> */}
                 <Tabs.Trigger value="update">Updates</Tabs.Trigger>
               </Tabs.List>
               <Separator className="mb-4 mt-2 w-full border-1" />
@@ -253,7 +254,8 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                 <Card>
                   <CardHeader>
                     <CardTitle>{projectData.project_name}</CardTitle>
-                    <CardDescription />
+                    <CardDescription>Project Pitch</CardDescription>
+                    <Separator className="my-4" />
                   </CardHeader>
                   <CardContent>
                     <div className="prose dark:prose-invert prose-sm max-w-none ">
@@ -264,7 +266,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </CardContent>
                 </Card>
               </Tabs.Content>
-              <Tabs.Content value="general">
+              {/* <Tabs.Content value="general">
                 <Card>
                   <CardHeader>
                     <CardTitle>general</CardTitle>
@@ -274,15 +276,16 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                     <p>general Content</p>
                   </CardContent>
                 </Card>
-              </Tabs.Content>
+              </Tabs.Content> */}
               <Tabs.Content value="update">
                 <Card>
                   <CardHeader>
-                    <CardTitle>update</CardTitle>
-                    <CardDescription>update Description</CardDescription>
+                    <CardTitle>Update</CardTitle>
+                    <CardDescription>Project log and updates</CardDescription>
+                    <Separator className="my-4" />
                   </CardHeader>
                   <CardContent>
-                    <p>update Content</p>
+                    <UpdateTab projectId={params.id} />
                   </CardContent>
                 </Card>
               </Tabs.Content>
