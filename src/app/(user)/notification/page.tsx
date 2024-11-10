@@ -5,7 +5,7 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { BellIcon } from "lucide-react";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { getNotificationByUserId } from "@/lib/data/norificationQuery";
+import { getNotificationByUserId } from "@/lib/data/notificationQuery";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import useSession from "@/lib/supabase/useSession";

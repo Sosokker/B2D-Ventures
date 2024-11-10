@@ -17,11 +17,10 @@ import { useUserRole } from "@/hooks/useUserRole";
 interface AuthenticatedComponentsProps {
   uid: string;
   avatarUrl?: string | null;
+  notificationCount: number;
 }
 
-export const AuthenticatedComponents = ({ uid, avatarUrl }: AuthenticatedComponentsProps) => {
-  const notifications = 100;
-  const displayValue = notifications >= 100 ? "..." : notifications;
+export const AuthenticatedComponents = ({ uid, avatarUrl, notificationCount }: AuthenticatedComponentsProps) => {
   const { data } = useUserRole();
 
   const businessClass =
@@ -32,9 +31,11 @@ export const AuthenticatedComponents = ({ uid, avatarUrl }: AuthenticatedCompone
       <Link href={"/notification"}>
         <div className="relative inline-block">
           <Bell className="h-6 w-6 " />
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full animate-ping">
-            {displayValue}
-          </span>
+          {notificationCount >= 1 && (
+            <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full animate-ping">
+              {notificationCount}
+            </span>
+          )}
         </div>
       </Link>
       <Link href="/follow">

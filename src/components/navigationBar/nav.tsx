@@ -19,6 +19,7 @@ import { UnAuthenticatedComponents } from "./UnAuthenticatedComponents";
 
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { getUserId } from "@/lib/supabase/actions/getUserId";
+import { getUnreadNotificationCountByUserId } from "@/lib/data/notificationQuery";
 
 const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
   ({ className, title, children, ...props }, ref) => {
@@ -48,6 +49,14 @@ export async function NavigationBar() {
   const client = createSupabaseClient();
   const userId = await getUserId();
   const { data: avatarUrl } = await client.from("profiles").select("avatar_url").eq("id", userId).single();
+  let notification_count = 0;
+  if (userId != null) {
+    const { count: notiCount, error: notiError } = (await getUnreadNotificationCountByUserId(client, userId)) ?? {};
+    notification_count = notiError ? 0 : (notiCount ?? 0);
+  } else {
+    notification_count = 0;
+  }
+
   const businessComponents = [
     {
       title: "Business",
@@ -143,7 +152,11 @@ export async function NavigationBar() {
               </div>
               <Separator orientation="vertical" className="mx-3" />
               {userId ? (
-                <AuthenticatedComponents uid={userId} avatarUrl={avatarUrl?.avatar_url} />
+                <AuthenticatedComponents
+                  uid={userId}
+                  avatarUrl={avatarUrl?.avatar_url}
+                  notificationCount={notification_count}
+                />
               ) : (
                 <UnAuthenticatedComponents />
               )}
