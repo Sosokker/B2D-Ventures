@@ -4,12 +4,9 @@ const MAX_FILE_SIZE = 500000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
 const imageSchema = z
-  .custom<File>(
-    (val) => val && typeof val === "object" && "size" in val && "type" in val,
-    {
-      message: "Input must be a file.",
-    }
-  )
+  .custom<File>((val) => val && typeof val === "object" && "size" in val && "type" in val, {
+    message: "Input must be a file.",
+  })
   .refine((file) => file.size < MAX_FILE_SIZE, {
     message: "File can't be bigger than 5MB.",
   })
@@ -32,12 +29,7 @@ const projectFormSchema = z.object({
       message: "Short description must be at least 10 characters.",
     }),
   projectPitchDeck: z.union([
-    z
-      .string()
-      .url("Pitch deck must be a valid URL.")
-      .refine((url) => url.endsWith(".md"), {
-        message: "Pitch deck URL must link to a markdown file (.md).",
-      }),
+    z.string().url("Pitch deck must be a valid URL."),
     z
       .custom<File>((val) => val instanceof File, {
         message: "Input must be a file.",
@@ -53,16 +45,12 @@ const projectFormSchema = z.object({
   projectPhotos: z.custom(
     (value) => {
       if (value instanceof FileList || Array.isArray(value)) {
-        return (
-          value.length > 0 &&
-          Array.from(value).every((item) => item instanceof File)
-        );
+        return value.length > 0 && Array.from(value).every((item) => item instanceof File);
       }
       return false;
     },
     {
-      message:
-        "Must be a FileList or an array of File objects with at least one file.",
+      message: "Must be a FileList or an array of File objects with at least one file.",
     }
   ),
 
@@ -90,10 +78,7 @@ const projectFormSchema = z.object({
     .refine((date) => date > new Date(), {
       message: "Deadline must be in the future.",
     }),
-  tag: z
-    .array(z.number())
-    .min(1, "Please provide at least one tag.")
-    .max(5, "You can provide up to 5 tags."),
+  tag: z.array(z.number()).min(1, "Please provide at least one tag.").max(5, "You can provide up to 5 tags."),
 });
 
 const businessFormSchema = z.object({
