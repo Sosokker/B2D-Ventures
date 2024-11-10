@@ -63,8 +63,6 @@ export const AuthenticatedComponents = ({ uid, avatarUrl, notificationCount }: A
             <Link href={`/profile/${uid}`}>Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
           {data?.role === "admin" && (
             <DropdownMenuItem>
               <Link href="/admin">Admin</Link>
