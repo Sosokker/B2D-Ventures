@@ -80,19 +80,19 @@ export default function Notification() {
         />
       </div>
 
-      <Card className="shadow-lg rounded-lg border border-gray-200">
+      <Card className="shadow-lg rounded-lg border border-border">
         <CardContent className="p-4 space-y-4">
           {filteredNotifications?.map((notification) => (
             <div
               key={notification.id}
-              className={`flex items-center justify-between p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-150 border ${
+              className={`flex bg-slate-100 dark:bg-slate-950 items-center justify-between p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-150 border ${
                 notification.is_read ? "bg-gray-100 text-gray-400" : "bg-white text-gray-800"
               }`}
             >
               <div className="flex items-center">
                 <BellIcon className={`w-5 h-5 mr-3 ${notification.is_read ? "text-gray-400" : "text-blue-500"}`} />
                 <div>
-                  <p className="text-sm font-medium">{notification.message}</p>
+                  <p className="text-sm font-medium text-black dark:text-white">{notification.message}</p>
                   <p className="text-xs text-gray-500">{formatDate(notification.created_at)}</p>
                 </div>
               </div>
