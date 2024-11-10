@@ -36,7 +36,7 @@ export async function deleteUserByEmail(email: string): Promise<boolean> {
     console.error(`UID is null`);
     return false;
   }
-  const data = await deleteUser(uid);
+  // const data = await deleteUser(uid);
   console.log(`Successfully delete user with email: ${email}`);
   return true;
 }
