@@ -14,7 +14,6 @@ export const selectFirstOption = async (page: Page, triggerLocator: Locator) => 
             const optionText = await firstOption.textContent();
             console.log(`${optionText}`);
             await firstOption.click();
-            console.log("Selected.");
             selected = true
         } catch (error) {
             console.log("Retrying as the combobox disappeared.");
