@@ -5,6 +5,7 @@ import { getProjectDataQuery } from "@/lib/data/projectQuery";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { ProjectEditSchema } from "@/types/schemas/project.schema";
 import { redirect } from "next/navigation";
+import { LegacyLoader } from "@/components/loading/LegacyLoader";
 
 export default async function EditProjectPage({ params }: { params: { projectId: string } }) {
   const client = createSupabaseClient();
@@ -14,8 +15,7 @@ export default async function EditProjectPage({ params }: { params: { projectId:
   const { data: user, error: userError } = await client.auth.getUser();
   const uuid = user.user?.id;
   const { data, error } = await client.from("project").select("...business(user_id)").eq("id", projectId).single();
-  console.log(uuid);
-  console.log(data);
+
   if (userError || error) {
     redirect("/");
   }
@@ -28,7 +28,7 @@ export default async function EditProjectPage({ params }: { params: { projectId:
 
   if (projectDataError) {
     console.error("Error fetching project data:", projectDataError);
-    return <p>Error loading project data.</p>;
+    throw projectDataError;
   }
 
   const mappedProjectData: ProjectEditSchema = {
@@ -46,8 +46,8 @@ export default async function EditProjectPage({ params }: { params: { projectId:
         <span className="text-2xl font-bold">Edit Project</span>
         <Separator className="my-5" />
       </div>
-      <Suspense fallback={<p>Loading project data...</p>}>
-        {projectData ? <EditProjectForm projectData={mappedProjectData} projectId={projectId} /> : <p>Loading...</p>}
+      <Suspense fallback={<LegacyLoader />}>
+        {projectData ? <EditProjectForm projectData={mappedProjectData} projectId={projectId} /> : <LegacyLoader />}
       </Suspense>
     </div>
   );
