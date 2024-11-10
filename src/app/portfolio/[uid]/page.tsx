@@ -52,7 +52,6 @@ export default async function Portfolio({ params }: { params: { uid: string } })
     );
   }
   const username = localUser ? localUser.user.user_metadata.name : "Anonymous";
-  // console.log(username)
   const overAllData = deals ? overAllGraphData(deals) : [];
   const fourYearData = deals ? fourYearGraphData(deals) : [];
   const dayOfWeekData = deals ? dayOftheWeekData(deals) : [];
@@ -66,31 +65,13 @@ export default async function Portfolio({ params }: { params: { uid: string } })
       )
     : [];
   const totalInvestment = deals ? getTotalInvestment(deals) : 0;
-  // console.log(latestDeals);
-
   const tagCount = countTags(tags);
-  // console.log(investedBusinessIds);
   const businessType = deals
     ? await Promise.all(deals.map(async (item) => await getBusinessTypeName(supabase, item.project_id)))
     : [];
   const countedBusinessType = countValues(businessType.filter((item) => item !== null));
-  // console.log(countedBusinessType);
-
-  // console.log(tagCount);
   return (
     <div className="container max-w-screen-xl">
-      {/* {JSON.stringify(params.uid)} */}
-      {/* {JSON.stringify(tagCount)} */}
-      {/* {JSON.stringify(deals)} */}
-      {/* {JSON.stringify(dayOfWeekData)} */}
-      {/* {JSON.stringify(overAllGraphData)} */}
-      {/* {JSON.stringify(threeYearGraphData)} */}
-      {/* {JSON.stringify(uniqueProjectIds)} */}
-      {/* <div className="flex flex-row">
-        <h1>Total Invest :  </h1>
-        <div>{totalInvest}</div>
-      </div> */}
-      {/* <CountUpComponent end={100} duration={3} /> */}
       <div className="text-center py-4">
         <h1 className="text-2xl font-semibold">Welcome to your Portfolio, {username}!</h1>
         <p className="text-lg text-muted-foreground">

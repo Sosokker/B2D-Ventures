@@ -26,11 +26,11 @@ function getTotalInvestment(deals: { deal_amount: number }[]) {
 }
 async function getLatestInvestment(
   supabase: SupabaseClient,
-  deals: { project_id: number; deal_amount: number; created_time: Date }[]
+  deals: { project_id: number; deal_amount: number; created_time: Date;}[]
 ) {
   const llist = [];
   const count = 8;
-
+  // select project name from the given id
   for (let i = deals.length - 1; i >= 0 && llist.length < count; --i) {
     let { data: project, error } = await supabase.from("project").select("project_name").eq("id", deals[i].project_id);
     if (error) {
@@ -38,6 +38,7 @@ async function getLatestInvestment(
     }
     let url = fetchLogoURL(supabase, deals[i].project_id);
     llist.push({
+      projectId: deals[i].project_id,
       name: project?.[0]?.project_name,
       amount: deals[i].deal_amount,
       date: new Date(deals[i].created_time),
@@ -104,7 +105,7 @@ async function getBusinessTypeName(supabase: SupabaseClient, projectId: number) 
 }
 
 // only use deal that were made at most year ago
-interface Deal {
+export interface Deal {
   created_time: string | number | Date;
   deal_amount: any;
 }
