@@ -17,6 +17,7 @@ import { getDealList } from "@/app/api/dealApi";
 import { sumByKey, toPercentage } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { isOwnerOfProject } from "./query";
+import { getFollow } from "@/lib/data/followQuery";
 import remarkGfm from "remark-gfm";
 
 const PHOTO_MATERIAL_ID = 2;
@@ -25,13 +26,12 @@ export default async function ProjectDealPage({ params }: { params: { id: number
   const supabase = createSupabaseClient();
   const { data: projectData, error: projectDataError } = await getProjectData(supabase, params.id);
   const { data: user, error: userError } = await supabase.auth.getUser();
-
   const { data: projectMaterial, error: projectMaterialError } = await supabase
     .from("project_material")
     .select("material_url")
     .eq("project_id", params.id)
     .eq("material_type_id", PHOTO_MATERIAL_ID);
-  // console.log(projectMaterial);
+
   if (projectMaterialError) {
     console.error("Error while fetching project material" + projectMaterialError);
   }
@@ -43,9 +43,9 @@ export default async function ProjectDealPage({ params }: { params: { id: number
     return (
       <div className="container max-w-screen-xl my-5">
         <p className="text-red-600">Error fetching data. Please try again.</p>
-        <Button className="mt-4" onClick={() => window.location.reload()}>
-          Refresh
-        </Button>
+        <Link href={`/deals/${params.id}`} className="mt-4">
+          <Button className="mt-4">Refresh</Button>
+        </Link>
       </div>
     );
   }
@@ -54,11 +54,31 @@ export default async function ProjectDealPage({ params }: { params: { id: number
     return (
       <div className="container max-w-screen-xl my-5">
         <p className="text-red-600">Error fetching data. Please try again.</p>
-        <Button className="mt-4" onClick={() => window.location.reload()}>
-          Refresh
-        </Button>
+        <Link href={`/deals/${params.id}`} className="mt-4">
+          <Button className="mt-4">Refresh</Button>
+        </Link>
       </div>
     );
+  }
+  const { data: follow, error: followError } = await getFollow(supabase, user!.user.id, params.id);
+
+  if (followError) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="container max-w-screen-xl text-center">
+          <p className="text-red-600">Error fetching data. Please try again.</p>
+          <p className="text-red-600">{followError.message}</p>
+          <Link href={`/deals/${params.id}`}>
+            <Button className="mt-4">Refresh</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  let isFollow = false;
+  if (follow) {
+    isFollow = true;
   }
 
   const isOwner = await isOwnerOfProject(supabase, params.id, user.user?.id);
@@ -80,8 +100,6 @@ export default async function ProjectDealPage({ params }: { params: { id: number
         )
       : [{ src: "/boiler1.jpg", alt: "Default Boiler Image" }];
 
-  // console.log(carouselData);
-
   return (
     <div className="container max-w-screen-xl my-5">
       <div className="flex flex-col gap-y-10">
@@ -92,7 +110,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <Image src="/logo.svg" alt="logo" width={50} height={50} className="sm:scale-75" />
               <h1 className="mt-3 font-bold  text-lg md:text-3xl">{projectData?.project_name}</h1>
             </span>
-            <FollowShareButtons />
+            <FollowShareButtons isFollow={isFollow} userId={user!.user.id} projectId={params.id} />
           </div>
           {/* end of pack */}
           <p className="mt-2 sm:text-sm">{projectData?.project_short_description}</p>

@@ -2,24 +2,22 @@
 
 /* eslint-disable */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ShareIcon, StarIcon } from "lucide-react";
-import { redirect } from "next/navigation";
-import useSession from "@/lib/supabase/useSession";
+import { deleteFollow, insertFollow } from "@/lib/data/followQuery";
 import toast from "react-hot-toast";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 
-const FollowShareButtons = () => {
-  const { session, loading } = useSession();
-  const user = session?.user;
-  const [sessionLoaded, setSessionLoaded] = useState(false);
-  const [isFollow, setIsFollow] = useState(false);
+interface FollowShareButtons {
+  isFollow: boolean;
+  userId: string;
+  projectId: number;
+}
 
-  useEffect(() => {
-    if (!loading) {
-      setSessionLoaded(true);
-    }
-  }, [loading]);
+const FollowShareButtons = ({ isFollow, userId, projectId }: FollowShareButtons) => {
+  const supabase = createSupabaseClient();
+  const [isFollowState, setIsFollowState] = useState<boolean>(isFollow);
 
   const handleShare = () => {
     const currentUrl = window.location.href;
@@ -29,11 +27,23 @@ const FollowShareButtons = () => {
       });
     }
   };
-  const handleFollow = () => {
-    if (user) {
-      setIsFollow((prevState) => !prevState);
+  const handleFollow = async () => {
+    if (!isFollowState) {
+      const error = await insertFollow(supabase, userId, projectId);
+      if (error) {
+        toast.error("Error occur!");
+      } else {
+        toast.success("You have followed the project!", { icon: "❤️" });
+        setIsFollowState(true);
+      }
     } else {
-      redirect("/login");
+      const error = await deleteFollow(supabase, userId, projectId);
+      if (error) {
+        toast.error("Error occur!");
+      } else {
+        toast.success("You have unfollowed the project!", { icon: "💔" });
+        setIsFollowState(false);
+      }
     }
   };
 
@@ -43,7 +53,7 @@ const FollowShareButtons = () => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <StarIcon id="follow" fill={isFollow ? "#FFFF00" : "#fff"} strokeWidth={2} />
+              <StarIcon id="follow" fill={isFollowState ? "#fcb30e" : "#fff"} strokeWidth={2} />
             </TooltipTrigger>
             <TooltipContent>
               <p>Follow NVIDIA</p>
