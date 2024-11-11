@@ -1,6 +1,6 @@
 "use client";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import BusinessForm from "./BusinessForm";
@@ -8,22 +8,23 @@ import { businessFormSchema } from "@/types/schemas/application.schema";
 import Swal from "sweetalert2";
 import { getCurrentUserID } from "@/app/api/userApi";
 import { uploadFile } from "@/app/api/generalApi";
-import { useRouter } from "next/navigation";
-import { hasUserApplied, transformChoice } from "./query";
+import { Loader } from "@/components/loading/loader";
+import { hasUserApplied, transformChoice } from "./actions";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_PITCH_NAME = "business-application";
-const supabase = createSupabaseClient();
+let supabase = createSupabaseClient();
 
 export default function ApplyBusiness() {
-  const router = useRouter();
   const alertShownRef = useRef(false);
+  const [success, setSucess] = useState(false);
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
     const transformedData = await transformChoice(data);
     await sendApplication(transformedData);
   };
   const sendApplication = async (recvData: any) => {
+    setSucess(false);
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -65,6 +66,7 @@ export default function ApplyBusiness() {
         },
       ])
       .select();
+    setSucess(true);
     // console.table(data);
     Swal.fire({
       icon: error == null ? "success" : "error",
@@ -72,13 +74,14 @@ export default function ApplyBusiness() {
       text: error == null ? "Your application has been submitted" : error.message,
       confirmButtonColor: error == null ? "green" : "red",
     }).then(() => {
-      router.push("/");
+      window.location.href = "/";
     });
   };
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        setSucess(false);
         const userID = await getCurrentUserID();
         if (userID) {
           const hasApplied = await hasUserApplied(supabase, userID);
@@ -87,14 +90,14 @@ export default function ApplyBusiness() {
             alertShownRef.current = true;
             Swal.fire({
               icon: "info",
-              title: "You Already Have an Account or Application",
+              title: "You Already Have an Account",
               text: "You have already submitted your business application.",
               confirmButtonText: "OK",
               allowOutsideClick: false,
               allowEscapeKey: false,
             }).then((result) => {
               if (result.isConfirmed) {
-                router.push("/");
+                window.location.href = "/";
               }
             });
           }
@@ -107,12 +110,13 @@ export default function ApplyBusiness() {
         console.error("Error fetching user ID:", error);
       }
     };
+    // setSucess(true);
     fetchUserData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div>
+      <Loader isSuccess={success} />
       <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-100 dark:bg-gray-800 p-5">
         <h1 className="text-2xl md:text-5xl font-medium md:font-bold justify-self-center md:mt-8">
           Apply to raise on B2DVentures
