@@ -99,9 +99,11 @@ export default function ApplyBusiness() {
             });
           }
         } else {
+          setSucess(true);
           console.error("User ID is undefined.");
         }
       } catch (error) {
+        setSucess(true);
         console.error("Error fetching user ID:", error);
       }
     };
