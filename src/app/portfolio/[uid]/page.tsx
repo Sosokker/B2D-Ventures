@@ -235,8 +235,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           <CardContent className="mt-5 grid grid-flow-row-dense">
             <RecentFunds data={latestDeals} />
             <div className="mt-5 flex justify-center">
-              {deals && deals.length > 5 ? <Button>View More</Button> : ""}
-              {/* <DataTable data={latestDeals} /> */}
+              {deals && deals.length > 5 ? <Button>View More</Button> : undefined}
             </div>
           </CardContent>
         </Card>

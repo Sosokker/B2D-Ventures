@@ -16,6 +16,7 @@ import { overAllGraphData, fourYearGraphData, dayOftheWeekData } from "../portfo
 import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Dashboard() {
   const supabase = createSupabaseClient();
@@ -50,17 +51,17 @@ export default function Dashboard() {
     )
   );
   let graphData = [];
-  const filteredData = (investmentDetail?.data || []).filter((deal) => deal.project_id === currentProjectId);
+  const filteredProject = (investmentDetail?.data || []).filter((deal) => deal.project_id === currentProjectId);
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
 
   if (activeTab === "daily") {
-    graphData = dayOftheWeekData(filteredData);
+    graphData = dayOftheWeekData(filteredProject);
   } else if (activeTab === "yearly") {
-    graphData = fourYearGraphData(filteredData);
+    graphData = fourYearGraphData(filteredProject);
   } else {
-    graphData = overAllGraphData(filteredData);
+    graphData = overAllGraphData(filteredProject);
   }
 
   useEffect(() => {
@@ -173,7 +174,7 @@ export default function Dashboard() {
                         <div className="text-2xl font-bold">
                           $
                           <CountUp
-                            end={filteredData
+                            end={filteredProject
                               .filter((project) => project.deal_status === "Completed")
                               .reduce((sum, current) => sum + current.deal_amount, 0)}
                             duration={1}
@@ -282,7 +283,7 @@ export default function Dashboard() {
                       <CardHeader>
                         <CardTitle>Recent Funds</CardTitle>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="grid grid-flow-dense">
                         <RecentFunds
                           data={latestInvestment.map((item) => {
                             return {
@@ -295,6 +296,13 @@ export default function Dashboard() {
                             };
                           })}
                         />
+                        <div className="flex justify-center">
+                          {filteredProject && filteredProject.length > 6 ? (
+                            <Button asChild>
+                              <Link href="/dashboard/deals/">View More</Link>
+                            </Button>
+                          ) : undefined}
+                        </div>
                       </CardContent>
                     </Card>
                   </div>
