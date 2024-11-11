@@ -12,15 +12,18 @@ export type RecentDealData = {
 };
 
 interface RecentFundsProps {
-  data?: { name?: string; amount?: number; avatar?: string; date?: Date; logo_url?: string; status?: string; profile_url?: string }[];
+  data?: {
+    name?: string;
+    amount?: number;
+    avatar?: string;
+    date?: Date;
+    logo_url?: string;
+    status?: string;
+    profile_url?: string;
+  }[];
 }
 
 export function RecentFunds(props: RecentFundsProps) {
-  const content = (
-    <div>
-      
-    </div>
-  )
   return (
     <div className="space-y-8">
       {(props?.data || []).map((deal, index) => (
@@ -129,5 +132,4 @@ export function RecentFunds(props: RecentFundsProps) {
       ))}
     </div>
   );
-
 }

@@ -35,6 +35,7 @@ const Gallery = ({ images }: GalleryProps) => {
           />
         </CarouselItem>
       )),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [images, current]
   );
 

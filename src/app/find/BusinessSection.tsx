@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BusinessCard } from "@/components/BusinessCard";
+import { BusinessCard } from "@/components/businessCard";
 import { BusinessCardProps } from "@/types/BusinessCard";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";

@@ -1,6 +1,7 @@
 "use client";
+
 import Image from "next/image";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/ui/overview";
 import { RecentFunds } from "@/components/recent-funds";
@@ -11,13 +12,14 @@ import { getProjectByUserId } from "@/lib/data/projectQuery";
 import { Loader } from "@/components/loading/loader";
 import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
-import { overAllGraphData, Deal, fourYearGraphData, dayOftheWeekData } from "../portfolio/[uid]/query";
+import { overAllGraphData, fourYearGraphData, dayOftheWeekData } from "../portfolio/[uid]/query";
 import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
   const supabase = createSupabaseClient();
-  const userId = useSession().session?.user.id;
+  const { session, loading: isLoadingSession } = useSession();
+  const userId = session?.user.id;
   const [projects, setProjects] = useState<
     { id: number; project_name: string; business_id: { user_id: number }[]; dataroom_id: number }[]
   >([]);
@@ -33,8 +35,8 @@ export default function Dashboard() {
   >([]);
   const tabOptions = ["daily", "monthly", "yearly"];
   const [activeTab, setActiveTab] = useState("daily");
-  const [isSuccess, setIsSuccess] = useState(false);
   const [graphType, setGraphType] = useState("line");
+  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
   const [currentProjectId, setCurrentProjectId] = useState<number>(projects[0]?.id);
 
   const investmentDetail = useQuery(
@@ -58,6 +60,24 @@ export default function Dashboard() {
   } else {
     graphData = overAllGraphData(filteredData);
   }
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      if (!userId) return;
+      const { data, error } = await getProjectByUserId(supabase, userId);
+      if (error) console.error("Error fetching projects");
+      setProjects(data || []);
+      setIsLoadingProjects(false);
+    };
+    fetchProjects();
+  }, [supabase, userId]);
+
+  useEffect(() => {
+    if (projects.length > 0 && !currentProjectId) {
+      setCurrentProjectId(projects[0].id);
+    }
+  }, [projects, currentProjectId]);
+
   useEffect(() => {
     const setTopLatestInvestment = () => {
       if (investmentDetail?.data) {
@@ -65,7 +85,6 @@ export default function Dashboard() {
           investmentDetail.data
             .slice(0, 8)
             .map((item) => {
-              // set the project according to current project id
               if (item.project_id === currentProjectId) {
                 return {
                   avatarUrl: item.avatar_url,
@@ -87,34 +106,14 @@ export default function Dashboard() {
             username: string;
           }[]
         );
-        // console.table(latestInvestment);
       }
     };
     setTopLatestInvestment();
-  }, [supabase, investmentDetail]);
-  useEffect(() => {
-    const fetchProjects = async () => {
-      if (userId) {
-        const { data, error } = await getProjectByUserId(supabase, userId);
-        if (error) {
-          console.error("Error while fetching projects");
-        }
-        if (data) {
-          //  set project and current project id
-          setProjects(data);
-          setCurrentProjectId(data[0].id);
-        }
-      } else {
-        console.error("Error with UserId while fetching projects");
-      }
-      setIsSuccess(true);
-    };
-    fetchProjects();
-  }, [supabase, userId]);
+  }, [currentProjectId, investmentDetail?.data]);
 
   return (
     <div className="container max-w-screen-xl">
-      <Loader isSuccess={isSuccess} />
+      <Loader isSuccess={!isLoadingSession && !isLoadingProjects} />{" "}
       <div className="md:hidden">
         <Image
           src="/examples/dashboard-light.png"
@@ -150,7 +149,7 @@ export default function Dashboard() {
                 ))}
               </TabsList>
               {projects.map((project) => (
-                <TabsContent value={project.project_name} className="space-y-4">
+                <TabsContent value={project.project_name} className="space-y-4" key={project.id}>
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
