@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import { getCurrentUserID } from "@/app/api/userApi";
 import { uploadFile } from "@/app/api/generalApi";
 import { useRouter } from "next/navigation";
+import { hasUserApplied, transformChoice } from "./query";
 
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_PITCH_NAME = "business-application";
@@ -75,47 +76,13 @@ export default function ApplyBusiness() {
     });
   };
 
-  const hasUserApplied = async (userID: string) => {
-    let { data: business, error } = await supabase.from("business").select("*").eq("user_id", userID);
-    let { data: businessApplication, error: applicationError } = await supabase
-      .from("business_application")
-      .select("*")
-      .eq("user_id", userID);
-    // console.table(business);
-    if (error || applicationError) {
-      console.error(error);
-      console.error(applicationError);
-    }
-    if ((business && business.length != 0) || (businessApplication && businessApplication.length != 0)) {
-      return true;
-    }
-    return false;
-  };
-  const transformChoice = (data: any) => {
-    // convert any yes and no to true or false
-    const transformedData = Object.entries(data).reduce((acc: Record<any, any>, [key, value]) => {
-      if (typeof value === "string") {
-        const lowerValue = value.toLowerCase();
-        if (lowerValue === "yes") {
-          acc[key] = true;
-        } else if (lowerValue === "no") {
-          acc[key] = false;
-        } else {
-          acc[key] = value; // keep other string values unchanged
-        }
-      } else {
-        acc[key] = value; // keep other types unchanged
-      }
-      return acc;
-    }, {});
-    return transformedData;
-  };
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const userID = await getCurrentUserID();
         if (userID) {
-          const hasApplied = await hasUserApplied(userID);
+          const hasApplied = await hasUserApplied(supabase, userID);
+          setSucess(true);
           if (hasApplied && !alertShownRef.current) {
             alertShownRef.current = true;
             Swal.fire({
