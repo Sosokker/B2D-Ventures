@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Heart, Wallet } from "lucide-react";
+import { Bell, Heart, Wallet, ChartPie } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logoutButton";
 import { useUserRole } from "@/hooks/useUserRole";
 
@@ -35,14 +35,19 @@ export const AuthenticatedComponents = ({ uid, avatarUrl }: AuthenticatedCompone
           <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full">
             {displayValue}
           </span>
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full animate-ping">
-          </span>
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full animate-ping"></span>
         </div>
       </Link>
       <Heart />
       <Link href={"/portfolio/" + uid}>
         <Wallet className="cursor-pointer" />
       </Link>
+      {/*chart pie icon for bussiness's dashboard */}
+      {data?.role === "business" && (
+        <Link href="/dashboard">
+          <ChartPie />
+        </Link>
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
