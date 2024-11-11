@@ -10,9 +10,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Heart, Wallet } from "lucide-react";
+import { Bell, Heart, Wallet, ChartPie } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logoutButton";
 import { useUserRole } from "@/hooks/useUserRole";
+import CustomTooltip from "../customToolTip";
 
 interface AuthenticatedComponentsProps {
   uid: string;
@@ -28,22 +29,32 @@ export const AuthenticatedComponents = ({ uid, avatarUrl, notificationCount }: A
 
   return (
     <div className={`flex gap-3 pl-2 items-center ${businessClass}`}>
-      <Link href={"/notification"}>
-        <div className="relative inline-block">
-          <Bell className="h-6 w-6 " />
-          {notificationCount >= 1 && (
-            <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full animate-ping">
-              {notificationCount}
-            </span>
-          )}
-        </div>
-      </Link>
+      <CustomTooltip message="Notification">
+        <Link href={"/notification"}>
+          <div className="relative inline-block">
+            <Bell className="h-6 w-6 " />
+            {notificationCount >= 1 && (
+              <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full animate-ping">
+                {notificationCount}
+              </span>
+            )}
+          </div>
+        </Link>
+      </CustomTooltip>
       <Link href="/follow">
         <Heart />
       </Link>
       <Link href={"/portfolio/" + uid}>
         <Wallet className="cursor-pointer" />
       </Link>
+      {/*chart pie icon for bussiness's dashboard */}
+      {data?.role === "business" && (
+        <CustomTooltip message="Dashboard">
+          <Link href="/dashboard">
+            <ChartPie />
+          </Link>
+        </CustomTooltip>
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
