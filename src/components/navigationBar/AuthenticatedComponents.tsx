@@ -41,12 +41,16 @@ export const AuthenticatedComponents = ({ uid, avatarUrl, notificationCount }: A
           </div>
         </Link>
       </CustomTooltip>
-      <Link href="/follow">
-        <Heart />
-      </Link>
-      <Link href={"/portfolio/" + uid}>
-        <Wallet className="cursor-pointer" />
-      </Link>
+      <CustomTooltip message="Followed">
+        <Link href="/follow">
+          <Heart />
+        </Link>
+      </CustomTooltip>
+      <CustomTooltip message="Portfolio">
+        <Link href={"/portfolio/" + uid}>
+          <Wallet className="cursor-pointer" />
+        </Link>
+      </CustomTooltip>
       {/*chart pie icon for bussiness's dashboard */}
       {data?.role === "business" && (
         <CustomTooltip message="Dashboard">
