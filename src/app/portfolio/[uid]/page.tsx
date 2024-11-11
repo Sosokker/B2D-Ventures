@@ -24,6 +24,8 @@ import { NoDataAlert } from "@/components/alert/noData/alert";
 import { error } from "console";
 import { UnAuthorizedAlert } from "@/components/alert/unauthorized/alert";
 import Link from "next/link";
+import { DataTable } from "@/components/dataTable";
+import { Button } from "@/components/ui/button";
 
 export default async function Portfolio({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
@@ -230,8 +232,12 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">Recent investment</CardTitle>
           </CardHeader>
-          <CardContent className="mt-5">
+          <CardContent className="mt-5 grid grid-flow-row-dense">
             <RecentFunds data={latestDeals} />
+            <div className="mt-5 flex justify-center">
+              {deals && deals.length > 5 ? <Button>View More</Button> : ""}
+              {/* <DataTable data={latestDeals} /> */}
+            </div>
           </CardContent>
         </Card>
       </div>
