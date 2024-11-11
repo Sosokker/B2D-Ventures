@@ -36,7 +36,6 @@ export const AuthenticatedComponents = ({ uid, avatarUrl }: AuthenticatedCompone
             {displayValue}
           </span>
           <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-red-600 rounded-full animate-ping">
-            {displayValue}
           </span>
         </div>
       </Link>
