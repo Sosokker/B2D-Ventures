@@ -23,6 +23,7 @@ import QuestionMarkIcon from "@/components/icon/questionMark";
 import { NoDataAlert } from "@/components/alert/noData/alert";
 import { error } from "console";
 import { UnAuthorizedAlert } from "@/components/alert/unauthorized/alert";
+import Link from "next/link";
 
 export default async function Portfolio({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
@@ -30,8 +31,21 @@ export default async function Portfolio({ params }: { params: { uid: string } })
   const hasInvestments = await checkForInvest(supabase, params.uid);
   if (!hasInvestments) {
     return (
-      <div>
-        <NoDataAlert />
+      <div className="container max-w-screen-xl p-6">
+        <div className="self-center border-2 border-border flex flex-col items-center justify-center p-4 bg-gray-100 dark:bg-slate-800 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">No Data Available</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6 text-center">
+            It looks like you haven&apos;t added any data yet. Please head over to the investment section to get
+            started.
+          </p>
+          <NoDataAlert />
+          <Link
+            href="/deals"
+            className="px-4 py-2 mt-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition"
+          >
+            Go to Investment
+          </Link>
+        </div>
       </div>
     );
   }

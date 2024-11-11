@@ -13,8 +13,8 @@ const alertOption = {
 
 export function NoDataAlert() {
   return (
-    <div className="fixed inset-0 flex items-center justify-centerbg-black mt-10">
-      <Lottie options={alertOption} height={"80%"} width={"50%"} />
+    <div>
+      <Lottie options={alertOption} height={"200"} width={"200"} />
     </div>
   );
 }
