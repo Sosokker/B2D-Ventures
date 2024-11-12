@@ -27,6 +27,7 @@ import Link from "next/link";
 import { DataTable } from "@/components/dataTable";
 import { Button } from "@/components/ui/button";
 import CustomTooltip from "@/components/customToolTip";
+import { Modal } from "@/components/modal";
 
 export default async function Portfolio({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
@@ -75,7 +76,15 @@ export default async function Portfolio({ params }: { params: { uid: string } })
   const tags = deals ? await getInvestorProjectTag(supabase, deals) : [];
   const latestDeals = deals
     ? await Promise.all(
-        (await getLatestInvestment(supabase, deals)).map(async (deal) => ({
+        (
+          await getLatestInvestment(
+            supabase,
+            deals.map((deal) => ({
+              ...deal,
+              status: deal.deal_status,
+            }))
+          )
+        ).map(async (deal) => ({
           ...deal,
           logo_url: await deal.logo_url,
         }))
@@ -99,7 +108,6 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           <CountUpComponent end={totalInvestment} duration={1} />
         </p>
       </div>
-
       <div className="flex flew-rows-3 gap-10 mt-5 w-full">
         <Tabs defaultValue="daily" className="space-y-4 w-full">
           <TabsList className="grid w-96 grid-cols-3">
@@ -235,9 +243,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           </CardHeader>
           <CardContent className="mt-5 grid grid-flow-row-dense">
             <RecentFunds data={latestDeals} />
-            <div className="mt-5 flex justify-center">
-              {deals && deals.length > 5 ? <Button>View More</Button> : undefined}
-            </div>
+            <div className="mt-5 flex justify-center">{deals && deals.length ? <Modal /> : undefined}</div>
           </CardContent>
         </Card>
       </div>
