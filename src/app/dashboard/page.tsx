@@ -15,9 +15,11 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { overAllGraphData, fourYearGraphData, dayOftheWeekData } from "../portfolio/[uid]/query";
 import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const supabase = createSupabaseClient();
+  const router = useRouter();
   const { session, loading: isLoadingSession } = useSession();
   const userId = session?.user.id;
   const [projects, setProjects] = useState<
@@ -234,7 +236,7 @@ export default function Dashboard() {
                     </Card>
                     <Button
                       onClick={() => {
-                        window.location.href = `/project/${project.id}/edit`;
+                        router.push(`/project/${project.id}/edit`);
                       }}
                       className="h-full bg-emerald-500 hover:bg-emerald-800 font-bold text-xl"
                     >

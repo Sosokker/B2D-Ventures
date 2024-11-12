@@ -10,12 +10,13 @@ import { getCurrentUserID } from "@/app/api/userApi";
 import { uploadFile } from "@/app/api/generalApi";
 import { Loader } from "@/components/loading/loader";
 import { hasUserApplied, transformChoice } from "./actions";
-
+import { useRouter } from "next/navigation";
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_PITCH_NAME = "business-application";
 let supabase = createSupabaseClient();
 
 export default function ApplyBusiness() {
+  const router = useRouter();
   const alertShownRef = useRef(false);
   const [success, setSucess] = useState(false);
 
@@ -74,7 +75,7 @@ export default function ApplyBusiness() {
       text: error == null ? "Your application has been submitted" : error.message,
       confirmButtonColor: error == null ? "green" : "red",
     }).then(() => {
-      window.location.href = "/";
+      router.push("/");
     });
   };
 
@@ -97,7 +98,7 @@ export default function ApplyBusiness() {
               allowEscapeKey: false,
             }).then((result) => {
               if (result.isConfirmed) {
-                window.location.href = "/";
+                router.push("/");
               }
             });
           }
@@ -112,6 +113,7 @@ export default function ApplyBusiness() {
     };
     // setSucess(true);
     fetchUserData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
