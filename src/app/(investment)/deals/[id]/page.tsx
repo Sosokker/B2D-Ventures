@@ -89,7 +89,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <Image src="/logo.svg" alt="logo" width={50} height={50} className="sm:scale-75" />
               <h1 className="mt-3 font-bold  text-lg md:text-3xl">{projectData?.project_name}</h1>
             </span>
-            <FollowShareButtons userId={user!.user.id} projectId={params.id} />
+            <FollowShareButtons userId={user!.user.id} projectId={params.id} projectName ={projectData?.project_name}/>
           </div>
           {/* end of pack */}
           <p className="mt-2 sm:text-sm">{projectData?.project_short_description}</p>
