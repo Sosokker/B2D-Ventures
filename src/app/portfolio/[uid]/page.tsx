@@ -247,13 +247,12 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           <CardContent className="mt-5 grid grid-flow-row-dense">
             <RecentFunds data={latestDeals} />
             <div className="mt-5 flex justify-center">
-              {deals?.length}
               {deals && deals.length > 5 ? (
                 <Modal
                   data={deals.map((item) => {
                     return {
                       date: item.created_time,
-                      name: item.username,
+                      name: item.project_name,
                       amount: item.deal_amount,
                       status: item.deal_status,
                       logoURL: Array.isArray(item.avatar_url) ? item.avatar_url[0] : item.avatar_url,
