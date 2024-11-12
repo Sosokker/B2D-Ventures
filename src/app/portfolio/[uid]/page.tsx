@@ -57,6 +57,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
   if (investorDealError) {
     console.error(investorDealError);
   }
+
   const { data: localUser, error: localUserError } = await supabase.auth.getUser();
   if (localUserError) {
     console.error("Error while fetching user" + error);
@@ -82,6 +83,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
             deals.map((deal) => ({
               ...deal,
               status: deal.deal_status,
+              project_id: deal.project_id,
             }))
           )
         ).map(async (deal) => ({
@@ -96,6 +98,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
     ? await Promise.all(deals.map(async (item) => await getBusinessTypeName(supabase, item.project_id)))
     : [];
   const countedBusinessType = countValues(businessType.filter((item) => item !== null));
+  console.table(deals);
   return (
     <div className="container max-w-screen-xl">
       <div className="text-center py-4">
@@ -244,17 +247,17 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           <CardContent className="mt-5 grid grid-flow-row-dense">
             <RecentFunds data={latestDeals} />
             <div className="mt-5 flex justify-center">
-              {/* {latestDeals.length} */}
-              {deals && deals.length ? (
+              {deals?.length}
+              {deals && deals.length > 5 ? (
                 <Modal
-                  data={latestDeals.map((item) => {
+                  data={deals.map((item) => {
                     return {
-                      date: item.date,
-                      name: item.name,
-                      amount: item.amount,
-                      status: item.status,
-                      logoURL: item.logo_url,
-                      profileURL: `deals/${item.projectId}`
+                      date: item.created_time,
+                      name: item.username,
+                      amount: item.deal_amount,
+                      status: item.deal_status,
+                      logoURL: Array.isArray(item.avatar_url) ? item.avatar_url[0] : item.avatar_url,
+                      profileURL: `deals/${item.project_id}` as string,
                     };
                   })}
                 />

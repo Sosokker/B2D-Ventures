@@ -63,6 +63,9 @@ export function getInvestorDeal(client: SupabaseClient, userId: string) {
       deal_status:value
       ),
     project_id,
+    ...project_id (
+     project_name
+    ),
     deal_amount,
     created_time,
     ...profiles (

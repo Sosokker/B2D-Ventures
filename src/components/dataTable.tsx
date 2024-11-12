@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 export type ModalProps = {
   date: Date;
@@ -66,7 +68,25 @@ export const columns: ColumnDef<ModalProps>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <Link href={`/deals/${(row.getValue("profileURL") as string).split("/").pop()}`} className="flex items-center">
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={row.getValue("logoURL")} />
+            <AvatarFallback>{(row.getValue("name") as string).slice(0, 2)}</AvatarFallback>
+          </Avatar>
+          <span className="ml-2">{row.getValue("name")}</span>
+        </Link>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "date",
+    header: () => <div className="text-left">Date</div>,
+    cell: ({ row }) => {
+      const formatted = new Date(row.getValue("date")).toUTCString();
+      return <div className=" font-medium">{formatted}</div>;
+    },
   },
   {
     accessorKey: "status",
@@ -101,16 +121,19 @@ export const columns: ColumnDef<ModalProps>[] = [
                 ? "text-green-500"
                 : "text-yellow-500"
           }`}
-        >
-        </p>
+        ></p>
 
-        <div className={`capitalize ${
-                        row.getValue("status") === "In Progress"
-                          ? "text-sky-500"
-                          : row.getValue("status") === "Completed"
-                            ? "text-green-500"
-                            : "text-yellow-500"
-                      }`}>{row.getValue("status")}</div>
+        <div
+          className={`capitalize ${
+            row.getValue("status") === "In Progress"
+              ? "text-sky-500"
+              : row.getValue("status") === "Completed"
+                ? "text-green-500"
+                : "text-yellow-500"
+          }`}
+        >
+          {row.getValue("status")}
+        </div>
       </div>
     ),
   },
@@ -128,6 +151,18 @@ export const columns: ColumnDef<ModalProps>[] = [
 
       return <div className="text-right font-medium">{formatted}</div>;
     },
+  },
+  {
+    accessorKey: "logoURL",
+    id: "logoURL",
+    header: () => null,
+    cell: () => null,
+  },
+  {
+    accessorKey: "profileURL",
+    id: "profileURL",
+    header: () => null,
+    cell: () => null,
   },
 ];
 
@@ -151,7 +186,10 @@ export function DataTable({ data }: { data: ModalProps[] }) {
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
+      columnVisibility: {
+        profileURL: false,
+        logoURL: false,
+      },
       rowSelection,
     },
   });
