@@ -1,6 +1,9 @@
 "use client";
 
-import Lottie from "react-lottie";
+import dynamic from "next/dynamic";
+
+// Dynamically import Lottie to prevent SSR issues
+const Lottie = dynamic(() => import("react-lottie"), { ssr: false });
 import * as loadingData from "./loading.json";
 
 const loadingOption = {
