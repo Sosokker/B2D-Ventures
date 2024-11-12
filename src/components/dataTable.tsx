@@ -26,19 +26,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-export type Payment = {
-  data?: {
-    name?: string;
-    amount?: number;
-    avatar?: string;
-    date?: Date;
-    logo_url?: string;
-    status?: string;
-    profile_url?: string;
-  }[];
+export type ModalProps = {
+  date: Date;
+  amount: number;
+  name: string;
+  investorId?: string;
+  profileURL?: string;
+  logoURL?: string;
+  status?: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<ModalProps>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -59,21 +57,62 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "email",
+    accessorKey: "name",
     header: ({ column }) => {
       return (
         <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Email
+          Name
           <ArrowUpDown />
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
+    cell: ({ row }) => (
+      <div className="flex items-center space-x-1">
+        <span className="relative flex h-3 w-3">
+          <span
+            className={`animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75 ${
+              row.getValue("status") === "In Progress"
+                ? "bg-sky-400"
+                : row.getValue("status") === "Completed"
+                  ? "bg-green-400"
+                  : "bg-yellow-400"
+            }`}
+          ></span>
+          <span
+            className={`relative inline-flex rounded-full h-2 w-2 mt-[2px] ml-0.5 ${
+              row.getValue("status") === "In Progress"
+                ? "bg-sky-500"
+                : row.getValue("status") === "Completed"
+                  ? "bg-green-500"
+                  : "bg-yellow-500"
+            }`}
+          ></span>
+        </span>
+        <p
+          className={`text-xs m-0 ${
+            row.getValue("status") === "In Progress"
+              ? "text-sky-500"
+              : row.getValue("status") === "Completed"
+                ? "text-green-500"
+                : "text-yellow-500"
+          }`}
+        >
+        </p>
+
+        <div className={`capitalize ${
+                        row.getValue("status") === "In Progress"
+                          ? "text-sky-500"
+                          : row.getValue("status") === "Completed"
+                            ? "text-green-500"
+                            : "text-yellow-500"
+                      }`}>{row.getValue("status")}</div>
+      </div>
+    ),
   },
   {
     accessorKey: "amount",
@@ -92,7 +131,7 @@ export const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-export function DataTable({ data }: { data: Payment[] }) {
+export function DataTable({ data }: { data: ModalProps[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -121,9 +160,9 @@ export function DataTable({ data }: { data: Payment[] }) {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
+          placeholder="Filter names..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>

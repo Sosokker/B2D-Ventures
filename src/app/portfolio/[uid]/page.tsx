@@ -244,13 +244,21 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           <CardContent className="mt-5 grid grid-flow-row-dense">
             <RecentFunds data={latestDeals} />
             <div className="mt-5 flex justify-center">
-              {/* {deals && deals.length ? <Modal data={latestDeals.map((deal) => {
-                return {
-                  name: deal.name,
-                  amount: deal.amount,
-                  date: deal.date, 
-                };
-              })} /> : undefined} */}
+              {/* {latestDeals.length} */}
+              {deals && deals.length ? (
+                <Modal
+                  data={latestDeals.map((item) => {
+                    return {
+                      date: item.date,
+                      name: item.name,
+                      amount: item.amount,
+                      status: item.status,
+                      logoURL: item.logo_url,
+                      profileURL: `deals/${item.projectId}`
+                    };
+                  })}
+                />
+              ) : undefined}
             </div>
           </CardContent>
         </Card>

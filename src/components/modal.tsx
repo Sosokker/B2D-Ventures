@@ -3,18 +3,17 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import { DataTable } from "./dataTable";
 
-export type Payment = {
-  data?: {
-    name?: string;
-    amount?: number;
-    avatar?: string;
-    date?: Date;
-    logo_url?: string;
-    status?: string;
-    profile_url?: string;
-  }[];
+export type ModalProps = {
+  date: Date;
+  amount: number;
+  name: string;
+  investorId?: string;
+  profileURL?: string;
+  logoURL?: string;
+  status?: string;
 };
-export function Modal({ data }: { data: Payment[] }) {
+
+export function Modal({ data }: { data: ModalProps[] }) {
   return (
     <div>
       <Dialog>
