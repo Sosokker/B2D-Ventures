@@ -186,13 +186,11 @@ export function DataTable({ data }: { data: ModalProps[] }) {
     state: {
       sorting,
       columnFilters,
-      columnVisibility: {
-        profileURL: false,
-        logoURL: false,
-      },
+      columnVisibility,
       rowSelection,
     },
   });
+  console.table(columnVisibility)
 
   return (
     <div className="w-full">
@@ -212,7 +210,7 @@ export function DataTable({ data }: { data: ModalProps[] }) {
           <DropdownMenuContent align="end">
             {table
               .getAllColumns()
-              .filter((column) => column.getCanHide())
+              .filter((column) => column.getCanHide() && column.id != "logoURL" && column.id != "profileURL")
               .map((column) => {
                 return (
                   <DropdownMenuCheckboxItem
