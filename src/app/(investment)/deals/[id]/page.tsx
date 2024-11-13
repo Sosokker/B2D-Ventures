@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-
 import ReactMarkdown from "react-markdown";
-
 import * as Tabs from "@radix-ui/react-tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -10,7 +8,6 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import FollowShareButtons from "./followShareButton";
-
 import { getProjectData } from "@/lib/data/projectQuery";
 import { getDealList } from "@/app/api/dealApi";
 import { sumByKey, toPercentage } from "@/lib/utils";
@@ -89,7 +86,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <Image src="/logo.svg" alt="logo" width={50} height={50} className="sm:scale-75" />
               <h1 className="mt-3 font-bold  text-lg md:text-3xl">{projectData?.project_name}</h1>
             </span>
-            <FollowShareButtons userId={user!.user.id} projectId={params.id} projectName ={projectData?.project_name}/>
+            <FollowShareButtons userId={user!.user.id} projectId={params.id} projectName={projectData?.project_name} />
           </div>
           {/* end of pack */}
           <p className="mt-2 sm:text-sm">{projectData?.project_short_description}</p>
