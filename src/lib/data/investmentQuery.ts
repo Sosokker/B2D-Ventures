@@ -20,6 +20,9 @@ export const getInvestmentByProjectsIds = (client: SupabaseClient, projectIds: s
       deal_status:value
       ),
     project_id,
+    ...project_id (
+     project_name
+    ),
     deal_amount,
     created_time,
     ...profiles (

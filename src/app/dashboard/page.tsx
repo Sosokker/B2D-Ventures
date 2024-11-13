@@ -17,6 +17,7 @@ import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Modal } from "@/components/modal";
 
 export default function Dashboard() {
   const supabase = createSupabaseClient();
@@ -296,11 +297,20 @@ export default function Dashboard() {
                             };
                           })}
                         />
-                        <div className="flex justify-center">
-                          {filteredProject && filteredProject.length > 6 ? (
-                            <Button asChild>
-                              <Link href="/dashboard/deals/">View More</Link>
-                            </Button>
+                        <div className="flex justify-center mt-5">
+                          {filteredProject && filteredProject.length > 1 ? (
+                            <Modal
+                              data={filteredProject.map((item) => {
+                                return {
+                                  date: item.created_time,
+                                  name: item.username,
+                                  amount: item.deal_amount,
+                                  status: item.deal_status,
+                                  logoURL: Array.isArray(item.avatar_url) ? item.avatar_url[0] : item.avatar_url,
+                                  profileURL: `/profile/${item.investor_id}`,
+                                };
+                              })}
+                            />
                           ) : undefined}
                         </div>
                       </CardContent>

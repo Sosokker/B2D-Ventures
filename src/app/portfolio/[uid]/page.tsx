@@ -189,8 +189,8 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           </TabsContent>
         </Tabs>
       </div>
-      <div className="flex flex-cols-3 w-full gap-5 mt-5">
-        <Card className="w-1/3">
+      <div className="flex flex-cols-3  w-full gap-5 mt-5">
+        <Card className="w-1/3 h-fit">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">Categories of Invested Projects</CardTitle>
             <TooltipProvider>
@@ -215,7 +215,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
             />
           </CardContent>
         </Card>
-        <Card className="w-1/3">
+        <Card className="w-1/3 h-fit">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">Types of Businesses Invested In</CardTitle>
             <TooltipProvider>
@@ -245,7 +245,18 @@ export default async function Portfolio({ params }: { params: { uid: string } })
             <CardTitle className="text-md font-bold">Recent investment</CardTitle>
           </CardHeader>
           <CardContent className="mt-5 grid grid-flow-row-dense">
-            <RecentFunds data={latestDeals} />
+            <RecentFunds
+              data={latestDeals.map((item) => {
+                return {
+                  name: item.name,
+                  amount: item.amount,
+                  avatar: item.logo_url,
+                  date: new Date(item.date),
+                  status: item.status,
+                  profile_url: `/deals/${item.projectId}`,
+                };
+              })}
+            />
             <div className="mt-5 flex justify-center">
               {deals && deals.length > 5 ? (
                 <Modal
@@ -256,7 +267,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
                       amount: item.deal_amount,
                       status: item.deal_status,
                       logoURL: Array.isArray(item.avatar_url) ? item.avatar_url[0] : item.avatar_url,
-                      profileURL: `deals/${item.project_id}` as string,
+                      profileURL: `/deals/${item.project_id}`,
                     };
                   })}
                 />

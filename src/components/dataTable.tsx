@@ -70,13 +70,18 @@ export const columns: ColumnDef<ModalProps>[] = [
     },
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
-        <Link href={`/deals/${(row.getValue("profileURL") as string).split("/").pop()}`} className="flex items-center">
+        <Button
+          className="bg-transparent hover:bg-transparent text-current"
+          onClick={() => {
+            window.location.href = row.getValue("profileURL");
+          }}
+        >
           <Avatar className="h-9 w-9">
             <AvatarImage src={row.getValue("logoURL")} />
             <AvatarFallback>{(row.getValue("name") as string).slice(0, 2)}</AvatarFallback>
           </Avatar>
           <span className="ml-2">{row.getValue("name")}</span>
-        </Link>
+        </Button>
       </div>
     ),
   },
