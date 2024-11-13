@@ -34,18 +34,20 @@ export const BusinessProfile = async ({ userId }: { userId: string }) => {
 
   return (
     <div className="container max-w-screen-xl px-4">
-      <Card className="mb-6 shadow-md rounded-lg bg-white">
+      <Card className="mb-6 shadow-md rounded-lg bg-white dark:bg-slate-900">
         <CardHeader>
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <div className="text-center sm:text-left">
               <CardTitle className="text-2xl font-semibold">{data.business_name}</CardTitle>
-              <CardDescription className="text-md text-gray-600">{data.business_type}</CardDescription>
+              <CardDescription className="text-md text-gray-600 dark:text-gray-400">
+                {data.business_type}
+              </CardDescription>
             </div>
             <div className="mt-4 sm:mt-0">
-              <p className="text-lg text-gray-700">
+              <p className="text-lg text-gray-700 dark:text-gray-400">
                 <strong>Location:</strong> {data.location}
               </p>
-              <p className="text-lg text-gray-700">
+              <p className="text-lg text-gray-700 dark:text-gray-400">
                 <strong>Joined on:</strong> {new Date(data.joined_date).toLocaleDateString()}
               </p>
             </div>
@@ -55,16 +57,16 @@ export const BusinessProfile = async ({ userId }: { userId: string }) => {
         <CardContent className="py-3">
           <div className="grid gap-4">
             <div>
-              <p className="text-md font-semibold text-gray-800">Business ID:</p>
-              <p className="text-md text-gray-600">{data.business_id}</p>
+              <p className="text-md font-semibold text-gray-800 dark:text-gray-500">Business ID:</p>
+              <p className="text-md text-gray-600 dark:text-gray-400">{data.business_id}</p>
             </div>
             <div>
-              <p className="text-md font-semibold text-gray-800">Business Type:</p>
-              <p className="text-md text-gray-600">{data.business_type}</p>
+              <p className="text-md font-semibold text-gray-800 dark:text-gray-500">Business Type:</p>
+              <p className="text-md text-gray-600 dark:text-gray-400">{data.business_type}</p>
             </div>
             <div>
-              <p className="text-md font-semibold text-gray-800">User ID:</p>
-              <p className="text-md text-gray-600">{data.user_id}</p>
+              <p className="text-md font-semibold text-gray-800 dark:text-gray-500">User ID:</p>
+              <p className="text-md text-gray-600 dark:text-gray-400">{data.user_id}</p>
             </div>
           </div>
         </CardContent>
