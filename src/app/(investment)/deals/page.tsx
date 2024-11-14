@@ -2,7 +2,7 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
-import { UserIcon, UsersIcon } from "lucide-react";
+import { Building2, ClipboardPen, Tag } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { getAllBusinessTypeQuery, getAllTagsQuery, getAllProjectStatusQuery } from "@/lib/data/dropdownQuery";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
@@ -140,7 +140,7 @@ export default function Deals() {
           {/* Business Type Filter */}
           <Select value={businessTypeFilter} onValueChange={(value) => setBusinessTypeFilter(value)}>
             <SelectTrigger className="w-full sm:w-[180px]">
-              <UsersIcon className="ml-2" />
+              <Building2 className="ml-2" />
               <SelectValue placeholder="Business Type" />
             </SelectTrigger>
             <SelectContent>
@@ -169,7 +169,7 @@ export default function Deals() {
           {/* Project Status Filter */}
           <Select value={projectStatusFilter} onValueChange={(value) => setProjectStatusFilter(value)}>
             <SelectTrigger className="w-full sm:w-[180px]">
-              <UserIcon className="ml-2" />
+              <ClipboardPen className="ml-2" />
               <SelectValue placeholder="Project Status" />
             </SelectTrigger>
             <SelectContent>
@@ -198,7 +198,7 @@ export default function Deals() {
           {/* Tags Filter */}
           <Select value={tagFilter} onValueChange={(value) => setTagFilter(value)}>
             <SelectTrigger className="w-full sm:w-[180px]">
-              <UserIcon className="ml-2" />
+              <Tag className="ml-2" />
               <SelectValue placeholder="Tags" />
             </SelectTrigger>
             <SelectContent>
