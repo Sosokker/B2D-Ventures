@@ -177,8 +177,8 @@ export function DataTable({ data }: { data: ModalProps[] }) {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
-    pageIndex: 0, //initial page index
-    pageSize: 5, //default page size
+    pageIndex: 0,
+    pageSize: 5,
   });
 
   const table = useReactTable({

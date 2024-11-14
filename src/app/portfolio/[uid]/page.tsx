@@ -98,7 +98,6 @@ export default async function Portfolio({ params }: { params: { uid: string } })
     ? await Promise.all(deals.map(async (item) => await getBusinessTypeName(supabase, item.project_id)))
     : [];
   const countedBusinessType = countValues(businessType.filter((item) => item !== null));
-  console.table(deals);
   return (
     <div className="container max-w-screen-xl">
       <div className="text-center py-4">
@@ -189,8 +188,8 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           </TabsContent>
         </Tabs>
       </div>
-      <div className="flex flex-cols-3  w-full gap-5 mt-5">
-        <Card className="w-1/3 h-fit">
+      <div className="grid grid-cols-1 md:grid-cols-3  w-full gap-5 mt-5">
+        <Card className="w-full h-fit">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">Categories of Invested Projects</CardTitle>
             <TooltipProvider>
@@ -215,7 +214,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
             />
           </CardContent>
         </Card>
-        <Card className="w-1/3 h-fit">
+        <Card className="w-full h-fit">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">Types of Businesses Invested In</CardTitle>
             <TooltipProvider>
@@ -240,7 +239,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
             />
           </CardContent>
         </Card>
-        <Card className="w-1/3">
+        <Card className="w-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">Recent investment</CardTitle>
           </CardHeader>
