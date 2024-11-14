@@ -20,7 +20,7 @@ export function Modal({ data }: { data: ModalProps[] }) {
         <DialogTrigger asChild>
           <Button>View More</Button>
         </DialogTrigger>
-        <DialogContent className="max-w-screen-lg ">
+        <DialogContent className="max-w-screen-md md:max-w-screen-lg ">
           <DataTable data={data} />
         </DialogContent>
       </Dialog>

@@ -203,7 +203,7 @@ export function DataTable({ data }: { data: ModalProps[] }) {
   });
 
   return (
-    <div className="w-full">
+    <div className="w-3/4 md:w-full">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter names..."

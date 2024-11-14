@@ -263,11 +263,11 @@ export default function Dashboard() {
                       </CardContent>
                     </Tabs>
                   </Card>
-                  <Card className="col-span-3  w-full">
+                  <Card className="col-span-4 md:col-span-3">
                     <CardHeader>
                       <CardTitle>Recent Funds</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid grid-flow-dense">
+                    <CardContent className="grid grid-flow-dense w-full">
                       <RecentFunds
                         data={latestInvestment.map((item) => {
                           return {
