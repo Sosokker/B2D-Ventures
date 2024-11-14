@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { ProjectCardProps } from "@/types/ProjectCard";
+import { Database } from "@/types/database.types";
 
 async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 4) {
   try {
@@ -205,7 +206,7 @@ const getProjectByBusinessId = (client: SupabaseClient, businessIds: string[]) =
     .in("business_id", businessIds);
 };
 
-const getProjectByUserId = (client: SupabaseClient, userId: string) => {
+const getProjectByUserId = (client: SupabaseClient<Database>, userId: string) => {
   return client
     .from("project")
     .select(
