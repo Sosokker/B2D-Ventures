@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { Clock } from "lucide-react";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 
-import getMeetingLog from "./actions";
+import { getMeetingLog } from "../actions";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { LegacyLoader } from "@/components/loading/LegacyLoader";
 

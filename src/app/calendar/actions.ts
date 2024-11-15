@@ -1,3 +1,4 @@
+import { Database } from "@/types/database.types";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 
 export async function createCalendarEvent(
@@ -65,6 +66,47 @@ export async function createMeetingLog({
       note: note, // Text for meeting notes
       user_id: userId, // Replace with a valid UUID
       project_id: projectId,
+    },
+  ]);
+
+  return error ? { status: false, error } : { status: true, error: null };
+}
+
+export function getMeetingLog(client: SupabaseClient<Database>, projectId: number) {
+  return client
+    .from("meeting_log")
+    .select(
+      `
+    id,
+    meet_date,
+    start_time,
+    end_time,
+    note,
+    user_id,
+    project_id,
+    created_at
+    `
+    )
+    .eq("project_id", projectId);
+}
+
+export function getFreeDate(client: SupabaseClient<Database>, projectId: number) {
+  return client.from("project_meeting_time").select("*").eq("project_id", projectId);
+}
+
+export async function specifyFreeDate({
+  client,
+  meet_date,
+  projectId,
+}: {
+  client: SupabaseClient<Database>;
+  meet_date: string;
+  projectId: number;
+}) {
+  const { error } = await client.from("project_meeting_time").insert([
+    {
+      project_id: projectId,
+      meet_date: meet_date, // Format date as YYYY-MM-DD
     },
   ]);
 

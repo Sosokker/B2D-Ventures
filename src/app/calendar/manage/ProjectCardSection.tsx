@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardDescription, CardTitle, CardHeader, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardTitle, CardHeader } from "@/components/ui/card";
 import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ManageMeetDialog } from "./ManageMeetDialog";
 import { Button } from "@/components/ui/button";
+import FreeTimeDialog from "./FreeTimeDialog";
 
 type ProjectCardSectionProps = {
   id: number;
@@ -22,6 +23,7 @@ type ProjectCardCalendarManageSectionProps = {
 };
 export default function ProjectCardCalendarManageSection({ projectData }: ProjectCardCalendarManageSectionProps) {
   const [showMeetModal, setShowMeetModal] = useState<boolean>(false);
+  const [showFreeTimeModal, setShowFreeTimeModal] = useState<boolean>(false);
   const [currentProjectId, setCurrentProjectId] = useState<number | undefined>(undefined);
 
   return (
@@ -41,7 +43,7 @@ export default function ProjectCardCalendarManageSection({ projectData }: Projec
               </TooltipProvider>
             </CardHeader>
             <Separator className="mb-3" />
-            <CardContent>
+            <CardContent className="flex gap-3">
               <Button
                 onClick={() => {
                   setCurrentProjectId(project.id);
@@ -50,14 +52,23 @@ export default function ProjectCardCalendarManageSection({ projectData }: Projec
               >
                 Meeting List
               </Button>
+              <Button
+                onClick={() => {
+                  setCurrentProjectId(project.id);
+                  setTimeout(() => setShowFreeTimeModal(true), 0);
+                }}
+              >
+                Specify Free Time
+              </Button>
             </CardContent>
-            <CardFooter></CardFooter>
+            {/* <CardFooter></CardFooter> */}
           </Card>
         ))
       ) : (
-        <div>No data</div>
+        <div>No project data</div>
       )}
       <ManageMeetDialog open={showMeetModal} onOpenChange={setShowMeetModal} projectId={currentProjectId!} />
+      <FreeTimeDialog open={showFreeTimeModal} onOpenChange={setShowFreeTimeModal} projectId={currentProjectId!} />
     </div>
   );
 }
