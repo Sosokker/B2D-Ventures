@@ -138,10 +138,16 @@ const DatetimePickerHourCycle = () => {
       </div>
       <MeetEventDialog
         open={showModal}
-        onOpenChange={setShowModal}
+        onOpenChange={(open) => {
+          setShowModal(open);
+          if (!open) {
+            setCurrentProjectId(undefined);
+            setCurrentProjectName("");
+          }
+        }}
         session={session}
         projectName={currentProjectName}
-        projectId={currentProjectId}
+        projectId={currentProjectId!}
       />
     </div>
   );
