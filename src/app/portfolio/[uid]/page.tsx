@@ -24,9 +24,6 @@ import { NoDataAlert } from "@/components/alert/noData/alert";
 import { error } from "console";
 import { UnAuthorizedAlert } from "@/components/alert/unauthorized/alert";
 import Link from "next/link";
-import { DataTable } from "@/components/dataTable";
-import { Button } from "@/components/ui/button";
-import CustomTooltip from "@/components/customToolTip";
 import { Modal } from "@/components/modal";
 
 export default async function Portfolio({ params }: { params: { uid: string } }) {
