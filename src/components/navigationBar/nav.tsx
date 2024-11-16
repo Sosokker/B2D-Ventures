@@ -21,6 +21,8 @@ import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { getUserId } from "@/lib/supabase/actions/getUserId";
 import { getUnreadNotificationCountByUserId } from "@/lib/data/notificationQuery";
 
+import { MobileMenu } from "../mobileMenu";
+
 const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
   ({ className, title, children, ...props }, ref) => {
     return (
@@ -97,8 +99,10 @@ export async function NavigationBar() {
               </span>
             </Link>
           </div>
-
-          <div className="flex items-center">
+          <div className="md:hidden">
+            <MobileMenu />
+          </div>
+          <div className="hidden md:flex items-center ">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
@@ -146,7 +150,7 @@ export async function NavigationBar() {
               </NavigationMenuList>
             </NavigationMenu>
 
-            <div className="flex gap-2 pl-2">
+            <div className="hidden md:flex gap-2 pl-2">
               <div className="mt-1">
                 <ThemeToggle />
               </div>
