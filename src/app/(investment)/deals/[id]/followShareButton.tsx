@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 import { useState, useEffect } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import CustomTooltip from "@/components/customToolTip";
 import { ShareIcon, StarIcon } from "lucide-react";
 import { deleteFollow, getFollow, insertFollow } from "@/lib/data/followQuery";
 import toast from "react-hot-toast";
@@ -13,9 +13,10 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 interface FollowShareButtons {
   userId: string;
   projectId: number;
+  projectName: string;
 }
 
-const FollowShareButtons = ({ userId, projectId }: FollowShareButtons) => {
+const FollowShareButtons = ({ userId, projectId, projectName }: FollowShareButtons) => {
   const supabase = createSupabaseClient();
   const { data: follow, isLoading: followIsLoading } = useQuery(getFollow(supabase, userId, projectId), {
     staleTime: 0,
@@ -71,16 +72,9 @@ const FollowShareButtons = ({ userId, projectId }: FollowShareButtons) => {
   return (
     <div className="grid grid-cols-2 gap-5 justify-self-end ">
       <div className="mt-2 cursor-pointer" onClick={handleFollow}>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <StarIcon id="follow" fill={isFollowState ? "#fcb30e" : "#fff"} strokeWidth={2} />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Follow NVIDIA</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <CustomTooltip message={`Follow ${projectName}`}>
+          <StarIcon id="follow" fill={isFollowState ? "#fcb30e" : "#fff"} strokeWidth={2} />
+        </CustomTooltip>
       </div>
       <div onClick={handleShare} className="cursor-pointer mt-2">
         <ShareIcon />

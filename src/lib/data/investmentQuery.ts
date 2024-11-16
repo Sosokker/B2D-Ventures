@@ -20,6 +20,9 @@ export const getInvestmentByProjectsIds = (client: SupabaseClient, projectIds: s
       deal_status:value
       ),
     project_id,
+    ...project_id (
+     project_name
+    ),
     deal_amount,
     created_time,
     ...profiles (
@@ -56,7 +59,25 @@ export const getInvestmentByUserId = (client: SupabaseClient, userId: string) =>
 export function getInvestorDeal(client: SupabaseClient, userId: string) {
   return client
     .from("investment_deal")
-    .select("*")
+    .select(
+      `
+    id, 
+    ...deal_status_id(
+      deal_status:value
+      ),
+    project_id,
+    ...project_id (
+     project_name
+    ),
+    deal_amount,
+    created_time,
+    ...profiles (
+      investor_id:id,
+      username,
+      avatar_url
+    )
+    `
+    )
     .in("investor_id", [userId])
     .order("created_time", { ascending: true });
 }

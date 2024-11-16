@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "./ui/carousel";
 import Image from "next/image";
 
@@ -8,15 +8,40 @@ interface GalleryProps {
 }
 
 const Gallery = ({ images }: GalleryProps) => {
-  const [mainApi, setMainApi] = useState<CarouselApi>();
-  const [thumbnailApi, setThumbnailApi] = useState<CarouselApi>();
+  const [mainApi, setMainApi] = useState<CarouselApi | null>(null);
+  const [thumbnailApi, setThumbnailApi] = useState<CarouselApi | null>(null);
   const [current, setCurrent] = useState(0);
+  const [isReady, setIsReady] = useState(false);
+
+  const syncCarousels = useCallback(
+    (index: number) => {
+      if (mainApi && thumbnailApi) {
+        setCurrent(index);
+        mainApi.scrollTo(index);
+        thumbnailApi.scrollTo(index);
+      }
+    },
+    [mainApi, thumbnailApi]
+  );
+
+  const handleClick = useCallback(
+    (index: number) => {
+      syncCarousels(index);
+    },
+    [syncCarousels]
+  );
 
   const mainImage = useMemo(
     () =>
       images.map((image, index) => (
         <CarouselItem key={index} className="relative aspect-video w-full border-8 border-b">
-          <Image src={image.src} alt={`Carousel Main Image ${index + 1}`} fill style={{ objectFit: "contain" }} />
+          <Image
+            src={image.src}
+            alt={`Carousel Main Image ${index + 1}`}
+            fill
+            style={{ objectFit: "contain" }}
+            priority={index === 0}
+          />
         </CarouselItem>
       )),
     [images]
@@ -25,61 +50,60 @@ const Gallery = ({ images }: GalleryProps) => {
   const thumbnailImages = useMemo(
     () =>
       images.map((image, index) => (
-        <CarouselItem key={index} className="relative aspect-square basis-1/4" onClick={() => handleClick(index)}>
+        <CarouselItem
+          key={index}
+          className="relative aspect-square basis-1/4 cursor-pointer"
+          onClick={() => handleClick(index)}
+        >
           <Image
-            className={`${index === current ? "border-2" : ""}`}
+            className={`transition-all duration-200 ${index === current ? "border-2 border-primary" : ""}`}
             src={image.src}
             fill
             alt={`Carousel Thumbnail Image ${index + 1}`}
             style={{ objectFit: "contain" }}
+            priority={index === 0}
           />
         </CarouselItem>
       )),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [images, current]
+    [images, current, handleClick]
   );
 
   useEffect(() => {
-    if (!mainApi || !thumbnailApi) {
-      return;
-    }
+    if (!mainApi || !thumbnailApi) return;
+    if (isReady) return;
 
-    const handleTopSelect = () => {
+    const handleMainSelect = () => {
       const selected = mainApi.selectedScrollSnap();
-      setCurrent(selected);
-      thumbnailApi.scrollTo(selected);
+      if (selected !== current) {
+        syncCarousels(selected);
+      }
     };
 
-    const handleBottomSelect = () => {
+    const handleThumbnailSelect = () => {
       const selected = thumbnailApi.selectedScrollSnap();
-      setCurrent(selected);
-      mainApi.scrollTo(selected);
+      if (selected !== current) {
+        syncCarousels(selected);
+      }
     };
 
-    mainApi.on("select", handleTopSelect);
-    thumbnailApi.on("select", handleBottomSelect);
+    mainApi.on("select", handleMainSelect);
+    thumbnailApi.on("select", handleThumbnailSelect);
+
+    syncCarousels(0);
+    setIsReady(true);
 
     return () => {
-      mainApi.off("select", handleTopSelect);
-      thumbnailApi.off("select", handleBottomSelect);
+      mainApi.off("select", handleMainSelect);
+      thumbnailApi.off("select", handleThumbnailSelect);
     };
-  }, [mainApi, thumbnailApi]);
-
-  const handleClick = (index: number) => {
-    if (!mainApi || !thumbnailApi) {
-      return;
-    }
-    thumbnailApi.scrollTo(index);
-    mainApi.scrollTo(index);
-    setCurrent(index);
-  };
+  }, [mainApi, thumbnailApi, current, syncCarousels, isReady]);
 
   return (
     <div className="w-full max-w-xl sm:w-auto">
-      <Carousel setApi={setMainApi}>
+      <Carousel setApi={setMainApi} className="mb-2">
         <CarouselContent className="m-1">{mainImage}</CarouselContent>
       </Carousel>
-      <Carousel setApi={setThumbnailApi}>
+      <Carousel setApi={setThumbnailApi} className="cursor-pointer">
         <CarouselContent className="m-1 h-16">{thumbnailImages}</CarouselContent>
       </Carousel>
     </div>

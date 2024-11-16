@@ -24,6 +24,10 @@ import { NoDataAlert } from "@/components/alert/noData/alert";
 import { error } from "console";
 import { UnAuthorizedAlert } from "@/components/alert/unauthorized/alert";
 import Link from "next/link";
+import { DataTable } from "@/components/dataTable";
+import { Button } from "@/components/ui/button";
+import CustomTooltip from "@/components/customToolTip";
+import { Modal } from "@/components/modal";
 
 export default async function Portfolio({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
@@ -53,6 +57,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
   if (investorDealError) {
     console.error(investorDealError);
   }
+
   const { data: localUser, error: localUserError } = await supabase.auth.getUser();
   if (localUserError) {
     console.error("Error while fetching user" + error);
@@ -72,7 +77,16 @@ export default async function Portfolio({ params }: { params: { uid: string } })
   const tags = deals ? await getInvestorProjectTag(supabase, deals) : [];
   const latestDeals = deals
     ? await Promise.all(
-        (await getLatestInvestment(supabase, deals)).map(async (deal) => ({
+        (
+          await getLatestInvestment(
+            supabase,
+            deals.map((deal) => ({
+              ...deal,
+              status: deal.deal_status,
+              project_id: deal.project_id,
+            }))
+          )
+        ).map(async (deal) => ({
           ...deal,
           logo_url: await deal.logo_url,
         }))
@@ -96,7 +110,6 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           <CountUpComponent end={totalInvestment} duration={1} />
         </p>
       </div>
-
       <div className="flex flew-rows-3 gap-10 mt-5 w-full">
         <Tabs defaultValue="daily" className="space-y-4 w-full">
           <TabsList className="grid w-96 grid-cols-3">
@@ -175,8 +188,8 @@ export default async function Portfolio({ params }: { params: { uid: string } })
           </TabsContent>
         </Tabs>
       </div>
-      <div className="flex flex-cols-3 w-full gap-5 mt-5">
-        <Card className="w-1/3">
+      <div className="grid grid-cols-1 md:grid-cols-3  w-full gap-5 mt-5">
+        <Card className="w-full h-fit">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">Categories of Invested Projects</CardTitle>
             <TooltipProvider>
@@ -201,7 +214,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
             />
           </CardContent>
         </Card>
-        <Card className="w-1/3">
+        <Card className="w-full h-fit">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">Types of Businesses Invested In</CardTitle>
             <TooltipProvider>
@@ -226,12 +239,39 @@ export default async function Portfolio({ params }: { params: { uid: string } })
             />
           </CardContent>
         </Card>
-        <Card className="w-1/3">
+        <Card className="w-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-md font-bold">Recent investment</CardTitle>
           </CardHeader>
-          <CardContent className="mt-5">
-            <RecentFunds data={latestDeals} />
+          <CardContent className="mt-5 grid grid-flow-row-dense">
+            <RecentFunds
+              data={latestDeals.map((item) => {
+                return {
+                  name: item.name,
+                  amount: item.amount,
+                  avatar: item.logo_url,
+                  date: new Date(item.date),
+                  status: item.status,
+                  profile_url: `/deals/${item.projectId}`,
+                };
+              })}
+            />
+            <div className="mt-5 flex justify-center">
+              {deals && deals.length > 5 ? (
+                <Modal
+                  data={deals.map((item) => {
+                    return {
+                      date: item.created_time,
+                      name: item.project_name,
+                      amount: item.deal_amount,
+                      status: item.deal_status,
+                      logoURL: Array.isArray(item.avatar_url) ? item.avatar_url[0] : item.avatar_url,
+                      profileURL: `/deals/${item.project_id}`,
+                    };
+                  })}
+                />
+              ) : undefined}
+            </div>
           </CardContent>
         </Card>
       </div>
