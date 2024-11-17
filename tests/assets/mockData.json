@@ -1,0 +1,16 @@
+{   
+    "company": {
+        "name": "Kasetsart",
+        "raised": "1000000",
+        "url": "https://www.test.md"
+    },
+    "project": {
+        "name": "DummyTester",
+        "description": "0123456789",
+        "url": "https://www.test.md",
+        "budgetLow": "500",
+        "budgetHigh": "100000000",
+        "deadline": "2026-01-01T00:00"
+    }
+  }
+  
