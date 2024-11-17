@@ -16,6 +16,7 @@ export function SignupForm() {
   const [error, setError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [captchaToken, setCaptchaToken] = useState<string | undefined>(undefined);
+  const [isSendingForm, setIsSendingForm] = useState(false);
   const captcha = useRef<HCaptcha | null>(null);
 
   const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -42,13 +43,16 @@ export function SignupForm() {
     }
 
     try {
+      setIsSendingForm(true);
       await signup(formData);
       captcha.current?.resetCaptcha();
       toast.success("Account created successfully!");
-      router.push("/");
+      router.push(`/verify?email=${formData.get("email") as string}`);
     } catch (error: any) {
       captcha.current?.resetCaptcha();
       setError(error.message);
+    } finally {
+      setIsSendingForm(false);
     }
   };
 
@@ -86,8 +90,8 @@ export function SignupForm() {
         }}
       />
       {error && <p className="text-red-600">{error}</p>}
-      <Button id="signup" type="submit">
-        Sign Up
+      <Button id="signup" type="submit" disabled={isSendingForm}>
+        {isSendingForm ? "Sending" : "Sign Up"}
       </Button>
     </form>
   );

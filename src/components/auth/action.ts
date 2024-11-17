@@ -33,6 +33,7 @@ export async function signup(formData: FormData) {
     password: formData.get("password") as string,
     options: {
       captchaToken: formData.get("captchaToken") as string,
+      emailRedirectTo: "http://localhost:3000/auth",
     },
   };
 
