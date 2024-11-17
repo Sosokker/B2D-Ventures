@@ -13,9 +13,8 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: Ci caching
+      - name: Caching
         uses: actions/cache@v4
-        id: ci-cache
         with:
           path: |
             ~/.npm
@@ -23,8 +22,26 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ github.run_id }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-      - run: npm ci
-        if: steps.ci-cache.outputs.cache-hit != 'true'
+
+      - name: Set environment variables
+        run: |
+          echo NEXT_PUBLIC_AUTH_GOOGLE_ID=${{ secrets.NEXT_PUBLIC_AUTH_GOOGLE_ID }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_AUTH_GOOGLE_SECRET=${{ secrets.NEXT_PUBLIC_AUTH_GOOGLE_SECRET }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_STRIPE_PUBLIC_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLIC_KEY }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SUPABASE_URL_SOURCE=${{ secrets.NEXT_PUBLIC_SUPABASE_URL_SOURCE }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_TEST_URL=${{ secrets.NEXT_PUBLIC_TEST_URL }} >> $GITHUB_ENV
+          echo PROJECT_ID=${{ secrets.PROJECT_ID }} >> $GITHUB_ENV
+          echo STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} >> $GITHUB_ENV
+          echo BASE_URL=${{ secrets.BASE_URL }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_ADMIN_EMAIL=${{ secrets.NEXT_PUBLIC_ADMIN_EMAIL }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_ADMIN_PASSWORD=${{ secrets.NEXT_PUBLIC_ADMIN_PASSWORD }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_TEST_USER_EMAIL=${{ secrets.NEXT_PUBLIC_TEST_USER_EMAIL }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_TEST_USER_PASSWORD=${{ secrets.NEXT_PUBLIC_TEST_USER_PASSWORD }} >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run build
         run: npm run build --if-present --verbose
