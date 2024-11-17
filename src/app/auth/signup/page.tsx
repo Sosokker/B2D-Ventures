@@ -3,11 +3,13 @@ import { Card, CardContent, CardFooter, CardDescription, CardHeader, CardTitle }
 import { SignupButton } from "@/components/auth/signupButton";
 import { SignupForm } from "@/components/auth/signupForm";
 
+import Link from "next/link";
+
 export default function Signup() {
   return (
     <div
       className="bg-cover bg-center min-h-screen flex items-center justify-center"
-      style={{ backgroundImage: "url(/signup.png)" }}
+      style={{ backgroundImage: "url(/login.png)" }}
     >
       <Card>
         <CardHeader className="items-center">
@@ -23,7 +25,17 @@ export default function Signup() {
           <SignupButton />
         </CardContent>
         <CardFooter className="text-xs justify-center">
-          By signing up, you agree to the Terms of Service and acknowledge you’ve read our Privacy Policy.
+          <span>
+            By signing up, you agree to the{" "}
+            <Link href="/terms" rel="noopener noreferrer" target="_blank" className="text-blue-600 underline">
+              Terms of Service
+            </Link>{" "}
+            and acknowledge you’ve read our{" "}
+            <Link href="/privacy" rel="noopener noreferrer" target="_blank" className="text-blue-600 underline">
+              Privacy Policy
+            </Link>
+            .
+          </span>{" "}
         </CardFooter>
       </Card>
     </div>
