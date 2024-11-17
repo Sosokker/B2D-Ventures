@@ -1,21 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { login } from "./action";
 import { LoginFormSchema } from "@/types/schemas/authentication.schema";
 import toast from "react-hot-toast";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string; server?: string }>({});
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(undefined);
+  const captcha = useRef<HCaptcha | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = { email, password };
+    const formData = { email, password, options: { captchaToken } };
 
     const result = LoginFormSchema.safeParse(formData);
 
@@ -31,13 +34,18 @@ export function LoginForm() {
     setErrors({});
 
     const form = new FormData();
-    form.append("email", email);
-    form.append("password", password);
+    form.set("email", email);
+    form.set("password", password);
+    if (captchaToken) {
+      form.set("captchaToken", captchaToken);
+    }
 
     try {
       await login(form);
+      captcha.current?.resetCaptcha();
       toast.success("Login succesfully!");
     } catch (authError: any) {
+      captcha.current?.resetCaptcha();
       setErrors((prevErrors) => ({
         ...prevErrors,
         server: authError.message || "An error occurred during login.",
@@ -61,6 +69,13 @@ export function LoginForm() {
         />
         {errors.password && <p className="text-red-600">{errors.password}</p>}
       </div>
+      <HCaptcha
+        ref={captcha}
+        sitekey={process.env.NEXT_PUBLIC_SITEKEY!}
+        onVerify={(token) => {
+          setCaptchaToken(token);
+        }}
+      />
       {errors.server && <p className="text-red-600">{errors.server}</p>}
       <Button id="login" type="submit">
         Login

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { signup } from "./action";
 import { signupSchema } from "@/types/schemas/authentication.schema";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export function SignupForm() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export function SignupForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(undefined);
+  const captcha = useRef<HCaptcha | null>(null);
 
   const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,15 +33,21 @@ export function SignupForm() {
     }
 
     const formData = new FormData();
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("confirmPassword", confirmPassword);
+    formData.set("email", email);
+    formData.set("password", password);
+    formData.set("confirmPassword", confirmPassword);
+
+    if (captchaToken) {
+      formData.set("captchaToken", captchaToken);
+    }
 
     try {
       await signup(formData);
+      captcha.current?.resetCaptcha();
       toast.success("Account created successfully!");
       router.push("/");
     } catch (error: any) {
+      captcha.current?.resetCaptcha();
       setError(error.message);
     }
   };
@@ -68,6 +77,13 @@ export function SignupForm() {
         onChange={(e) => setConfirmPassword(e.target.value)}
         placeholder="Confirm Password"
         required
+      />
+      <HCaptcha
+        ref={captcha}
+        sitekey={process.env.NEXT_PUBLIC_SITEKEY!}
+        onVerify={(token) => {
+          setCaptchaToken(token);
+        }}
       />
       {error && <p className="text-red-600">{error}</p>}
       <Button id="signup" type="submit">

@@ -10,6 +10,7 @@
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "dependencies": {
+    "@hcaptcha/react-hcaptcha": "^1.11.0",
     "@hookform/resolvers": "^3.9.0",
     "@mdxeditor/editor": "^3.15.0",
     "@nextui-org/calendar": "^2.0.12",
