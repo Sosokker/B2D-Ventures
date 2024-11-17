@@ -1,4 +1,5 @@
-import { Session } from "@supabase/supabase-js";
+import { Database } from "@/types/database.types";
+import { Session, SupabaseClient } from "@supabase/supabase-js";
 
 export async function createCalendarEvent(
   session: Session,
@@ -33,9 +34,81 @@ export async function createCalendarEvent(
 
     const data = await response.json();
     console.log(data);
-    alert("Event created, check your Google Calendar!");
   } catch (error) {
     console.error("Error creating calendar event:", error);
-    alert("Failed to create the event.");
   }
+}
+
+interface CreateMeetingLogProps {
+  client: SupabaseClient;
+  userId: string;
+  projectId: number;
+  meet_date: string;
+  start_time: string;
+  end_time: string;
+  note: string;
+}
+
+export async function createMeetingLog({
+  client,
+  userId,
+  projectId,
+  meet_date,
+  start_time,
+  end_time,
+  note,
+}: CreateMeetingLogProps) {
+  const { error } = await client.from("meeting_log").insert([
+    {
+      meet_date: meet_date, // Format date as YYYY-MM-DD
+      start_time: start_time, // Format time as HH:MM:SS
+      end_time: end_time, // Format time as HH:MM:SS
+      note: note, // Text for meeting notes
+      user_id: userId, // Replace with a valid UUID
+      project_id: projectId,
+    },
+  ]);
+
+  return error ? { status: false, error } : { status: true, error: null };
+}
+
+export function getMeetingLog(client: SupabaseClient<Database>, projectId: number) {
+  return client
+    .from("meeting_log")
+    .select(
+      `
+    id,
+    meet_date,
+    start_time,
+    end_time,
+    note,
+    user_id,
+    project_id,
+    created_at
+    `
+    )
+    .eq("project_id", projectId);
+}
+
+export function getFreeDate(client: SupabaseClient<Database>, projectId: number) {
+  return client.from("project_meeting_time").select("*").eq("project_id", projectId);
+}
+
+export async function specifyFreeDate({
+  client,
+  meet_date,
+  projectId,
+}: {
+  client: SupabaseClient<Database>;
+  meet_date: string;
+  projectId: number;
+}) {
+  const { error } = await client.from("project_meeting_time").insert([
+    {
+      project_id: projectId,
+      meet_date: meet_date, // Format date as YYYY-MM-DD
+    },
+  ]);
+
+  return error ? { status: false, error } : { status: true, error: null };
 }

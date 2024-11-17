@@ -1,5 +1,5 @@
 import React from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ReactQueryClientProvider } from "@/components/ReactQueryClientProvider";
@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     default: "B2DVentures",
   },
   description: "B2DVentures is a financial services company.",
+};
+
+export const viewport: Viewport = {
+  initialScale: 1,
+  width: "device-width",
 };
 
 interface RootLayoutProps {

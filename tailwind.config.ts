@@ -1,13 +1,15 @@
+import {nextui} from '@nextui-org/theme';
 import type { Config } from "tailwindcss"
 
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+    "./node_modules/@nextui-org/theme/dist/components/(calendar|date-input|button|ripple|spinner).js"
+  ],
   prefix: "",
   theme: {
     container: {
@@ -74,7 +76,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require('@tailwindcss/typography'),],
+  plugins: [require('tailwindcss-animate'),require('@tailwindcss/typography'),nextui()],
 } satisfies Config
 
 export default config

@@ -37,6 +37,7 @@ const DatetimePickerHourCycle = () => {
   const supabase = createSupabaseClient();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [currentProjectName, setCurrentProjectName] = useState<string>("");
+  const [currentProjectId, setCurrentProjectId] = useState<number | undefined>(undefined);
   const { session, loading } = useSession();
 
   const {
@@ -125,7 +126,8 @@ const DatetimePickerHourCycle = () => {
               <Button
                 onClick={() => {
                   setCurrentProjectName(projectInvestments[0].project_name);
-                  setShowModal(true);
+                  setCurrentProjectId(projectInvestments[0].project_id);
+                  setTimeout(() => setShowModal(true), 0);
                 }}
               >
                 Schedule Meeting
@@ -136,9 +138,16 @@ const DatetimePickerHourCycle = () => {
       </div>
       <MeetEventDialog
         open={showModal}
-        onOpenChange={setShowModal}
+        onOpenChange={(open) => {
+          setShowModal(open);
+          if (!open) {
+            setCurrentProjectId(undefined);
+            setCurrentProjectName("");
+          }
+        }}
         session={session}
         projectName={currentProjectName}
+        projectId={currentProjectId!}
       />
     </div>
   );

@@ -20,7 +20,7 @@ export function ProjectSection({ projectsData }: { projectsData: ProjectCardProp
   }
 
   return (
-    <div className="grid grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
       {projectsData.map((project) => (
         <div key={project.id}>
           <Link href={`/deals/${project.id}`}>
