@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -24,60 +24,79 @@ export function MobileMenu() {
       <Button onClick={() => setIsVisible((prev) => !prev)}>
         <Menu />
       </Button>
-      {isVisible && (
-        <motion.div
-          initial={{ x: "-100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "-100%" }}
-          transition={{ duration: 0.3 }}
-          className="fixed top-0 left-0 w-full bg-blue-500  flex items-center"
-        >
-          <X className="cursor-pointer w-8" onClick={() => setIsVisible(false)} />
-          <NavigationMenu>
-            <NavigationMenuList className="grid grid-cols-3 space-x-4 mt-1">
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-base">Businesses</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  {businessComponents.map((component) => (
-                    <ListItem key={component.title} title={component.title} href={component.href}>
-                      {component.description}
-                    </ListItem>
-                  ))}
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-base ">Projects</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] ">
-                    {projectComponents.map((component) => (
-                      <ListItem key={component.title} title={component.title} href={component.href}>
-                        {component.description}
-                      </ListItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-base  ">Dataroom</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] ">
-                    {dataroomComponents.map((component) => (
-                      <ListItem key={component.title} title={component.title} href={component.href}>
-                        {component.description}
-                      </ListItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            exit={{ y: -100 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed top-0 left-0 w-full bg-white dark:bg-slate-900 border-b dark:border-slate-800 shadow-sm z-50"
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16">
+                <div className="flex items-center">
+                  <button
+                    onClick={() => setIsVisible(false)}
+                    className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
 
-              <NavigationMenuItem className="pl-5 flex mt-5 flex">
-                <ThemeToggle />
-                <SearchBar />
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </motion.div>
-      )}
+                  <NavigationMenu className="ml-6">
+                    <NavigationMenuList className="flex space-x-4">
+                      <NavigationMenuItem>
+                        <NavigationMenuTrigger className="text-sm font-medium">Businesses</NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <ul className="w-[240px] p-4 gap-3">
+                            {businessComponents.map((component) => (
+                              <ListItem key={component.title} title={component.title} href={component.href}>
+                                {component.description}
+                              </ListItem>
+                            ))}
+                          </ul>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+
+                      <NavigationMenuItem>
+                        <NavigationMenuTrigger className="text-sm font-medium">Projects</NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <ul className="w-[240px] p-4 gap-3">
+                            {projectComponents.map((component) => (
+                              <ListItem key={component.title} title={component.title} href={component.href}>
+                                {component.description}
+                              </ListItem>
+                            ))}
+                          </ul>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+
+                      <NavigationMenuItem>
+                        <NavigationMenuTrigger className="text-sm font-medium">Dataroom</NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <ul className="w-[240px] p-4 gap-3">
+                            {dataroomComponents.map((component) => (
+                              <ListItem key={component.title} title={component.title} href={component.href}>
+                                {component.description}
+                              </ListItem>
+                            ))}
+                          </ul>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+                    </NavigationMenuList>
+                  </NavigationMenu>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <SearchBar />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
