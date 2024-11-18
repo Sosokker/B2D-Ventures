@@ -27,7 +27,7 @@ export default function ProjectCardCalendarManageSection({ projectData }: Projec
   const [currentProjectId, setCurrentProjectId] = useState<number | undefined>(undefined);
 
   return (
-    <div id="content" className="grid grid-cols-2 space-x-2">
+    <div id="content" className="grid grid-cols-1 md:grid-cols-2 space-x-2">
       {projectData != null ? (
         projectData.map((project) => (
           <Card key={project.id} className="mb-3">
