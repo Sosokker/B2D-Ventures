@@ -12,6 +12,7 @@ export function LoginButton(props: { nextUrl?: string }) {
       provider: "google",
       options: {
         redirectTo: `${location.origin}/auth/callback?next=${props.nextUrl || ""}`,
+        scopes: "https://www.googleapis.com/auth/calendar",
       },
     });
   };

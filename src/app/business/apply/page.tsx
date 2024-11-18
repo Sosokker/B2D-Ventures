@@ -1,6 +1,6 @@
 "use client";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import BusinessForm from "./BusinessForm";
@@ -8,9 +8,10 @@ import { businessFormSchema } from "@/types/schemas/application.schema";
 import Swal from "sweetalert2";
 import { getCurrentUserID } from "@/app/api/userApi";
 import { uploadFile } from "@/app/api/generalApi";
-import { Loader } from "@/components/loading/loader";
+// import { Loader } from "@/components/loading/loader";
 import { hasUserApplied, transformChoice } from "./actions";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_PITCH_NAME = "business-application";
 let supabase = createSupabaseClient();
@@ -18,14 +19,14 @@ let supabase = createSupabaseClient();
 export default function ApplyBusiness() {
   const router = useRouter();
   const alertShownRef = useRef(false);
-  const [success, setSucess] = useState(false);
+  // const [success, setSucess] = useState(false);
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
     const transformedData = await transformChoice(data);
     await sendApplication(transformedData);
   };
   const sendApplication = async (recvData: any) => {
-    setSucess(false);
+    // setSucess(false);
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -42,8 +43,8 @@ export default function ApplyBusiness() {
         if (!uploadSuccess) {
           return;
         }
-
-        console.log("file upload successful");
+        toast.success("Send business appliction susccessfully!");
+        router.push("/");
       } else {
         console.error("user ID is undefined.");
         return;
@@ -67,7 +68,7 @@ export default function ApplyBusiness() {
         },
       ])
       .select();
-    setSucess(true);
+    // setSucess(true);
     // console.table(data);
     Swal.fire({
       icon: error == null ? "success" : "error",
@@ -82,11 +83,11 @@ export default function ApplyBusiness() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        setSucess(false);
+        // setSucess(false);
         const userID = await getCurrentUserID();
         if (userID) {
           const hasApplied = await hasUserApplied(supabase, userID);
-          setSucess(true);
+          // setSucess(true);
           if (hasApplied && !alertShownRef.current) {
             alertShownRef.current = true;
             Swal.fire({
@@ -103,11 +104,11 @@ export default function ApplyBusiness() {
             });
           }
         } else {
-          setSucess(true);
+          // setSucess(true);
           console.error("User ID is undefined.");
         }
       } catch (error) {
-        setSucess(true);
+        // setSucess(true);
         console.error("Error fetching user ID:", error);
       }
     };
@@ -118,7 +119,7 @@ export default function ApplyBusiness() {
 
   return (
     <div>
-      <Loader isSuccess={success} />
+      {/* <Loader isSuccess={success} /> */}
       <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-100 dark:bg-gray-800 p-5">
         <h1 className="text-2xl md:text-5xl font-medium md:font-bold justify-self-center md:mt-8">
           Apply to raise on B2DVentures

@@ -40,12 +40,12 @@ export const ProjectProfileSection = async ({ userId }: { userId: string }) => {
       <div className="overflow-y-auto max-h-screen flex flex-col gap-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {data.map((project) => (
-            <Card key={project.id} className="shadow-lg rounded-lg bg-white overflow-hidden">
+            <Card key={project.id} className="shadow-lg rounded-lg bg-white dark:bg-slate-900 overflow-hidden">
               <CardHeader>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                   <div className="text-center sm:text-left">
                     <CardTitle className="text-2xl font-semibold">{project.project_name}</CardTitle>
-                    <CardDescription className="text-md text-gray-600">
+                    <CardDescription className="text-md text-gray-600 dark:text-gray-500">
                       {project.project_short_description}
                     </CardDescription>
                   </div>

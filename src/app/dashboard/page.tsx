@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Overview } from "@/components/ui/overview";
@@ -16,7 +15,6 @@ import { overAllGraphData, fourYearGraphData, dayOftheWeekData } from "../portfo
 import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Modal } from "@/components/modal";
 
 export default function Dashboard() {
@@ -25,7 +23,13 @@ export default function Dashboard() {
   const { session, loading: isLoadingSession } = useSession();
   const userId = session?.user.id;
   const [projects, setProjects] = useState<
-    { id: number; project_name: string; business_id: { user_id: number }[]; dataroom_id: number }[]
+    {
+      id: number;
+      project_name: string;
+      project_short_description: string;
+      business_id: { user_id: string };
+      dataroom_id: number | null;
+    }[]
   >([]);
   const [latestInvestment, setLatestInvestment] = useState<
     {
