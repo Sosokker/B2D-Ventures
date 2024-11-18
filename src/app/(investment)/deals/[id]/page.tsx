@@ -98,7 +98,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
             ))}
           </div>
         </div>
-        <div id="sub-content" className="flex flex-row mt-5">
+        <div id="sub-content" className="grid grid-cols-1 md:grid-cols-2 mt-5 space-y-5 md:space-y-0">
           {/* image carousel */}
           <div id="image-carousel" className="w-full">
             <Gallery images={carouselData} />
@@ -152,62 +152,28 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </Button>
                 )}
               </div>
-              <div className="flex justify-between w-full">
-                <Button className="w-[48%] h-12 dark:text-white" variant={"outline"}>
-                  <Link href={`/dataroom/${params.id}/files`}>Access Dataroom</Link>
+              <div className="flex justify-between gap-4 w-full">
+                <Button
+                  className="flex justify-center items-center w-[48%] h-12 text-xs md:text-sm text-center dark:text-white"
+                  variant="outline"
+                >
+                  <Link href={`/dataroom/${params.id}/files`} className="block text-center break-words">
+                    <span className="block lg:inline">Access</span>
+                    <span className="block lg:inline"> Dataroom</span>
+                  </Link>
                 </Button>
-                <Button className="w-[48%] h-12 dark:text-white" variant={"outline"}>
-                  <Link href={`/dataroom/overview`}>Request Dataroom Access</Link>
+                <Button
+                  className="flex justify-center items-center w-[48%] h-12 text-xs md:text-sm text-center dark:text-white"
+                  variant="outline"
+                >
+                  <Link href={`/dataroom/overview`} className="block text-center break-words">
+                    <span className="block lg:inline">Request</span>
+                    <span className="block lg:inline"> Dataroom Access</span>
+                  </Link>
                 </Button>
               </div>
             </CardFooter>
           </Card>
-
-          {/* <div id="stats" className="flex flex-col w-full mt-4 pl-12">
-            <div className="pl-5">
-              <span>
-                <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
-                <p className="text-sm md:text-lg">
-                  {toPercentage(totalDealAmount, projectData?.target_investment)}% raised of $
-                  {projectData?.target_investment} max goal
-                </p>
-                <Progress
-                  value={toPercentage(totalDealAmount, projectData?.target_investment)}
-                  className="w-[60%] h-3 mt-3"
-                />
-              </span>
-              <span>
-                <h1 className="font-semibold text-4xl md:mt-8">
-                  <p className="text-xl md:text-4xl">{dealList.length}</p>
-                </h1>
-                <p className="text-sm md:text-lg">Investors</p>
-              </span>
-              <Separator decorative className="mt-3 w-3/4 ml-5" />
-              <span>
-                <h1 className="font-semibold text-xl md:text-4xl mt-8 ml-5"></h1>
-                {projectData?.investment_deadline ? (
-                  <>
-                    <p className="text-xl md:text-4xl">{Math.floor(hourLeft)} hours</p>
-                    <p>Left to invest</p>
-                  </>
-                ) : (
-                  <p className="text-xl md:text-4xl">No deadline</p>
-                )}
-              </span>
-              <Button className="mt-5 w-3/4 h-12 dark:text-white">
-                <Link href={`/invest/${params.id}`}>Invest in {projectData?.project_name}</Link>
-              </Button>
-              <div className="flex flex-col space-y-2 py-4 mt-5 w-3/4 h-12 border-2 border-border rounded-md">
-                <p className="text-md font-bold">Dataroom</p>
-                <Button className=" dark:text-white">
-                  <Link href={`/invest/${params.id}`}>Access Dataroom</Link>
-                </Button>
-                <Button className=" dark:text-white">
-                  <Link href={`/invest/${params.id}`}>Manage Dataroom</Link>
-                </Button>
-              </div>
-            </div>
-          </div> */}
         </div>
         {/* menu */}
         <div id="deck">
@@ -215,7 +181,6 @@ export default async function ProjectDealPage({ params }: { params: { id: number
             <Tabs.Root defaultValue="pitch" className="w-full">
               <Tabs.List className="list-none flex gap-10 text-lg md:text-xl">
                 <Tabs.Trigger value="pitch">Pitch</Tabs.Trigger>
-                {/* <Tabs.Trigger value="general">General Data</Tabs.Trigger> */}
                 <Tabs.Trigger value="update">Updates</Tabs.Trigger>
               </Tabs.List>
               <Separator className="mb-4 mt-2 w-full border-1" />
@@ -235,17 +200,6 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </CardContent>
                 </Card>
               </Tabs.Content>
-              {/* <Tabs.Content value="general">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>general</CardTitle>
-                    <CardDescription>general Description</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p>general Content</p>
-                  </CardContent>
-                </Card>
-              </Tabs.Content> */}
               <Tabs.Content value="update">
                 <Card>
                   <CardHeader>
