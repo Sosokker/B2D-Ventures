@@ -54,7 +54,7 @@ export async function NavigationBar() {
               </span>
             </Link>
           </div>
-          <div className="md:hidden grid grid-cols-2">
+          <div className="md:hidden grid grid-cols-2 justify-items-center items-center">
             <div className="flex justify-end w-10">
               {userId ? (
                 <AuthenticatedComponents
