@@ -209,7 +209,7 @@ export function DataTable({ data }: { data: ModalProps[] }) {
           placeholder="Filter names..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
-          className="max-w-sm"
+          className="md:max-w-sm max-w-xs"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -43,8 +43,8 @@ export function MobileMenu() {
                     <X className="w-5 h-5" />
                   </button>
 
-                  <NavigationMenu className="ml-6">
-                    <NavigationMenuList className="flex space-x-4">
+                  <NavigationMenu>
+                    <NavigationMenuList className="flex space-x-2">
                       <NavigationMenuItem>
                         <NavigationMenuTrigger className="text-sm font-medium">Businesses</NavigationMenuTrigger>
                         <NavigationMenuContent>
@@ -87,9 +87,10 @@ export function MobileMenu() {
                   </NavigationMenu>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <div className="relative">
-                    <SearchBar />
+                <div className="flex items-center ml-2">
+                  <SearchBar />
+                  <div className="-ml-2">
+                    <ThemeToggle />
                   </div>
                 </div>
               </div>
