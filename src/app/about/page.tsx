@@ -40,9 +40,15 @@ export default function About() {
 
   return (
     <div className="container max-w-screen-xl p-10">
-      <h1 className="mt-3 font-bold text-lg md:text-3xl">About us</h1>
-      <Separator className="my-3" />
-      <div className="border border-border rounded-md">
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="mt-3 font-bold text-lg md:text-5xl font-black">Invest with the best</h1>
+        <h1 className="text-gray-500 text-2xl mt-1">
+          B2DVentures Curates private investing opportunities with high-growth potential
+        </h1>
+        <h1 className="text-gray-500 text-2xl">Across startups, gaming, real estate.</h1>
+      </div>
+
+      {/* <div className="border border-border rounded-md">
         <p className="p-5">
           Welcome to B2D Ventures! We&apos;re a dynamic platform committed to bridging the gap between visionary
           entrepreneurs and passionate investors. Our mission is to empower innovation by connecting groundbreaking
@@ -56,15 +62,15 @@ export default function About() {
           lasting impact.
         </p>
         <p className="p-5">Let&apos;s build the future, together.</p>
-      </div>
+      </div> */}
 
-      <div className="mt-10 text-center">
+      {/* <div className="mt-10 text-center">
         <h2 className="font-bold text-lg md:text-3xl">Our Team</h2>
         <Separator className="my-3" />
-      </div>
+      </div> */}
 
       {/* Card Section */}
-      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {cardData.map((card, index) => (
           <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden">
             <Image src={card.imageSrc} width={460} height={460} alt={card.name} className="w-full h-48 object-cover" />
@@ -74,7 +80,7 @@ export default function About() {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
