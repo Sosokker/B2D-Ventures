@@ -22,7 +22,7 @@ const InfoCard = ({ imageSrc, imageAlt, heading, content, link, buttonText }: Ca
         </p>
       ))}
       <Link href={link}>
-        <Button className="p-5 font-semibold text-base mt-5">{buttonText}</Button>
+        <Button className="p-6 font-semibold text-base mt-5">{buttonText}</Button>
       </Link>
     </div>
   );
