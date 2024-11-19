@@ -26,8 +26,12 @@ const nextConfig = {
         hostname: "avatars.githubusercontent.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "assets.republic.com",
+        pathname: "/**",
+      },
     ],
   },
 };
-
 export default nextConfig;

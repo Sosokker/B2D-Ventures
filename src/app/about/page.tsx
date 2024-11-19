@@ -1,5 +1,9 @@
+"use client";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import InfoCard from "./infoCard";
 
 export default function About() {
   // Static data for the cards
@@ -38,14 +42,42 @@ export default function About() {
     },
   ];
 
+  const imageData = {
+    img1: "https://assets.republic.com/assets/static_pages/about/growth_opportunities/individual_investors-0e85dfd02359a24ac4b232be008c7168fc57d3437a2f526f5d5889b874b20221.png",
+    img2: "https://assets.republic.com/assets/static_pages/about/growth_opportunities/accredited_investors-42d6aa046861adb7f0648f26ca3f798b07f3b13bf7024f7dc17c17acb78fdf2c.png",
+  };
+
   return (
     <div className="container max-w-screen-xl p-10">
       <div className="flex flex-col items-center justify-center">
-        <h1 className="mt-3 font-bold text-lg md:text-5xl font-black">Invest with the best</h1>
+        <h1 className="mt-3 font-bold text-lg md:text-5xl font-black">Growth opportunities for</h1>
+        <h1 className="mt-3 font-bold text-lg md:text-5xl font-black">all sides of the investment market</h1>
         <h1 className="text-gray-500 text-2xl mt-1">
-          B2DVentures Curates private investing opportunities with high-growth potential
+          B2DVentures is where both accredited and non-accredited investors meet entrepreneurs and
         </h1>
-        <h1 className="text-gray-500 text-2xl">Across startups, gaming, real estate.</h1>
+        <h1 className="text-gray-500 text-2xl">
+          access high-growth potential deals across a range of private markets.
+        </h1>
+      </div>
+      <div className="mt-10">
+        <div className="grid grid-cols-2">
+          <InfoCard
+            imageSrc={imageData.img1}
+            imageAlt="Image1"
+            heading="Individual investors"
+            content={[
+              "B2DVentures's success has been built off our hundreds",
+              "of sourced private deals, all available for",
+              "investment from you with as little as $10 or as ",
+              "much as $124,000.",
+            ]}
+            link="/deals"
+            buttonText="Explore opportunities"
+          />
+          <Separator orientation="vertical"></Separator>
+          <div></div>
+        </div>
+        <div></div>
       </div>
 
       {/* <div className="border border-border rounded-md">
