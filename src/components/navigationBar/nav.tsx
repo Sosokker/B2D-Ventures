@@ -2,7 +2,6 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
@@ -21,31 +20,9 @@ import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { getUserId } from "@/lib/supabase/actions/getUserId";
 import { getUnreadNotificationCountByUserId } from "@/lib/data/notificationQuery";
 
-import { MobileMenu } from "../mobileMenu";
-
-const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
-  ({ className, title, children, ...props }, ref) => {
-    return (
-      <li>
-        <NavigationMenuLink asChild>
-          <a
-            ref={ref}
-            className={cn(
-              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-              className
-            )}
-            {...props}
-          >
-            <div className="text-sm font-medium leading-none">{title}</div>
-            <hr />
-            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
-          </a>
-        </NavigationMenuLink>
-      </li>
-    );
-  }
-);
-ListItem.displayName = "ListItem";
+import { MobileMenu } from "./mobileMenu";
+import ListItem from "../listItem";
+import { businessComponents, projectComponents, dataroomComponents } from "./menu";
 
 export async function NavigationBar() {
   const client = createSupabaseClient();
@@ -59,30 +36,6 @@ export async function NavigationBar() {
     notification_count = 0;
   }
 
-  const businessComponents = [
-    {
-      title: "Business",
-      href: "/business/apply",
-      description: "Apply to raise on on B2DVentures",
-    },
-  ];
-
-  const projectComponents = [
-    {
-      title: "Projects",
-      href: "/project/apply",
-      description: "Start your new project on B2DVentures",
-    },
-  ];
-
-  const dataroomComponents = [
-    {
-      title: "Overview",
-      href: "/dataroom/overview",
-      description: "View all dataroom available to you",
-    },
-  ];
-
   return (
     <header className="sticky top-0 flex flex-wrap w-full bg-card text-sm py-3 border-b-2 border-border z-50">
       <nav className="max-w-screen-xl w-full mx-auto px-4">
@@ -93,15 +46,31 @@ export async function NavigationBar() {
               href="/"
               aria-label="Brand"
             >
-              <span className="inline-flex items-center gap-x-2 text-xl font-semibold dark:text-white">
-                <Image src="/logo.svg" alt="logo" width={50} height={50} />
-                B2DVentures
+              <span className="lg:inline-flex flex items-center gap-x-2 text-xl font-semibold dark:text-white">
+                <Image src="/logo.svg" alt="logo" width={50} height={50} className="w-10 h-10 sm:w-16 sm:h-16" />
+                <span className="block lg:inline">
+                  B2D<span className=" lg:inline">Ventures</span>
+                </span>
               </span>
             </Link>
           </div>
-          <div className="md:hidden">
-            <MobileMenu />
+          <div className="md:hidden grid grid-cols-2 justify-items-center items-center">
+            <div className="flex justify-end w-10">
+              {userId ? (
+                <AuthenticatedComponents
+                  uid={userId}
+                  avatarUrl={avatarUrl?.avatar_url}
+                  notificationCount={notification_count}
+                />
+              ) : (
+                <UnAuthenticatedComponents />
+              )}
+            </div>
+            <div className="justify-end flex">
+              <MobileMenu />
+            </div>
           </div>
+
           <div className="hidden md:flex items-center ">
             <NavigationMenu>
               <NavigationMenuList>

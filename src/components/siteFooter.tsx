@@ -16,7 +16,7 @@ export function SiteFooter() {
               Home
             </Link>
             <Link href="/about" className="hover:underline">
-              About Us
+              About
             </Link>
             <Link href="/privacy" className="hover:underline">
               Privacy
