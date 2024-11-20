@@ -46,62 +46,64 @@ export default function About() {
   };
 
   return (
-    <div className="container  bg-neutral-100">
-      <div className="">
-        <div className="flex flex-col items-center justify-center">
-          <h1 className="mt-3  text-lg md:text-5xl font-black">Growth opportunities for all sides </h1>
-          <h1 className="mt-3 text-lg md:text-5xl font-black">of the investment market</h1>
-          <h1 className="text-gray-500 text-2xl mt-1">
-            B2DVentures is where both accredited and non-accredited investors meet
-          </h1>
-          <h1 className="text-gray-500 text-2xl">
-            entrepreneurs and access high-growth potential deals across a range
-          </h1>
-          <h1 className="text-gray-500 text-2xl">of private markets.</h1>
-        </div>
-        <div className="mt-10">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr,auto,1fr] gap-3">
+    <div>
+      <div className="container  bg-neutral-100">
+        <div className="">
+          <div className="flex flex-col items-center justify-center">
+            <h1 className="mt-3  text-lg md:text-5xl font-black">Growth opportunities for all sides </h1>
+            <h1 className="mt-3 text-lg md:text-5xl font-black">of the investment market</h1>
+            <h1 className="text-gray-500 text-2xl mt-1">
+              B2DVentures is where both accredited and non-accredited investors meet
+            </h1>
+            <h1 className="text-gray-500 text-2xl">
+              entrepreneurs and access high-growth potential deals across a range
+            </h1>
+            <h1 className="text-gray-500 text-2xl">of private markets.</h1>
+          </div>
+          <div className="mt-10">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr,auto,1fr] gap-3">
+              <InfoCard
+                imageSrc={imageData.img1}
+                imageAlt="Image1"
+                heading="Individual investors"
+                content={[
+                  "B2DVentures's success has been built off our hundreds",
+                  "of sourced private deals, all available for",
+                  "investment from you with as little as $10 or as ",
+                  "much as $124,000.",
+                ]}
+                link="/deals"
+                buttonText="Explore opportunities"
+              />
+              <Separator orientation="vertical" />
+              <InfoCard
+                imageSrc={imageData.img2}
+                imageAlt="Image2"
+                heading="Accredited investors"
+                content={[
+                  "The benefits of the Republic platform, optimized for",
+                  "accredited investors. Access a curated investor",
+                  "portal for unique private investment opportunities. ",
+                ]}
+                link="/dataroom/overview"
+                buttonText="Learn more"
+              />
+            </div>
+            <Separator className="mt-5 mb-5" />
             <InfoCard
-              imageSrc={imageData.img1}
-              imageAlt="Image1"
-              heading="Individual investors"
+              imageSrc={imageData.img3}
+              imageAlt="Image3"
+              heading="Entrepreneurs"
               content={[
-                "B2DVentures's success has been built off our hundreds",
-                "of sourced private deals, all available for",
-                "investment from you with as little as $10 or as ",
-                "much as $124,000.",
+                "Seek funding from a wider base of diverse",
+                "investors while simultaneously growing a loyal",
+                "base and leveraging Republic’s private investment",
+                "network.",
               ]}
-              link="/deals"
-              buttonText="Explore opportunities"
-            />
-            <Separator orientation="vertical" />
-            <InfoCard
-              imageSrc={imageData.img2}
-              imageAlt="Image2"
-              heading="Accredited investors"
-              content={[
-                "The benefits of the Republic platform, optimized for",
-                "accredited investors. Access a curated investor",
-                "portal for unique private investment opportunities. ",
-              ]}
-              link="/dataroom/overview"
-              buttonText="Learn more"
+              link="/project/apply"
+              buttonText="Raise money"
             />
           </div>
-          <Separator className="mt-5 mb-5" />
-          <InfoCard
-            imageSrc={imageData.img3}
-            imageAlt="Image3"
-            heading="Entrepreneurs"
-            content={[
-              "Seek funding from a wider base of diverse",
-              "investors while simultaneously growing a loyal",
-              "base and leveraging Republic’s private investment",
-              "network.",
-            ]}
-            link="/project/apply"
-            buttonText="Raise money"
-          />
         </div>
       </div>
       <div className="flex flex-col items-center justify-center mt-10">
