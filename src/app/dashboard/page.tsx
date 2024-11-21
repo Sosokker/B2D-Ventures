@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import useSession from "@/lib/supabase/useSession";
 import { getProjectByUserId } from "@/lib/data/projectQuery";
-import { Loader } from "@/components/loading/loader";
 import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { overAllGraphData, fourYearGraphData, dayOftheWeekData } from "../portfolio/[uid]/query";
@@ -16,6 +15,7 @@ import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Modal } from "@/components/modal";
+import Link from "next/link";
 
 export default function Dashboard() {
   const supabase = createSupabaseClient();
@@ -44,7 +44,6 @@ export default function Dashboard() {
   const tabOptions = ["daily", "monthly", "yearly"];
   const [activeTab, setActiveTab] = useState("daily");
   const [graphType, setGraphType] = useState("line");
-  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
   const [currentProjectId, setCurrentProjectId] = useState<number>(projects[0]?.id);
 
   const investmentDetail = useQuery(
@@ -75,7 +74,6 @@ export default function Dashboard() {
       const { data, error } = await getProjectByUserId(supabase, userId);
       if (error) console.error("Error fetching projects");
       setProjects(data || []);
-      setIsLoadingProjects(false);
     };
     fetchProjects();
   }, [supabase, userId]);
@@ -119,9 +117,40 @@ export default function Dashboard() {
     setTopLatestInvestment();
   }, [currentProjectId, investmentDetail?.data]);
 
+  if (projects.length == 0){
+    return (
+      <div className="flex flex-col items-center justify-center text-center py-16">
+        <div className="bg-gray-100 rounded-full p-6 mb-4 shadow-md">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            className="w-12 h-12 text-gray-500"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12h6m-3 3v-6m9-3v12a2.5 2.5 0 01-2.5 2.5h-15A2.5 2.5 0 012 15V3A2.5 2.5 0 014.5.5h15A2.5 2.5 0 0122 3v3"
+            />
+          </svg>
+        </div>
+        <h2 className="text-2xl font-semibold  mb-2">No Projects Found</h2>
+        <p className=" mb-6">
+          It seems like you don&apos;t have any projects to view right now. <br />Start by creating  a project to see
+          data here.
+        </p>
+        <Link href="/project/apply" className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
+          Create a New Project
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="container max-w-screen-xl">
-      <Loader isSuccess={!isLoadingSession && !isLoadingProjects} />{" "}
+      {/* <Loader isSuccess={!isLoadingSession && !isLoadingProjects} /> */}
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Business Dashboard</h2>

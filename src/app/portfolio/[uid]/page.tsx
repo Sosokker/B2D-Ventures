@@ -254,7 +254,7 @@ export default async function Portfolio({ params }: { params: { uid: string } })
               })}
             />
             <div className="mt-5 flex justify-center">
-              {deals && deals.length > 5 ? (
+              {deals && deals.length > 1 ? (
                 <Modal
                   data={deals.map((item) => {
                     return {

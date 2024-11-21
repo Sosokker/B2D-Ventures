@@ -21,5 +21,6 @@ export function getNotificationByUserId(client: SupabaseClient, userId: string |
         is_read
         `
     )
-    .eq("receiver_id", userId);
+    .eq("receiver_id", userId)
+    .order("created_at", { ascending: false });
 }
