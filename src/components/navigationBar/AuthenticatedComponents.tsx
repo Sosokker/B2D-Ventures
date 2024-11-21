@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Heart, Wallet, ChartPie } from "lucide-react";
+import { Bell, Heart, Wallet, ChartPie, CalendarClock } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logoutButton";
 import { useUserRole } from "@/hooks/useUserRole";
 import CustomTooltip from "../customToolTip";
@@ -54,13 +54,25 @@ export const AuthenticatedComponents = ({ uid, avatarUrl, notificationCount }: A
           <Wallet className="cursor-pointer" />
         </Link>
       </CustomTooltip>
+      {data?.role === "investor" && (
+        <div className="flex gap-2">
+          <CustomTooltip message="Calendar">
+            <Link href="/calendar/">
+              <CalendarClock />
+            </Link>
+          </CustomTooltip>
+        </div>
+      )}
+
       {/*chart pie icon for bussiness's dashboard */}
       {data?.role === "business" && (
-        <CustomTooltip message="Dashboard">
-          <Link href="/dashboard">
-            <ChartPie />
-          </Link>
-        </CustomTooltip>
+        <div className="flex gap-2">
+          <CustomTooltip message="Dashboard">
+            <Link href="/dashboard">
+              <ChartPie />
+            </Link>
+          </CustomTooltip>
+        </div>
       )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -85,6 +97,14 @@ export const AuthenticatedComponents = ({ uid, avatarUrl, notificationCount }: A
             <DropdownMenuItem>
               <Link href="/admin">Admin</Link>
             </DropdownMenuItem>
+          )}
+          {data?.role === "business" && (
+            <>
+              <DropdownMenuItem>
+                <Link href="/calendar/manage">Calendar</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
           )}
           {data != null && data != undefined && data.role === "business" && (
             <DropdownMenuItem>
