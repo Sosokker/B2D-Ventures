@@ -87,6 +87,11 @@ export default function About() {
         <h1 className="text-gray-500 text-2xl">top investment platforms and entrepreneurial ecosystems. Since then,</h1>
         <h1 className="text-gray-500 text-2xl">we have built a team and a network of the top people from</h1>
         <h1 className="text-gray-500 text-2xl">the startup, venture capital, and investment worlds.</h1>
+        <div className="flex flex-col items-center mt-8">
+          <Separator className="w-full h-1 bg-primary mb-2"></Separator>
+          <h2 className="text-3xl font-bold text-center text-primary">Meet the Minds Behind the Innovation.</h2>
+        </div>
+
         <div className="mt-10">
           {founderData.map((profile) => {
             return (

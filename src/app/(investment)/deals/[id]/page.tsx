@@ -16,6 +16,7 @@ import { isOwnerOfProject } from "./query";
 import { UpdateTab } from "./UpdateTab";
 import remarkGfm from "remark-gfm";
 import Gallery from "@/components/carousel";
+import CountUpComponent from "@/components/countUp";
 
 const PHOTO_MATERIAL_ID = 2;
 
@@ -109,7 +110,9 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <div id="stats" className="flex flex-col w-full mt-4">
                 <div className="pl-5">
                   <span>
-                    <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
+                    <h1 className="font-semibold text-xl md:text-4xl mt-8">
+                      $<CountUpComponent end={totalDealAmount} duration={0.5} />
+                    </h1>
                     <p className="text-sm md:text-lg">
                       {toPercentage(totalDealAmount, projectData?.target_investment)}% raised of $
                       {projectData?.target_investment} max goal
@@ -121,7 +124,9 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </span>
                   <span>
                     <h1 className="font-semibold text-4xl md:mt-8">
-                      <p className="text-xl md:text-4xl">{dealList.length}</p>
+                      <p className="text-xl md:text-4xl">
+                        <CountUpComponent end={dealList.length} duration={0.5} />
+                      </p>
                     </h1>
                     <p className="text-sm md:text-lg">Investors</p>
                   </span>
@@ -130,7 +135,10 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                     <h1 className="font-semibold text-xl md:text-4xl mt-8 ml-5"></h1>
                     {projectData?.investment_deadline ? (
                       <>
-                        <p className="text-xl md:text-4xl">{Math.floor(hourLeft)} hours</p>
+                        <p className="text-xl md:text-4xl">
+                          <CountUpComponent end={Math.floor(hourLeft)}  duration={0.5} />
+                           hours
+                        </p>
                         <p>Left to invest</p>
                       </>
                     ) : (

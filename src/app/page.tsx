@@ -7,6 +7,7 @@ import { getTopProjects } from "@/lib/data/projectQuery";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { Suspense } from "react";
 import { ProjectSection } from "@/components/ProjectSection";
+import EmojiRain from "@/components/banner";
 
 const ProjectsLoader = () => (
   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -30,6 +31,8 @@ export default async function Home() {
       <div className="relative mx-auto">
         {/* Expanded div */}
         <div className="flex flex-row bg-slate-100 dark:bg-gray-800">
+
+            <EmojiRain />
           <div className="container max-w-screen-xl flex flex-col">
             <span className="mx-20 px-10 py-10">
               <p className="text-4xl font-bold">Explore the world of ventures</p>
