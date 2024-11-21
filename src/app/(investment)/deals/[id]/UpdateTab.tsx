@@ -40,32 +40,30 @@ export const UpdateTab = async ({ projectId }: { projectId: number }) => {
   }
 
   return (
-    <div className="w-full">
+    <div className="grid grid-cols-3 gap-4 w-full">
       {parsedLogs.map((log, index) => (
-        <div key={index} className="grid grid-cols-3 gap-4 overflow-y-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>{log.table}</CardTitle>
-              <CardDescription>{log.changes.length} Changes</CardDescription>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 overflow-y-auto h-1/2 mx-4">
-              {log.changes.map((change, changeIndex) => (
-                <div key={changeIndex} className="mb-3">
-                  <div className="text-sm font-semibold">{change.field}</div>
-                  <div className="text-gray-500">
-                    <span className="text-red-500">From:</span> {JSON.stringify(change.from)}
-                  </div>
-                  <div className="text-gray-500">
-                    <span className="text-green-500">To:</span> {JSON.stringify(change.to)}
-                  </div>
+        <Card key={index} className="overflow-hidden">
+          <CardHeader>
+            <CardTitle>{log.table}</CardTitle>
+            <CardDescription>{log.changes.length} Changes</CardDescription>
+          </CardHeader>
+          <CardContent className="overflow-y-auto h-60 px-4">
+            {log.changes.map((change, changeIndex) => (
+              <div key={changeIndex} className="mb-4">
+                <div className="text-sm font-semibold">{change.field}</div>
+                <div className="text-gray-500">
+                  <span className="text-red-500">From:</span> {JSON.stringify(change.from)}
                 </div>
-              ))}
-            </CardContent>
-            <CardFooter>
-              <div className="text-xs text-gray-500">Updated at: {new Date(log.changed_at).toLocaleString()}</div>
-            </CardFooter>
-          </Card>
-        </div>
+                <div className="text-gray-500">
+                  <span className="text-green-500">To:</span> {JSON.stringify(change.to)}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+          <CardFooter>
+            <div className="text-xs text-gray-500">Updated at: {new Date(log.changed_at).toLocaleString()}</div>
+          </CardFooter>
+        </Card>
       ))}
     </div>
   );
