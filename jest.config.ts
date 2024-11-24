@@ -10,6 +10,10 @@ const createJestConfig = nextJest({
 const config: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
+  transformIgnorePatterns: [
+    '/node_modules/(?!(flat|@supabase-cache-helpers|react-markdown)/)'
+  ],
+  setupFiles: ["jest-canvas-mock"]
   // Add more setup options before each test is run
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 }

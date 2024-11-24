@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-function NotFound() {
+export default function NotFound() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
       <div className="max-w-md text-center p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
@@ -19,5 +19,3 @@ function NotFound() {
     </main>
   );
 }
-
-export default NotFound;

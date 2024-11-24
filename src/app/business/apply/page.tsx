@@ -12,6 +12,7 @@ import { uploadFile } from "@/app/api/generalApi";
 import { hasUserApplied, transformChoice } from "./actions";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_PITCH_NAME = "business-application";
 let supabase = createSupabaseClient();
@@ -19,12 +20,13 @@ let supabase = createSupabaseClient();
 export default function ApplyBusiness() {
   const router = useRouter();
   const alertShownRef = useRef(false);
-  // const [success, setSucess] = useState(false);
+  // const [success, setSuccess] = useState(false);
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
     const transformedData = await transformChoice(data);
     await sendApplication(transformedData);
   };
+
   const sendApplication = async (recvData: any) => {
     // setSucess(false);
     const {

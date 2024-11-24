@@ -13,8 +13,6 @@ const alertOption = {
 
 export function NoDataAlert() {
   return (
-    <div>
-      <Lottie options={alertOption} height={"200"} width={"200"} />
-    </div>
+    <Lottie options={alertOption} height={"200"} width={"200"} />
   );
 }
