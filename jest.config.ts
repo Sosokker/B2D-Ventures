@@ -13,7 +13,10 @@ const config: Config = {
   transformIgnorePatterns: [
     '/node_modules/(?!(flat|@supabase-cache-helpers|react-markdown)/)'
   ],
-  setupFiles: ["jest-canvas-mock"]
+  setupFiles: ["jest-canvas-mock"],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1', // Resolves @/ to src/
+  },
   // Add more setup options before each test is run
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 }

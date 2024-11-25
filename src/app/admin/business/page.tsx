@@ -81,13 +81,14 @@ function ApplicationTable({ applications }: { applications: ApplicationData[] })
   ));
 }
 
-export default async function BusinesssApplicationAdminPage() {
+export default async function BusinessApplicationAdminPage() {
   const client = createSupabaseClient();
   const { data: userData, error: userDataError } = await client.auth.getUser();
 
   if (userDataError) {
     redirect("/");
   }
+
   const uid = userData.user!.id;
   const { data: roleData, error: roleDataError } = await getUserRole(client, uid);
 
@@ -104,7 +105,7 @@ export default async function BusinesssApplicationAdminPage() {
 
   const pendingApplications = businessApplicationData?.filter((app) => app.status === "pending") || [];
   const approvedApplications = businessApplicationData?.filter((app) => app.status === "approve") || [];
-  const rejectedApplications = businessApplicationData?.filter((app) => app.status === "rejecte") || [];
+  const rejectedApplications = businessApplicationData?.filter((app) => app.status === "rejected") || [];
 
   return (
     <div className="container max-w-screen-xl my-4">

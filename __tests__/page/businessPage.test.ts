@@ -1,3 +1,4 @@
+import React from 'react';
 import { render } from "@testing-library/react";
 
 // Pages - Business
@@ -26,8 +27,10 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Business Pages
-// describe("Business Pages", () => {
-//   it("Apply Business Page should render without crashing", async () => {
-//     render(await ApplyBusiness());
-//   });
-// });
+describe("Business Pages", () => {
+  // it("Apply Business Page should render without crashing", async () => {
+  //   jest.spyOn(React, 'useRef').mockReturnValue({ current: false });
+  //   jest.spyOn(React, 'useEffect').mockImplementation((fn) => fn());
+  //   render(await ApplyBusiness());
+  // });
+});
