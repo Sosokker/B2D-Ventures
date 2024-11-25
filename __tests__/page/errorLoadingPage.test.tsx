@@ -5,6 +5,8 @@ import Error from "@/app/error";
 import Loading from "@/app/loading";
 import NotFound from "@/app/not-found";
 
+import { mockError, mockReset } from "./utils";
+
 // Mock Cookies
 jest.mock("next/headers", () => ({
     cookies: jest.fn(() => ({
@@ -15,15 +17,15 @@ jest.mock("next/headers", () => ({
 
 // Error and Loading Pages
 describe("Error and Loading Pages", () => {
-  // it("Error Page should render without crashing", async () => {
-  //   render(await Error());
-  // });
-
-  it("Loading Page should render without crashing", async () => {
-    render(await Loading());
+  it("Error Page should render without crashing", () => {
+    render(<Error error={mockError} reset={mockReset} />);
   });
 
-  it("Not Found Page should render without crashing", async () => {
-    render(await NotFound());
+  it("Loading Page should render without crashing", () => {
+    render(Loading());
+  });
+
+  it("Not Found Page should render without crashing", () => {
+    render(NotFound());
   });
 });
