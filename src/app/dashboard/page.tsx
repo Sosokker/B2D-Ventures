@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
 import useSession from "@/lib/supabase/useSession";
 import { getProjectByUserId } from "@/lib/data/projectQuery";
-import { Loader } from "@/components/loading/loader";
+// import { Loader } from "@/components/loading/loader";
 import { getInvestmentByProjectsIds } from "@/lib/data/investmentQuery";
 import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 import { overAllGraphData, fourYearGraphData, dayOftheWeekData } from "../portfolio/[uid]/query";
@@ -16,6 +16,7 @@ import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Modal } from "@/components/modal";
+import { LegacyLoader } from "@/components/loading/LegacyLoader";
 
 export default function Dashboard() {
   const supabase = createSupabaseClient();
@@ -119,9 +120,13 @@ export default function Dashboard() {
     setTopLatestInvestment();
   }, [currentProjectId, investmentDetail?.data]);
 
+  if (isLoadingSession && isLoadingProjects) {
+    return <LegacyLoader />;
+  }
+
   return (
     <div className="container max-w-screen-xl">
-      <Loader isSuccess={!isLoadingSession && !isLoadingProjects} />{" "}
+      {/* <Loader isSuccess={!isLoadingSession && !isLoadingProjects} />{" "} */}
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Business Dashboard</h2>
