@@ -17,7 +17,7 @@ export function editProjectById(
   projectId: number,
   projectData: Partial<ProjectEditSchema>
 ) {
-  return client.from("project").update(projectData).eq("id", projectId).select();
+  return client.from("project").update(projectData).eq("id", projectId);
 }
 
 export function editProjectInvestmentDetailById(

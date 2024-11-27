@@ -53,6 +53,7 @@ function getProjectDataQuery(client: SupabaseClient, projectId: number) {
       ),
       tags:project_tag!inner (
         ...tag!inner (
+          tag_id:id,
           tag_name:value
         )
       )
