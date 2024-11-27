@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell, Heart, Wallet, ChartPie, CalendarClock } from "lucide-react";
+import { Bell, Heart, Wallet, ChartPie, CalendarClock, Calendar } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logoutButton";
 import { useUserRole } from "@/hooks/useUserRole";
 import CustomTooltip from "../customToolTip";
@@ -63,7 +63,11 @@ export const AuthenticatedComponents = ({ uid, avatarUrl, notificationCount }: A
           </CustomTooltip>
         </div>
       )}
-
+      <CustomTooltip message="Calendar">
+        <Link href={"/calendar"}>
+          <Calendar className="cursor-pointer" />
+        </Link>
+      </CustomTooltip>
       {/*chart pie icon for bussiness's dashboard */}
       {data?.role === "business" && (
         <div className="flex gap-2">
