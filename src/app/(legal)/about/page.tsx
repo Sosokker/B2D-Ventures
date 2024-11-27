@@ -88,9 +88,10 @@ export default function About() {
         <h1 className="text-gray-500 text-2xl">we have built a team and a network of the top people from</h1>
         <h1 className="text-gray-500 text-2xl">the startup, venture capital, and investment worlds.</h1>
         <div className="mt-10">
-          {founderData.map((profile) => {
+          {founderData.map((profile, index) => {
             return (
               <FounderCard
+                key={index}
                 image={profile.profileLogo}
                 name={profile.name}
                 position={profile.position}
