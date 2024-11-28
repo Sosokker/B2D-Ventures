@@ -105,3 +105,42 @@
 //   await page.getByRole('button', { name: 'Close' }).first().click();
 // }
 // });
+
+import { test, expect } from "@playwright/test";
+
+test.use({
+  storageState: "./storageState.json",
+});
+
+test("Investment process test", async ({ page }) => {
+  await page.goto("http://localhost:3000/");
+
+  await page.getByRole("link", { name: "Card image Project Blackwell" }).click();
+  await page.getByRole("link", { name: "Invest in Project Blackwell" }).click();
+
+  await page.getByPlaceholder("min $").click();
+  await page.getByPlaceholder("min $").fill("99");
+
+  await page.getByRole("checkbox").first().check();
+  await page
+    .locator("div")
+    .filter({ hasText: /^I have read and accept the terms of investment\.$/ })
+    .getByRole("checkbox")
+    .check();
+  await page.getByRole("button", { name: "Proceed to Payment" }).click();
+
+  const paymentInfo = page.getByLabel("Payment Information");
+  await expect(paymentInfo).toBeVisible();
+
+  const cardNumber = page.getByText("Card Number");
+  await expect(cardNumber).toBeVisible();
+
+  const expirationDate = page.getByText("Expiration Date");
+  await expect(expirationDate).toBeVisible();
+
+  const cvc = page.getByText("CVC");
+  await expect(cvc).toBeVisible();
+
+  const cancelButton = page.getByRole("button", { name: "Cancel" });
+  await expect(cancelButton).toBeVisible();
+});

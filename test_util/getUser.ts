@@ -28,8 +28,8 @@ export async function getUserUidByEmail(email: string): Promise<{ data: string |
       return { data: null, error: error };
     }
 
-    console.log(`Retrieve UID successfully.`);
-    return { data: data[0].id, error: error };
+    console.log(`Retrieve UID successfully.`, data);
+    return { data, error: error };
   } catch (error) {
     console.error(`Error retrive user with email: ${email}`, error);
     throw error;
