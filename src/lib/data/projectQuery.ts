@@ -1,45 +1,34 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import { ProjectCardProps } from "@/types/ProjectCard";
+import { Database } from "@/types/database.types";
 
 async function getTopProjects(client: SupabaseClient, numberOfRecords: number = 4) {
   try {
     const { data, error } = await client
-      .from("project")
+      .from("project_card")
       .select(
         `
-          id,
+          project_id,
           project_name,
-          business_id,
-          published_time,
-          project_short_description,
-          card_image_url,
-          project_investment_detail (
-            min_investment,
-            total_investment,
-            target_investment,
-            investment_deadline
-          ),
-          project_tag (
-            tag (
-              id,
-              value
-            )
-          ),
-          business (
-            location
-          )
+          short_description,
+          image_url,
+          join_date,
+          location,
+          total_investor,
+          total_raise,
+          min_investment,
+          tags
         `
       )
-      .order("published_time", { ascending: false })
+      .order("total_raise", { ascending: false })
       .limit(numberOfRecords);
 
     if (error) {
-      console.error("Error fetching top projects:", error.message);
       return { data: null, error: error.message };
     }
-
+    // console.log(data);
     return { data, error: null };
   } catch (err) {
-    console.error("Unexpected error:", err);
     return { data: null, error: "An unexpected error occurred." };
   }
 }
@@ -53,6 +42,9 @@ function getProjectDataQuery(client: SupabaseClient, projectId: number) {
       project_short_description,
       project_description,
       published_time,
+      project_status_id,
+      project_type_id,
+      deadline,
       ...project_investment_detail!inner (
         min_investment,
         total_investment,
@@ -61,6 +53,7 @@ function getProjectDataQuery(client: SupabaseClient, projectId: number) {
       ),
       tags:project_tag!inner (
         ...tag!inner (
+          tag_id:id,
           tag_name:value
         )
       )
@@ -80,6 +73,7 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
       project_description,
       published_time,
       card_image_url,
+      deadline,
       ...project_investment_detail!inner (
         min_investment,
         total_investment,
@@ -105,7 +99,7 @@ async function getProjectData(client: SupabaseClient, projectId: number) {
 
 export interface FilterParams {
   searchTerm?: string;
-  tagsFilter?: string[];
+  tagFilter?: string;
   projectStatus?: string;
   projectStatusFilter?: string;
   businessTypeFilter?: string;
@@ -121,16 +115,16 @@ function searchProjectsQuery(
   client: SupabaseClient,
   {
     searchTerm,
-    tagsFilter,
-    projectStatus,
+    tagFilter,
+    projectStatusFilter,
     businessTypeFilter,
-    sortByTimeFilter,
+    // sortByTimeFilter,
     page = 1,
     pageSize = 4,
   }: FilterProjectQueryParams
 ) {
   const start = (page - 1) * pageSize;
-  const end = start + pageSize;
+  const end = start + pageSize - 1;
 
   let query = client
     .from("project")
@@ -141,8 +135,8 @@ function searchProjectsQuery(
     published_time,
     project_short_description,
     card_image_url,
-    ...project_status!inner (
-      project_status:value
+    project_status!inner (
+      value
     ),
     ...project_investment_detail!inner (
       min_investment,
@@ -160,45 +154,36 @@ function searchProjectsQuery(
         business_type:value
       ),
       business_location:location
+    ),
+    investment_deal (
+      deal_amount,
+      investor_id
     )
     `
     )
-    .order("published_time", { ascending: false })
     .range(start, end);
 
-  if (sortByTimeFilter === "all") {
-    sortByTimeFilter = undefined;
+  // if (sortByTimeFilter && sortByTimeFilter !== "all") {
+  //   query = query.eq("published_time", sortByTimeFilter);
+  // }
+
+  if (projectStatusFilter && projectStatusFilter !== "all") {
+    query = query.eq("project_status.value", projectStatusFilter);
   }
 
-  if (projectStatus === "all") {
-    projectStatus = undefined;
+  if (businessTypeFilter && businessTypeFilter !== "all") {
+    query = query.eq("business.business_type.value", businessTypeFilter);
   }
 
-  if (businessTypeFilter === "all") {
-    businessTypeFilter = undefined;
-  }
-
-  if (tagsFilter?.length === 0) {
-    tagsFilter = undefined;
+  if (tagFilter && tagFilter !== "all") {
+    query = query.in("project_tag.tag.value", [tagFilter]);
   }
 
   if (searchTerm) {
     query = query.ilike("project_name", `%${searchTerm}%`);
   }
 
-  if (tagsFilter) {
-    query = query.in("project_tag.tag.value", tagsFilter);
-  }
-
-  if (projectStatus) {
-    query = query.eq("project_status.value", projectStatus);
-  }
-
-  if (businessTypeFilter) {
-    query = query.eq("business.business_type.value", businessTypeFilter);
-  }
-
-  return query;
+  return query.order("published_time", { ascending: false });
 }
 
 const getProjectByBusinessId = (client: SupabaseClient, businessIds: string[]) => {
@@ -222,13 +207,14 @@ const getProjectByBusinessId = (client: SupabaseClient, businessIds: string[]) =
     .in("business_id", businessIds);
 };
 
-const getProjectByUserId = (client: SupabaseClient, userId: string) => {
+const getProjectByUserId = (client: SupabaseClient<Database>, userId: string) => {
   return client
     .from("project")
     .select(
       `
       id,
       project_name,
+      project_short_description,
       business_id:business!inner (
         user_id
       ),
@@ -238,6 +224,62 @@ const getProjectByUserId = (client: SupabaseClient, userId: string) => {
     .eq("business.user_id", userId);
 };
 
+function getProjectByName(client: SupabaseClient, searchTerm: string) {
+  return client
+    .from("project")
+    .select(
+      `
+          id,
+          project_name,
+          business_id,
+          published_time,
+          project_short_description,
+          card_image_url,
+          project_investment_detail (
+            min_investment,
+            total_investment,
+            target_investment,
+            investment_deadline
+          ),
+          project_tag (
+            tag (
+              id,
+              value
+            )
+          ),
+          business (
+            location
+          )
+        `
+    )
+    .ilike("project_name", `%${searchTerm}%`);
+}
+
+const getProjectCardData = async (client: SupabaseClient, projectIds: string[]) => {
+  const { data, error } = await client.from("project_card").select("*").in("project_id", projectIds);
+
+  if (error) {
+    return { data: null, error: error.message };
+  }
+
+  const projectSections = data.map((project) => {
+    const projectSection: ProjectCardProps = {
+      id: project.project_id,
+      project_name: project.project_name,
+      short_description: project.short_description,
+      image_url: project.image_url,
+      join_date: project.join_date,
+      location: project.location,
+      tags: project.tags || [],
+      min_investment: project.min_investment,
+      total_investor: project.total_investor,
+      total_raise: project.total_raise,
+    };
+    return projectSection;
+  });
+
+  return { data: projectSections, error: null };
+};
 export {
   getProjectData,
   getProjectDataQuery,
@@ -245,4 +287,6 @@ export {
   searchProjectsQuery,
   getProjectByBusinessId,
   getProjectByUserId,
+  getProjectByName,
+  getProjectCardData,
 };

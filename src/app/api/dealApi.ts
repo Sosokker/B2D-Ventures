@@ -35,7 +35,7 @@ export async function getDealList(userId: string | undefined) {
   }
 
   if (!dealData || !dealData.project.length) {
-    alert("No project available");
+    // alert("No project available");
     return []; // Exit if there's no data
   }
 
@@ -70,7 +70,7 @@ export async function getRecentDealData(userId: string | undefined) {
     console.error("User not found");
     return; // Exit on error
   }
-  
+
   const supabase = createSupabaseClient();
   const dealList = await getDealList(userId);
 
@@ -111,7 +111,6 @@ export async function getRecentDealData(userId: string | undefined) {
     return { ...item, ...recentUserData[index] };
   });
 
-  
   return recentDealData;
 }
 
@@ -133,6 +132,8 @@ export function convertToGraphData(deals: Deal[]): Record<string, number> {
 
   // Create a sorted graph data object
   const sortedGraphData: Record<string, number> = {};
-  sortedKeys.forEach((key) => {sortedGraphData[key] = graphData[key]});
+  sortedKeys.forEach((key) => {
+    sortedGraphData[key] = graphData[key];
+  });
   return sortedGraphData;
 }

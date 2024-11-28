@@ -3,56 +3,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ProjectCard } from "@/components/projectCard";
 import { getTopProjects } from "@/lib/data/projectQuery";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import { Suspense } from "react";
-import { FC } from "react";
-
-interface Project {
-  id: number;
-  project_name: string;
-  project_short_description: string;
-  card_image_url: string;
-  published_time: string;
-  business: { location: string }[];
-  project_tag: { tag: { id: number; value: string }[] }[];
-  project_investment_detail: {
-    min_investment: number;
-    total_investment: number;
-  }[];
-}
-
-interface TopProjectsProps {
-  projects: Project[];
-}
-
-const TopProjects: FC<TopProjectsProps> = ({ projects }) => {
-  if (!projects || projects.length === 0) {
-    return <div>No top projects available.</div>;
-  }
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {projects.map((project) => (
-        <Link href={`/deals/${project.id}`} key={project.id}>
-          <ProjectCard
-            name={project.project_name}
-            description={project.project_short_description}
-            imageUri={project.card_image_url}
-            joinDate={new Date(project.published_time).toLocaleDateString()}
-            location={project.business[0]?.location || ""}
-            tags={project.project_tag.flatMap((item: { tag: { id: number; value: string }[] }) =>
-              Array.isArray(item.tag) ? item.tag.map((tag) => tag.value) : []
-            )}
-            minInvestment={project.project_investment_detail[0]?.min_investment || 0}
-            totalInvestor={0}
-            totalRaised={project.project_investment_detail[0]?.total_investment || 0}
-          />
-        </Link>
-      ))}
-    </div>
-  );
-};
+import { ProjectSection } from "@/components/ProjectSection";
 
 const ProjectsLoader = () => (
   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -64,6 +18,12 @@ const ProjectsLoader = () => (
 export default async function Home() {
   const supabase = createSupabaseClient();
   const { data: topProjectsData, error: topProjectsError } = await getTopProjects(supabase);
+
+  const formattedProjects =
+    topProjectsData?.map((project) => ({
+      ...project,
+      id: project.project_id,
+    })) || [];
 
   return (
     <main>
@@ -121,14 +81,14 @@ export default async function Home() {
               <CardTitle className="text-lg md:text-2xl">Follow Us</CardTitle>
             </CardHeader>
             <CardContent className="flex gap-2">
-              <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-                <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100" />
-                Github
-              </Button>
-              <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
-                <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100" />
-                Github
-              </Button>
+              <Link href="https://github.com/Sosokker/B2D-Ventures" passHref>
+                <Button className="flex gap-1 border-2 border-border rounded-md p-1 bg-background text-foreground scale-75 md:scale-100">
+                  <div className="dark:bg-white rounded-full">
+                    <Image src={"/github.svg"} width={20} height={20} alt="github" className="scale-75 md:scale-100" />
+                  </div>
+                  Github
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
@@ -141,10 +101,12 @@ export default async function Home() {
             <p className="text-md md:text-lg">The deals attracting the most interest right now</p>
           </span>
           {topProjectsError ? (
-            <div className="text-red-500">Error fetching projects: {topProjectsError}</div>
+            <div className="text-center text-red-600">
+              <p>Failed to load top projects. Please try again later.</p>
+            </div>
           ) : (
             <Suspense fallback={<ProjectsLoader />}>
-              <TopProjects projects={topProjectsData || []} />
+              <ProjectSection projectsData={formattedProjects} />
             </Suspense>
           )}
           <div className="self-center py-5 scale-75 md:scale-100">

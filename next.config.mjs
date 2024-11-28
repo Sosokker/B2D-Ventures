@@ -12,11 +12,31 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: SUPABASE_URL,
+        port: "",
+        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
         hostname: "upload.wikimedia.org",
         pathname: "/wikipedia/**",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "assets.republic.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "media.licdn.com",
+        pathname: "/**",
       },
     ],
   },
 };
-
 export default nextConfig;

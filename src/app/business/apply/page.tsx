@@ -1,30 +1,32 @@
 "use client";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { SubmitHandler } from "react-hook-form";
 import { z } from "zod";
-import BusinessForm from "@/components/BusinessForm";
+import BusinessForm from "./BusinessForm";
 import { businessFormSchema } from "@/types/schemas/application.schema";
 import Swal from "sweetalert2";
 import { getCurrentUserID } from "@/app/api/userApi";
 import { uploadFile } from "@/app/api/generalApi";
-import { Loader } from "@/components/loading/loader";
-
+// import { Loader } from "@/components/loading/loader";
+import { hasUserApplied, transformChoice } from "./actions";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 type businessSchema = z.infer<typeof businessFormSchema>;
 const BUCKET_PITCH_NAME = "business-application";
 let supabase = createSupabaseClient();
 
 export default function ApplyBusiness() {
-  const [applyProject, setApplyProject] = useState(false);
+  const router = useRouter();
   const alertShownRef = useRef(false);
-  const [success, setSucess] = useState(false);
+  // const [success, setSucess] = useState(false);
 
   const onSubmit: SubmitHandler<businessSchema> = async (data) => {
     const transformedData = await transformChoice(data);
     await sendApplication(transformedData);
   };
   const sendApplication = async (recvData: any) => {
-    setSucess(false);
+    // setSucess(false);
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -41,8 +43,8 @@ export default function ApplyBusiness() {
         if (!uploadSuccess) {
           return;
         }
-
-        console.log("file upload successful");
+        toast.success("Send business appliction susccessfully!");
+        router.push("/");
       } else {
         console.error("user ID is undefined.");
         return;
@@ -66,60 +68,26 @@ export default function ApplyBusiness() {
         },
       ])
       .select();
-    setSucess(true);
-
+    // setSucess(true);
+    // console.table(data);
     Swal.fire({
       icon: error == null ? "success" : "error",
       title: error == null ? "success" : "Error: " + error.code,
       text: error == null ? "Your application has been submitted" : error.message,
       confirmButtonColor: error == null ? "green" : "red",
-    }).then((result) => {
-      if (result.isConfirmed && applyProject) {
-        window.location.href = "/project/apply";
-      } else {
-        window.location.href = "/";
-      }
+    }).then(() => {
+      router.push("/");
     });
   };
 
-  const hasUserApplied = async (userID: string) => {
-    let { data: business, error } = await supabase.from("business").select("*").eq("user_id", userID);
-    console.table(business);
-    if (error) {
-      console.error(error);
-    }
-    if (business) {
-      return true;
-    }
-    return false;
-  };
-  const transformChoice = (data: any) => {
-    // convert any yes and no to true or false
-    const transformedData = Object.entries(data).reduce((acc: Record<any, any>, [key, value]) => {
-      if (typeof value === "string") {
-        const lowerValue = value.toLowerCase();
-        if (lowerValue === "yes") {
-          acc[key] = true;
-        } else if (lowerValue === "no") {
-          acc[key] = false;
-        } else {
-          acc[key] = value; // keep other string values unchanged
-        }
-      } else {
-        acc[key] = value; // keep other types unchanged
-      }
-      return acc;
-    }, {});
-    return transformedData;
-  };
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        setSucess(false);
+        // setSucess(false);
         const userID = await getCurrentUserID();
         if (userID) {
-          const hasApplied = await hasUserApplied(userID);
-          setSucess(true);
+          const hasApplied = await hasUserApplied(supabase, userID);
+          // setSucess(true);
           if (hasApplied && !alertShownRef.current) {
             alertShownRef.current = true;
             Swal.fire({
@@ -131,25 +99,27 @@ export default function ApplyBusiness() {
               allowEscapeKey: false,
             }).then((result) => {
               if (result.isConfirmed) {
-                window.location.href = "/";
+                router.push("/");
               }
             });
           }
-          setSucess(false);
         } else {
+          // setSucess(true);
           console.error("User ID is undefined.");
         }
       } catch (error) {
+        // setSucess(true);
         console.error("Error fetching user ID:", error);
       }
     };
     // setSucess(true);
     fetchUserData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div>
-      <Loader isSuccess={success} />
+      {/* <Loader isSuccess={success} /> */}
       <div className="grid grid-flow-row auto-rows-max w-full h-52 md:h-92 bg-gray-100 dark:bg-gray-800 p-5">
         <h1 className="text-2xl md:text-5xl font-medium md:font-bold justify-self-center md:mt-8">
           Apply to raise on B2DVentures
@@ -165,7 +135,7 @@ export default function ApplyBusiness() {
       </div>
       {/* form */}
       {/* <form action="" onSubmit={handleSubmit(handleSubmitForms)}> */}
-      <BusinessForm onSubmit={onSubmit} applyProject={applyProject} setApplyProject={setApplyProject} />
+      <BusinessForm onSubmit={onSubmit} />
     </div>
   );
 }

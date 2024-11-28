@@ -3,25 +3,32 @@
 /* eslint-disable */
 
 import { useState, useEffect } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import CustomTooltip from "@/components/customToolTip";
 import { ShareIcon, StarIcon } from "lucide-react";
-import { redirect } from "next/navigation";
-import useSession from "@/lib/supabase/useSession";
+import { deleteFollow, getFollow, insertFollow } from "@/lib/data/followQuery";
 import toast from "react-hot-toast";
+import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
+import { useQuery } from "@supabase-cache-helpers/postgrest-react-query";
 
-const FollowShareButtons = () => {
-  const [progress, setProgress] = useState(0);
-  const [tab, setTab] = useState("Pitch");
-  const { session, loading } = useSession();
-  const user = session?.user;
-  const [sessionLoaded, setSessionLoaded] = useState(false);
-  const [isFollow, setIsFollow] = useState(false);
+interface FollowShareButtons {
+  userId: string;
+  projectId: number;
+  projectName: string;
+}
+
+const FollowShareButtons = ({ userId, projectId, projectName }: FollowShareButtons) => {
+  const supabase = createSupabaseClient();
+  const { data: follow, isLoading: followIsLoading } = useQuery(getFollow(supabase, userId, projectId), {
+    staleTime: 0,
+  });
+
+  const [isFollowState, setIsFollowState] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!loading) {
-      setSessionLoaded(true);
+    if (follow) {
+      setIsFollowState(!!follow);
     }
-  }, [loading]);
+  }, [follow]);
 
   const handleShare = () => {
     const currentUrl = window.location.href;
@@ -31,27 +38,43 @@ const FollowShareButtons = () => {
       });
     }
   };
-  const handleFollow = () => {
-    if (user) {
-      setIsFollow((prevState) => !prevState);
+
+  const handleFollow = async () => {
+    if (!isFollowState) {
+      const error = await insertFollow(supabase, userId, projectId);
+      if (error) {
+        toast.error("Error occurred!");
+      } else {
+        toast.success("You have followed the project!", { icon: "❤️" });
+        setIsFollowState(true);
+      }
     } else {
-      redirect("/login");
+      const error = await deleteFollow(supabase, userId, projectId);
+      if (error) {
+        toast.error("Error occurred!");
+      } else {
+        toast.success("You have unfollowed the project!", { icon: "💔" });
+        setIsFollowState(false);
+      }
     }
   };
+
+  if (followIsLoading) {
+    return (
+      <div className="grid grid-cols-2 gap-5 justify-self-end">
+        <div onClick={handleShare} className="cursor-pointer mt-2">
+          <ShareIcon />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-2 gap-5 justify-self-end ">
       <div className="mt-2 cursor-pointer" onClick={handleFollow}>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <StarIcon id="follow" fill={isFollow ? "#FFFF00" : "#fff"} strokeWidth={2} />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Follow NVIDIA</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <CustomTooltip message={`Follow ${projectName}`}>
+          <StarIcon id="follow" fill={isFollowState ? "#fcb30e" : "#fff"} strokeWidth={2} />
+        </CustomTooltip>
       </div>
       <div onClick={handleShare} className="cursor-pointer mt-2">
         <ShareIcon />

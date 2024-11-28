@@ -37,12 +37,16 @@ const BusinessTable = ({ businesses }: BusinessTableProps) => {
             <TableRow key={business.id}>
               <TableCell>
                 <Link href={`/admin/business/${business.id}/projects`}>
-                  <p className="hover:text-blue-600">{business.business_name}</p>
+                  <p className="text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-700 border border-transparent hover:border-blue-300 rounded-md px-2 py-1 cursor-pointer transition duration-200">
+                    {business.business_name}
+                  </p>
                 </Link>
               </TableCell>
               <TableCell>
                 <Link href={`/profile/${business.user_id}`}>
-                  <p className="hover:text-blue-600">{business.username}</p>
+                  <p className="text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-700 border border-transparent hover:border-blue-300 rounded-md px-2 py-1 cursor-pointer transition duration-200">
+                    {business.username}
+                  </p>
                 </Link>
               </TableCell>
               <TableCell>{business.business_type}</TableCell>

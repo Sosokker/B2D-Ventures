@@ -1,35 +1,19 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm, ControllerRenderProps } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { MultipleOptionSelector } from "@/components/multipleSelector";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { projectFormSchema } from "@/types/schemas/application.schema";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@/components/ui/label";
 import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { Textarea } from "./ui/textarea";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ChevronsUpDown, Check, X } from "lucide-react";
 
@@ -39,30 +23,32 @@ type FieldType = ControllerRenderProps<any, "projectPhotos">;
 interface ProjectFormProps {
   onSubmit: SubmitHandler<projectSchema>;
 }
-const ProjectForm = ({
-  onSubmit,
-}: ProjectFormProps & { onSubmit: SubmitHandler<projectSchema> }) => {
+const ProjectForm = ({ onSubmit }: ProjectFormProps & { onSubmit: SubmitHandler<projectSchema> }) => {
   const form = useForm<projectSchema>({
     resolver: zodResolver(projectFormSchema),
-    defaultValues: {},
+    defaultValues: {
+      projectName: "",
+      projectType: undefined,
+      shortDescription: "",
+      projectPitchDeck: "",
+      projectLogo: undefined,
+      projectPhotos: [],
+      minInvest: undefined,
+      targetInvest: undefined,
+      deadline: new Date(),
+      tag: [],
+    },
   });
   let supabase = createSupabaseClient();
-  const [projectType, setProjectType] = useState<
-    { id: number; name: string }[]
-  >([]);
+  const [projectType, setProjectType] = useState<{ id: number; name: string }[]>([]);
   const [projectPitch, setProjectPitch] = useState("text");
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [projectPitchFile, setProjectPitchFile] = useState("");
   const [tag, setTag] = useState<{ id: number; value: string }[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<
-    { id: number; value: string }[]
-  >([]);
+  const [selectedTag, setSelectedTag] = useState<{ id: number; value: string }[]>([]);
 
-  const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    field: FieldType
-  ) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, field: FieldType) => {
     if (event.target.files) {
       const filesArray = Array.from(event.target.files);
       console.log("first file", filesArray);
@@ -86,9 +72,7 @@ const ProjectForm = ({
   };
 
   const fetchProjectType = async () => {
-    let { data: ProjectType, error } = await supabase
-      .from("project_type")
-      .select("id, value");
+    let { data: ProjectType, error } = await supabase.from("project_type").select("id, value");
 
     if (error) {
       console.error(error);
@@ -122,13 +106,12 @@ const ProjectForm = ({
   useEffect(() => {
     fetchProjectType();
     fetchTag();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit as SubmitHandler<projectSchema>)}
-        className="space-y-8"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit as SubmitHandler<projectSchema>)} className="space-y-8">
         <div className="ml-96 space-y-10">
           {/* project name */}
           <FormField
@@ -137,17 +120,10 @@ const ProjectForm = ({
             render={({ field }: { field: any }) => (
               <FormItem>
                 <div className="space-y-5">
-                  <FormLabel className="font-bold text-lg">
-                    Project name
-                  </FormLabel>
+                  <FormLabel className="font-bold text-lg">Project name</FormLabel>
                   <FormControl>
                     <div className="flex space-x-5">
-                      <Input
-                        type="text"
-                        id="projectName"
-                        className="w-96"
-                        {...field}
-                      />
+                      <Input type="text" id="projectName" className="w-96" {...field} />
                     </div>
                   </FormControl>
                 </div>
@@ -169,9 +145,7 @@ const ProjectForm = ({
                     handleFunction={(selectedValues: any) => {
                       field.onChange(selectedValues.id);
                     }}
-                    description={
-                      <>Please specify the primary purpose of the funds</>
-                    }
+                    description={<>Please specify the primary purpose of the funds</>}
                     placeholder="Select a Project type"
                     selectLabel="Project type"
                   />
@@ -189,18 +163,11 @@ const ProjectForm = ({
               <FormItem>
                 <FormControl>
                   <div className="mt-10 space-y-5">
-                    <FormLabel className="font-bold text-lg">
-                      Short description
-                    </FormLabel>
+                    <FormLabel className="font-bold text-lg">Short description</FormLabel>
                     <div className="flex space-x-5">
-                      <Textarea
-                        id="shortDescription"
-                        className="w-96"
-                        {...field}
-                      />
+                      <Textarea id="shortDescription" className="w-96" {...field} />
                       <span className="text-[12px] text-neutral-500 self-center">
-                        Could you provide a brief description of your project{" "}
-                        <br /> in one or two sentences?
+                        Could you provide a brief description of your project <br /> in one or two sentences?
                       </span>
                     </div>
                   </div>
@@ -225,9 +192,7 @@ const ProjectForm = ({
                       <div className="flex space-x-2 w-96">
                         <Button
                           type="button"
-                          variant={
-                            projectPitch === "text" ? "default" : "outline"
-                          }
+                          variant={projectPitch === "text" ? "default" : "outline"}
                           onClick={() => setProjectPitch("text")}
                           className="w-32 h-12 text-base"
                         >
@@ -235,9 +200,7 @@ const ProjectForm = ({
                         </Button>
                         <Button
                           type="button"
-                          variant={
-                            projectPitch === "file" ? "default" : "outline"
-                          }
+                          variant={projectPitch === "file" ? "default" : "outline"}
                           onClick={() => setProjectPitch("file")}
                           className="w-32 h-12 text-base"
                         >
@@ -247,11 +210,7 @@ const ProjectForm = ({
                       <div className="flex space-x-5">
                         <Input
                           type={projectPitch === "file" ? "file" : "text"}
-                          placeholder={
-                            projectPitch === "file"
-                              ? "Upload your Markdown file"
-                              : "https:// "
-                          }
+                          placeholder={projectPitch === "file" ? "Upload your Markdown file" : "https:// "}
                           accept={projectPitch === "file" ? ".md" : undefined}
                           onChange={(e) => {
                             const value = e.target;
@@ -266,11 +225,9 @@ const ProjectForm = ({
                         />
 
                         <span className="text-[12px] text-neutral-500 self-center">
-                          Please upload a file or paste a link to your pitch,
-                          which should <br />
-                          cover key aspects of your project: what it will do,
-                          what investors <br /> can expect to gain, and any
-                          highlights that make it stand out.
+                          Please upload a file or paste a link to your pitch, which should <br />
+                          cover key aspects of your project: what it will do, what investors <br /> can expect to gain,
+                          and any highlights that make it stand out.
                         </span>
                       </div>
                       {projectPitchFile && (
@@ -302,23 +259,22 @@ const ProjectForm = ({
               <FormItem>
                 <FormControl>
                   <div className="mt-10 space-y-5">
-                    <FormLabel className="font-bold text-lg mt-10">
-                      Project logo
-                    </FormLabel>
-                    <Input
-                      type="file"
-                      id="projectLogo"
-                      className="w-96"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        field.onChange(file || "");
-                      }}
-                    />
-                    <span className="text-[12px] text-neutral-500 self-center">
-                      Please upload the logo picture that best represents your
-                      project.
-                    </span>
+                    <FormLabel className="font-bold text-lg mt-10">Project logo</FormLabel>
+                    <div className="flex space-x-5">
+                      <Input
+                        type="file"
+                        id="projectLogo"
+                        className="w-96"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          field.onChange(file || "");
+                        }}
+                      />
+                      <span className="text-[12px] text-neutral-500 self-center">
+                        Please upload the logo picture that best represents your project.
+                      </span>
+                    </div>
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -334,9 +290,7 @@ const ProjectForm = ({
               <FormItem>
                 <FormControl>
                   <div className="mt-10 space-y-5">
-                    <FormLabel className="font-bold text-lg mt-10">
-                      Project photos
-                    </FormLabel>
+                    <FormLabel className="font-bold text-lg mt-10">Project photos</FormLabel>
                     <div className="flex space-x-5">
                       <Input
                         type="file"
@@ -349,16 +303,15 @@ const ProjectForm = ({
                         }}
                       />
                       <span className="text-[12px] text-neutral-500 self-center">
-                        Please upload the logo picture that best represents your
-                        project.
+                        Please upload the photo that best represents your project.
+                        <p className="text-red-500">
+                          *** It is recommended that the photo be horizontal for better presentation.
+                        </p>
                       </span>
                     </div>
                     <div className="mt-5 space-y-2 w-96">
                       {selectedImages.map((image, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center border p-2 rounded"
-                        >
+                        <div key={index} className="flex justify-between items-center border p-2 rounded">
                           <span>{image.name}</span>
                           <Button
                             variant="outline"
@@ -385,9 +338,7 @@ const ProjectForm = ({
             render={({ field }: { field: any }) => (
               <FormItem>
                 <div className="mt-10 space-y-5">
-                  <FormLabel className="font-bold text-lg">
-                    Minimum investment
-                  </FormLabel>
+                  <FormLabel className="font-bold text-lg">Minimum investment</FormLabel>
                   <FormControl>
                     <div className="flex space-x-5">
                       <Input
@@ -419,9 +370,7 @@ const ProjectForm = ({
             render={({ field }: { field: any }) => (
               <FormItem>
                 <div className="mt-10 space-y-5">
-                  <FormLabel className="font-bold text-lg">
-                    Target investment
-                  </FormLabel>
+                  <FormLabel className="font-bold text-lg">Target investment</FormLabel>
                   <FormControl>
                     <div className="flex space-x-5">
                       <Input
@@ -437,8 +386,8 @@ const ProjectForm = ({
                         value={field.value}
                       />
                       <span className="text-[12px] text-neutral-500 self-center">
-                        We encourage you to set a specific target investment{" "}
-                        <br /> amount that reflects your funding goals.
+                        We encourage you to set a specific target investment <br /> amount that reflects your funding
+                        goals.
                       </span>
                     </div>
                   </FormControl>
@@ -457,16 +406,10 @@ const ProjectForm = ({
                   <FormLabel className="font-bold text-lg">Deadline</FormLabel>
                   <FormControl>
                     <div className="flex space-x-5">
-                      <Input
-                        type="datetime-local"
-                        id="deadline"
-                        className="w-96"
-                        {...field}
-                      />
+                      <Input type="datetime-local" id="deadline" className="w-96" {...field} />
                       <span className="text-[12px] text-neutral-500 self-center">
-                        What is the deadline for your fundraising project?
-                        Setting <br /> a clear timeline can help motivate
-                        potential investors.
+                        What is the deadline for your fundraising project? Setting <br /> a clear timeline can help
+                        motivate potential investors.
                       </span>
                     </div>
                   </FormControl>
@@ -493,9 +436,7 @@ const ProjectForm = ({
                             aria-expanded={open}
                             className="w-96 justify-between overflow-hidden text-ellipsis whitespace-nowrap"
                           >
-                            {selectedTag.length > 0
-                              ? selectedTag.map((t) => t.value).join(", ")
-                              : "Select tags..."}
+                            {selectedTag.length > 0 ? selectedTag.map((t) => t.value).join(", ") : "Select tags..."}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </PopoverTrigger>
@@ -511,15 +452,11 @@ const ProjectForm = ({
                                     value={tag.value}
                                     onSelect={() => {
                                       setSelectedTag((prev) => {
-                                        const exists = prev.find(
-                                          (t) => t.id === tag.id
-                                        );
+                                        const exists = prev.find((t) => t.id === tag.id);
                                         const updatedTags = exists
                                           ? prev.filter((t) => t.id !== tag.id)
                                           : [...prev, tag];
-                                        field.onChange(
-                                          updatedTags.map((t) => t.id)
-                                        );
+                                        field.onChange(updatedTags.map((t) => t.id));
                                         return updatedTags;
                                       });
                                       setOpen(false);
@@ -528,9 +465,7 @@ const ProjectForm = ({
                                     <Check
                                       className={cn(
                                         "h-4",
-                                        selectedTag.some((t) => t.id === tag.id)
-                                          ? "opacity-100"
-                                          : "opacity-0"
+                                        selectedTag.some((t) => t.id === tag.id) ? "opacity-100" : "opacity-0"
                                       )}
                                     />
                                     {tag.value}
@@ -542,8 +477,7 @@ const ProjectForm = ({
                         </PopoverContent>
                       </Popover>
                       <span className="text-[12px] text-neutral-500 self-center">
-                        Add 1 to 5 tags that describe your project. Tags help{" "}
-                        <br />
+                        Add 1 to 5 tags that describe your project. Tags help <br />
                         investors understand your focus.
                       </span>
                     </div>
@@ -561,9 +495,7 @@ const ProjectForm = ({
                       <button
                         onClick={() => {
                           setSelectedTag((prev) => {
-                            const updatedTags = prev.filter(
-                              (t) => t.id !== tag.id
-                            );
+                            const updatedTags = prev.filter((t) => t.id !== tag.id);
                             field.onChange(updatedTags.map((t) => t.id));
                             return updatedTags;
                           });
@@ -579,10 +511,7 @@ const ProjectForm = ({
           />
         </div>
         <center>
-          <Button
-            className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5 "
-            type="submit"
-          >
+          <Button className="mt-12 mb-20 h-10 text-base font-bold py-6 px-5 " type="submit">
             Submit application
           </Button>
         </center>

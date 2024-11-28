@@ -12,4 +12,8 @@ function getAllBusinessTypeQuery(client: SupabaseClient) {
   return client.from("business_type").select("id, value, description");
 }
 
-export { getAllBusinessTypeQuery, getALlFundedStatusQuery, getAllTagsQuery };
+function getAllProjectStatusQuery(client: SupabaseClient) {
+  return client.from("project_status").select("id, value, description");
+}
+
+export { getAllBusinessTypeQuery, getALlFundedStatusQuery, getAllTagsQuery, getAllProjectStatusQuery };

@@ -1,24 +1,30 @@
 "use client";
 
-import { createSupabaseClient } from "@/lib/supabase/clientComponentClient";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { logout } from "./action"; // Adjust the import path accordingly
+import { usePathname, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export function LogoutButton() {
-  const supabase = createSupabaseClient();
   const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-
-    if (pathname === "/") {
-      window.location.reload();
-    } else {
-      await router.push("/");
-      window.location.reload();
+    try {
+      await logout();
+      if (pathname === "/") {
+        window.location.reload();
+      } else {
+        await router.push("/");
+        window.location.reload();
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred during logout.");
     }
   };
 
-  return <button onClick={handleLogout}>Logout</button>;
+  return (
+    <div>
+      <button onClick={handleLogout}>Logout</button>
+    </div>
+  );
 }

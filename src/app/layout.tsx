@@ -1,5 +1,5 @@
 import React from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ReactQueryClientProvider } from "@/components/ReactQueryClientProvider";
@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   description: "B2DVentures is a financial services company.",
 };
 
+export const viewport: Viewport = {
+  initialScale: 1,
+  width: "device-width",
+};
+
 interface RootLayoutProps {
   children: Readonly<React.ReactNode>;
 }
@@ -35,7 +40,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="relative flex min-h-screen flex-col">
               <div>
-                <Toaster position="top-center" reverseOrder={false} toastOptions={{ duration: 1000 }} />
+                <Toaster position="top-center" reverseOrder={false} toastOptions={{ duration: 2000 }} />
               </div>
               <NavigationBar />
               <div className="flex-1 bg-background">{children}</div>

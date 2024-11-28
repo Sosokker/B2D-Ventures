@@ -6,6 +6,9 @@ import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import Link from "next/link";
 import { getUserRole } from "@/lib/data/userQuery";
+import { BusinessProfile } from "./BusinessProfile";
+import { ProjectProfileSection } from "./ProjectProfile";
+import remarkGfm from "remark-gfm";
 
 export default async function ProfilePage({ params }: { params: { uid: string } }) {
   const supabase = createSupabaseClient();
@@ -85,12 +88,20 @@ export default async function ProfilePage({ params }: { params: { uid: string } 
               )}
             </div>
           </div>
+          {userRoleData.role === "business" && (
+            <div id="business-area" className="rounded-md mt-3">
+              <BusinessProfile userId={uid} />
+              <ProjectProfileSection userId={uid} />
+            </div>
+          )}
           {/* Lower */}
           <div>
             <div className="mt-6">
-              <h2 className="text-xl font-semibold mb-2">Bio</h2>
-              <div className="prose prose-sm max-w-none dark:prose-invert">
-                <ReactMarkdown>{profileData.bio || "No bio available."}</ReactMarkdown>
+              {/* <h2 className="text-4xl font-bold mb-2">Bio</h2> */}
+              <div className="border-[1px] mx-4 p-6 rounded-md">
+                <div className="prose prose-sm max-w-none dark:prose-invert">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{profileData.bio || "No bio available."}</ReactMarkdown>
+                </div>
               </div>
             </div>
           </div>

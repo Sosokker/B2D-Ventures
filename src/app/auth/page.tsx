@@ -3,6 +3,8 @@ import { Card, CardContent, CardFooter, CardDescription, CardHeader, CardTitle }
 import { LoginButton } from "@/components/auth/loginButton";
 import { LoginForm } from "@/components/auth/loginForm";
 
+import Link from "next/link";
+
 export default function Login() {
   return (
     <div
@@ -23,7 +25,17 @@ export default function Login() {
           <LoginButton />
         </CardContent>
         <CardFooter className="text-xs justify-center">
-          By signing up, you agree to the Terms of Service and acknowledge you’ve read our Privacy Policy.
+          <span>
+            By signing in, you agree to the{" "}
+            <Link href="/terms" rel="noopener noreferrer" target="_blank" className="text-blue-600 underline">
+              Terms of Service
+            </Link>{" "}
+            and acknowledge you’ve read our{" "}
+            <Link href="/privacy" rel="noopener noreferrer" target="_blank" className="text-blue-600 underline">
+              Privacy Policy
+            </Link>
+            .
+          </span>
         </CardFooter>
       </Card>
     </div>

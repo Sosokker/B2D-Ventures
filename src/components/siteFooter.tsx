@@ -16,12 +16,15 @@ export function SiteFooter() {
               Home
             </Link>
             <Link href="/about" className="hover:underline">
-              About Us
+              About
             </Link>
-            <Link href="/services" className="hover:underline">
-              Services
+            <Link href="/privacy" className="hover:underline">
+              Privacy
             </Link>
-            <Link href="/contact" className="hover:underline">
+            <Link href="/terms" className="hover:underline">
+              Terms and Service
+            </Link>
+            <Link href="mailto:b2d.ventures.contact@gmail.com" className="hover:underline">
               Contact
             </Link>
           </div>
