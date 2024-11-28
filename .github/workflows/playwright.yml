@@ -39,6 +39,11 @@ jobs:
           echo NEXT_PUBLIC_TEST_URL=${{ secrets.NEXT_PUBLIC_TEST_URL }} >> $GITHUB_ENV
           echo PROJECT_ID=${{ secrets.PROJECT_ID }} >> $GITHUB_ENV
           echo STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} >> $GITHUB_ENV
+          echo SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_TEST_USER_EMAIL=${{ secrets.NEXT_PUBLIC_TEST_USER_EMAIL }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_TEST_USER_PASSWORD=${{ secrets.NEXT_PUBLIC_TEST_USER_PASSWORD }} >> $GITHUB_ENV
+          echo NEXT_PUBLIC_SITEKEY=${{ secrets.NEXT_PUBLIC_SITEKEY }} >> $GITHUB_ENV
+          echo BASE_URL=${{ secrets.BASE_URL }} >> $GITHUB_ENV
 
       - name: Install dependencies
         run: npm ci
@@ -46,8 +51,8 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests with 4 workers
-        run: npx playwright test --workers=4
+      - name: Run Playwright tests with 1 workers
+        run: npx playwright test --workers=1
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
