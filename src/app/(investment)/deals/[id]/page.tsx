@@ -16,6 +16,7 @@ import { isOwnerOfProject } from "./query";
 import { UpdateTab } from "./UpdateTab";
 import remarkGfm from "remark-gfm";
 import Gallery from "@/components/carousel";
+import { getProjectCardData } from "@/lib/data/projectQuery";
 
 const PHOTO_MATERIAL_ID = 2;
 
@@ -62,6 +63,8 @@ export default async function ProjectDealPage({ params }: { params: { id: number
 
   const projectBusinessOwnerId = projectData.user_id;
   const dealList = await getDealList(projectBusinessOwnerId);
+  const { data, error } = await getProjectCardData(supabase, [params.id.toString()]);
+
   const totalDealAmount = sumByKey(dealList, "deal_amount");
   // timeDiff, if negative convert to zero
   const timeDiff = Math.max(new Date(projectData.investment_deadline).getTime() - new Date().getTime(), 0);
@@ -75,6 +78,10 @@ export default async function ProjectDealPage({ params }: { params: { id: number
           }))
         )
       : [{ src: "/boiler1.jpg", alt: "Default Boiler Image" }];
+
+  if (error) {
+    throw new Error("Error fetching data");
+  }
 
   return (
     <div className="container max-w-screen-xl my-5">
@@ -109,9 +116,9 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <div id="stats" className="flex flex-col w-full mt-4">
                 <div className="pl-5">
                   <span>
-                    <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
+                    <h1 className="font-semibold text-xl md:text-4xl mt-8">${data ? data[0].total_raise : 0}</h1>
                     <p className="text-sm md:text-lg">
-                      {toPercentage(totalDealAmount, projectData?.target_investment)}% raised of $
+                      {data ? toPercentage(totalDealAmount, data[0].total_raise) : 0}% raised of $
                       {projectData?.target_investment} max goal
                     </p>
                     <Progress
@@ -121,7 +128,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </span>
                   <span>
                     <h1 className="font-semibold text-4xl md:mt-8">
-                      <p className="text-xl md:text-4xl">{dealList.length}</p>
+                      <p className="text-xl md:text-4xl">{data ? data[0].total_investor : 0}</p>
                     </h1>
                     <p className="text-sm md:text-lg">Investors</p>
                   </span>
