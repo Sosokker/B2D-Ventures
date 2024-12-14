@@ -23,6 +23,9 @@ export default function Login() {
           <LoginForm />
           <hr></hr>
           <LoginButton />
+          <Link href={"/auth/forgot"}>
+            <span className="text-blue-600 hover:text-blue-800 hover:underline">Forget your password?</span>
+          </Link>
         </CardContent>
         <CardFooter className="text-xs justify-center">
           <span>
