@@ -8,7 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import FollowShareButtons from "./followShareButton";
-import { getProjectData } from "@/lib/data/projectQuery";
+import { getProjectCardData, getProjectData } from "@/lib/data/projectQuery";
 import { getDealList } from "@/app/api/dealApi";
 import { sumByKey, toPercentage } from "@/lib/utils";
 import { redirect } from "next/navigation";
@@ -62,6 +62,8 @@ export default async function ProjectDealPage({ params }: { params: { id: number
 
   const projectBusinessOwnerId = projectData.user_id;
   const dealList = await getDealList(projectBusinessOwnerId);
+  const { data, error } = await getProjectCardData(supabase, [params.id.toString()]);
+
   const totalDealAmount = sumByKey(dealList, "deal_amount");
   // timeDiff, if negative convert to zero
   const timeDiff = Math.max(new Date(projectData.investment_deadline).getTime() - new Date().getTime(), 0);
@@ -75,6 +77,17 @@ export default async function ProjectDealPage({ params }: { params: { id: number
           }))
         )
       : [{ src: "/boiler1.jpg", alt: "Default Boiler Image" }];
+
+  if (error) {
+    return (
+      <div className="container max-w-screen-xl my-5">
+        <p className="text-red-600">Error fetching data. Please try again.</p>
+        <Link href={`/deals/${params.id}`} className="mt-4">
+          <Button className="mt-4">Refresh</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-screen-xl my-5">
@@ -109,9 +122,9 @@ export default async function ProjectDealPage({ params }: { params: { id: number
               <div id="stats" className="flex flex-col w-full mt-4">
                 <div className="pl-5">
                   <span>
-                    <h1 className="font-semibold text-xl md:text-4xl mt-8">${totalDealAmount}</h1>
+                    <h1 className="font-semibold text-xl md:text-4xl mt-8">{data?.[0]?.total_raise ?? 0}</h1>
                     <p className="text-sm md:text-lg">
-                      {toPercentage(totalDealAmount, projectData?.target_investment)}% raised of $
+                      {toPercentage(data?.[0]?.total_raise!, projectData?.target_investment)}% raised of $
                       {projectData?.target_investment} max goal
                     </p>
                     <Progress
@@ -121,7 +134,7 @@ export default async function ProjectDealPage({ params }: { params: { id: number
                   </span>
                   <span>
                     <h1 className="font-semibold text-4xl md:mt-8">
-                      <p className="text-xl md:text-4xl">{dealList.length}</p>
+                      <p className="text-xl md:text-4xl">{data?.[0]?.total_investor ?? 0}</p>
                     </h1>
                     <p className="text-sm md:text-lg">Investors</p>
                   </span>
