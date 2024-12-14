@@ -9,6 +9,8 @@ import { NavigationBar } from "@/components/navigationBar/nav";
 import { Toaster } from "react-hot-toast";
 import { SiteFooter } from "@/components/siteFooter";
 
+import CookieConsent from "@/components/CookieConsent";
+
 const montserrat = Montserrat({
   subsets: ["latin"],
   display: "swap",
@@ -44,6 +46,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               </div>
               <NavigationBar />
               <div className="flex-1 bg-background">{children}</div>
+              <CookieConsent />
             </div>
             <SiteFooter />
           </ThemeProvider>
