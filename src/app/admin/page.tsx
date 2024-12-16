@@ -3,10 +3,25 @@ import { createSupabaseClient } from "@/lib/supabase/serverComponentClient";
 import BusinessTable from "./BusinessTable";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import { getUserRole } from "@/lib/data/userQuery";
+import { redirect } from "next/navigation";
 
 export default async function AdminPage() {
   const client = createSupabaseClient();
   const { data, error } = await getAllBusinesses(client);
+  const { data: userData, error: userDataError } = await client.auth.getUser();
+
+  if (userDataError) {
+    redirect("/");
+  }
+
+  const uid = userData.user!.id;
+
+  const { data: userRoleData, error: userRoleError } = await getUserRole(client, uid);
+
+  if (userRoleError || userRoleData!.role !== "admin") {
+    redirect("/");
+  }
 
   if (error) {
     return <div>Error fetching businesses: {error.message}</div>;
